@@ -16,18 +16,7 @@ I will add a slightly more detailed description later.
 - [Arduino Extension](https://marketplace.visualstudio.com/items?itemName=vsciot-vscode.vscode-arduino)
 - [NodeRed](https://nodered.org/)
 
-
-## Installation
-1. Install the Arduino IDE
-2. Install the Arduino Extension for Visual Studio Code
-3. Install OpenCV
-4. Clone this repository
-5. Open the folder in Visual Studio Code
-6. To be continued...
-
-
-## [Tutorial](<https://i40.fh-aachen.de//courses/dta/activities/bittle/workspace_setup.html#node-red>)
-## Dependencies 
+## Dependencies for serial communication with node-red
 <details>
 <summary>Install dependencies on Linux</summary>
 <br>
@@ -74,6 +63,18 @@ $ cd ~/Arduino/libraries/opencv_esp32
 $ git submodule update --init
 ``` 
 </details>
+
+
+## Installation
+1. Install the Arduino IDE
+2. Install the Arduino Extension for Visual Studio Code
+3. Install OpenCV
+4. Clone this repository
+5. Open the folder in Visual Studio Code
+6. To be continued...
+
+
+## [Tutorial](<https://i40.fh-aachen.de//courses/dta/activities/bittle/workspace_setup.html#node-red>)
 
 ## Tips and tricks
 <details>
