@@ -32,16 +32,17 @@ I will add a slightly more detailed description later.
 <summary>Install dependencies on Linux</summary>
 <br>
 Install Node-Red
+
 Check if Node.js and npm are installed
 ```
-node -v
-npm -v
+node -v && npm -v
 ```
+
 If not installed, install Node.js and npm
 ```
-$ sudo apt-get install nodejs
-$ sudo apt-get install npm
+$ sudo apt-get install nodejs && sudo apt-get install npm
 ```
+
 Install Node-Red
 ```
 $ sudo npm install -g --unsafe-perm node-red
