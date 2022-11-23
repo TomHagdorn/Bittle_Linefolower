@@ -1,0 +1,131 @@
+[
+    {
+        "id": "e56cf8a9394c2a36",
+        "type": "tab",
+        "label": "Flow 1",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "38e54c40badb34c7",
+        "type": "debug",
+        "z": "e56cf8a9394c2a36",
+        "name": "debug 1",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 720,
+        "y": 240,
+        "wires": []
+    },
+    {
+        "id": "3cef0356c48af8dc",
+        "type": "serial out",
+        "z": "e56cf8a9394c2a36",
+        "name": "Bitle",
+        "serial": "ebb34b3136fb470c",
+        "x": 710,
+        "y": 360,
+        "wires": []
+    },
+    {
+        "id": "c140b6b1de1af1b6",
+        "type": "ui_text_input",
+        "z": "e56cf8a9394c2a36",
+        "name": "",
+        "label": "",
+        "tooltip": "",
+        "group": "b8960f08b2fdcb02",
+        "order": 0,
+        "width": 0,
+        "height": 0,
+        "passthru": true,
+        "mode": "text",
+        "delay": "0",
+        "topic": "topic",
+        "sendOnBlur": true,
+        "className": "",
+        "topicType": "msg",
+        "x": 400,
+        "y": 300,
+        "wires": [
+            [
+                "38e54c40badb34c7",
+                "3cef0356c48af8dc"
+            ]
+        ]
+    },
+    {
+        "id": "e55d7f912640b1cd",
+        "type": "inject",
+        "z": "e56cf8a9394c2a36",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": true,
+        "onceDelay": "1.1",
+        "topic": "hi",
+        "payload": "hi",
+        "payloadType": "str",
+        "x": 430,
+        "y": 400,
+        "wires": [
+            [
+                "3cef0356c48af8dc",
+                "38e54c40badb34c7"
+            ]
+        ]
+    },
+    {
+        "id": "ebb34b3136fb470c",
+        "type": "serial-port",
+        "serialport": "COM10",
+        "serialbaud": "115200",
+        "databits": "8",
+        "parity": "none",
+        "stopbits": "1",
+        "waitfor": "",
+        "dtr": "none",
+        "rts": "none",
+        "cts": "none",
+        "dsr": "none",
+        "newline": "\\n",
+        "bin": "false",
+        "out": "char",
+        "addchar": "",
+        "responsetimeout": "10000"
+    },
+    {
+        "id": "b8960f08b2fdcb02",
+        "type": "ui_group",
+        "name": "Standard",
+        "tab": "9b98c99ed6d2e914",
+        "order": 1,
+        "disp": true,
+        "width": "6",
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "9b98c99ed6d2e914",
+        "type": "ui_tab",
+        "name": "Home",
+        "icon": "dashboard",
+        "disabled": false,
+        "hidden": false
+    }
+]
