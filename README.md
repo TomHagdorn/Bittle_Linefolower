@@ -79,9 +79,35 @@ $ git submodule update --init
 <summary>Bittle serial cmds</summary>
 <br>
 
-![Getting Started](./images/serial_commands.png)
+![Getting Started](docs/images/bittle_serial_cmds.png)
 
 
 </details>
 
+
+## Printed parts
+<details>
+<summary>Printed parts</summary>
+<br>
+
+GummifussV2.stl
+
+    Covers the feet of the Bittle with TPU or PLA. This prevents the Bittle from slipping on the floor.
+    The PLA needs to be Rubber coated and the TPU needs to be very soft.
+
+CAM-Holder.stl
+
+    Holds the ESP32-CAM on the Bittle. The ESP32-CAM is screwed on the holder. 
+    The holder is clipped where the Bittle's head would be.
+
+
+Skelleton.stl
+
+    Skelleton cover for the back of the Bittle. It is printed in PLA+ and is for weight reduction of 0.5g.
+    This is not necessary, but it looks cool.
+
+standWithCalibration.stl
+
+    Stand for the Bittle. It is printed in PLA+ and it is for testing and calibration without risking the Bittle to fall down.
+</details>
 
