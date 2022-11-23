@@ -28,7 +28,7 @@
         "type": "serial out",
         "z": "e56cf8a9394c2a36",
         "name": "Bitle",
-        "serial": "ebb34b3136fb470c",
+        "serial": "89e4c01f43d31b2e",
         "x": 710,
         "y": 360,
         "wires": []
@@ -61,39 +61,9 @@
         ]
     },
     {
-        "id": "e55d7f912640b1cd",
-        "type": "inject",
-        "z": "e56cf8a9394c2a36",
-        "name": "",
-        "props": [
-            {
-                "p": "payload"
-            },
-            {
-                "p": "topic",
-                "vt": "str"
-            }
-        ],
-        "repeat": "",
-        "crontab": "",
-        "once": true,
-        "onceDelay": "1.1",
-        "topic": "hi",
-        "payload": "hi",
-        "payloadType": "str",
-        "x": 430,
-        "y": 400,
-        "wires": [
-            [
-                "3cef0356c48af8dc",
-                "38e54c40badb34c7"
-            ]
-        ]
-    },
-    {
-        "id": "ebb34b3136fb470c",
+        "id": "89e4c01f43d31b2e",
         "type": "serial-port",
-        "serialport": "COM10",
+        "serialport": "/dev/ttyUSB0",
         "serialbaud": "115200",
         "databits": "8",
         "parity": "none",
