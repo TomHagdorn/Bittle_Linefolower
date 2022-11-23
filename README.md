@@ -112,3 +112,4 @@ standWithCalibration.stl
     Stand for the Bittle. It is printed in PLA+ and it is for testing and calibration without risking the Bittle to fall down.
 </details>
 
+## [Official Repository](https://github.com/PetoiCamp)
