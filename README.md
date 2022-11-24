@@ -106,6 +106,8 @@ $ git clone
 $ cd %userprofile%\Documents\Arduino\libraries\opencv_esp32
 $ git submodule update --init
 ```
+
+
 </details>
 
 
