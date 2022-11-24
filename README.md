@@ -64,6 +64,51 @@ $ git submodule update --init
 ``` 
 </details>
 
+<details>
+<summary>Install dependencies on Windows</summary>
+<br>
+Check if Node.js and npm are installed
+```
+node -v && npm -v
+```
+
+If not installed, install Node.js and npm on Windows
+```
+https://nodejs.org/en/download/
+```
+
+Install Node-Red Windows
+```	
+$ npm install -g --unsafe-perm node-red
+```
+Install Node-Red Dashboard
+```
+$ cd %userprofile%\.node-red
+$ npm install node-red-dashboard
+```
+
+Install Node-Red Node for Bittle
+```
+$ cd %userprofile%\.node-red
+$ npm install node-red-contrib-bittle
+```
+
+Install Node-Red Serialport
+```
+$ cd %userprofile%\.node-red
+$ npm install node-red-node-serialport
+```
+
+Install OpenCV ESP32 Library
+```
+$ cd %userprofile%\Documents\Arduino\libraries
+$ git clone
+$ cd %userprofile%\Documents\Arduino\libraries\opencv_esp32
+$ git submodule update --init
+```
+</details>
+
+
 
 ## Installation
 1. Install the Arduino IDE
