@@ -55,13 +55,6 @@ $ cd ~/.node-red
 $ npm install node-red-node-serialport
 ```
 
-Install OpenCV ESP32 Library
-``` 
-$ cd ~/Arduino/libraries
-$ git clone
-$ cd ~/Arduino/libraries/opencv_esp32
-$ git submodule update --init
-``` 
 </details>
 
 <details>
@@ -97,14 +90,6 @@ Install Node-Red Serialport
 ```
 $ cd %userprofile%\.node-red
 $ npm install node-red-node-serialport
-```
-
-Install OpenCV ESP32 Library
-```
-$ cd %userprofile%\Documents\Arduino\libraries
-$ git clone
-$ cd %userprofile%\Documents\Arduino\libraries\opencv_esp32
-$ git submodule update --init
 ```
 
 
