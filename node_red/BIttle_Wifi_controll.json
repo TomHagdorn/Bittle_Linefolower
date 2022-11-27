@@ -1,0 +1,229 @@
+[
+    {
+        "id": "8fdb76d9993f8970",
+        "type": "tab",
+        "label": "Flow 1",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "83e9a889065e91fe",
+        "type": "http request",
+        "z": "8fdb76d9993f8970",
+        "name": "",
+        "method": "GET",
+        "ret": "txt",
+        "paytoqs": "ignore",
+        "url": "http://192.168.0.6/actionpage?name={{{payload.Command}}}",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 830,
+        "y": 540,
+        "wires": [
+            [
+                "cb3608fb5fe5cc68"
+            ]
+        ]
+    },
+    {
+        "id": "7179b0b2d42b22ab",
+        "type": "ui_button",
+        "z": "8fdb76d9993f8970",
+        "name": "",
+        "group": "21a03f70a4e79e26",
+        "order": 0,
+        "width": "2",
+        "height": "1",
+        "passthru": false,
+        "label": "Vorwärts",
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "payload": "{\"Command\":\"forward\"}",
+        "payloadType": "json",
+        "topic": "topic",
+        "topicType": "msg",
+        "x": 540,
+        "y": 340,
+        "wires": [
+            [
+                "83e9a889065e91fe"
+            ]
+        ]
+    },
+    {
+        "id": "e6d8dc140454272f",
+        "type": "ui_button",
+        "z": "8fdb76d9993f8970",
+        "name": "",
+        "group": "21a03f70a4e79e26",
+        "order": 1,
+        "width": "2",
+        "height": "1",
+        "passthru": false,
+        "label": "Links",
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "payload": "{\"Command\":\"forwardleft\"}",
+        "payloadType": "json",
+        "topic": "topic",
+        "topicType": "msg",
+        "x": 530,
+        "y": 440,
+        "wires": [
+            [
+                "83e9a889065e91fe"
+            ]
+        ]
+    },
+    {
+        "id": "aa9a73f6ae980c69",
+        "type": "ui_button",
+        "z": "8fdb76d9993f8970",
+        "name": "",
+        "group": "21a03f70a4e79e26",
+        "order": 2,
+        "width": "2",
+        "height": "1",
+        "passthru": false,
+        "label": "Rechts",
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "payload": "{\"Command\":\"forwardright\"}",
+        "payloadType": "json",
+        "topic": "topic",
+        "topicType": "msg",
+        "x": 540,
+        "y": 540,
+        "wires": [
+            [
+                "83e9a889065e91fe"
+            ]
+        ]
+    },
+    {
+        "id": "b92e6f6239b08995",
+        "type": "ui_button",
+        "z": "8fdb76d9993f8970",
+        "name": "",
+        "group": "21a03f70a4e79e26",
+        "order": 3,
+        "width": "2",
+        "height": "1",
+        "passthru": false,
+        "label": "Stop",
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "payload": "{\"Command\":\"stop\"}",
+        "payloadType": "json",
+        "topic": "topic",
+        "topicType": "msg",
+        "x": 530,
+        "y": 640,
+        "wires": [
+            [
+                "83e9a889065e91fe"
+            ]
+        ]
+    },
+    {
+        "id": "cb3608fb5fe5cc68",
+        "type": "debug",
+        "z": "8fdb76d9993f8970",
+        "name": "debug 1",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1160,
+        "y": 540,
+        "wires": []
+    },
+    {
+        "id": "d1deb980b98e4e6e",
+        "type": "ui_form",
+        "z": "8fdb76d9993f8970",
+        "name": "",
+        "label": "",
+        "group": "21a03f70a4e79e26",
+        "order": 4,
+        "width": 0,
+        "height": 0,
+        "options": [
+            {
+                "label": "",
+                "value": "",
+                "type": "text",
+                "required": true,
+                "rows": null
+            }
+        ],
+        "formValue": {
+            "": ""
+        },
+        "payload": "",
+        "submit": "submit",
+        "cancel": "cancel",
+        "topic": "topic",
+        "topicType": "msg",
+        "splitLayout": "",
+        "className": "",
+        "x": 530,
+        "y": 740,
+        "wires": [
+            [
+                "83e9a889065e91fe"
+            ]
+        ]
+    },
+    {
+        "id": "6091547e97e805d7",
+        "type": "ui_spacer",
+        "z": "8fdb76d9993f8970",
+        "name": "spacer",
+        "group": "21a03f70a4e79e26",
+        "order": 1,
+        "width": 1,
+        "height": 1
+    },
+    {
+        "id": "21a03f70a4e79e26",
+        "type": "ui_group",
+        "name": "Standard",
+        "tab": "edd72335a521cadb",
+        "order": 1,
+        "disp": true,
+        "width": "7",
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "edd72335a521cadb",
+        "type": "ui_tab",
+        "name": "Tab 1",
+        "icon": "dashboard",
+        "order": 1,
+        "disabled": false,
+        "hidden": false
+    }
+]
