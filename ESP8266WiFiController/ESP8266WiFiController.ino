@@ -39,9 +39,9 @@
 ESP8266WebServer server(80);
 
 // dict object for action
-Dictionary *actions = new Dictionary(30);
+Dictionary *actions = new Dictionary(30); // 30 is the max number of actions
 
-String PROGMEM renderHtml(String body, String title) {
+String PROGMEM renderHtml(String body, String title) {  
   String page;
   page += FPSTR(head);
   page.replace(FPSTR("%TITLE%"), title);
@@ -63,10 +63,10 @@ void handleCalibration() {
   String joint = server.arg("c");
   String offset = server.arg("o");
     
-  if (joint == "s") {
+  if (joint == "s") { // save
     Serial.print("s");
   } else {
-    Serial.print("c" + joint + " " + offset);
+    Serial.print("c" + joint + " " + offset); // calibrate
   }
   server.send(200, "text/html", "ok");
 }
@@ -114,7 +114,7 @@ void handleAction()
 void setup(void) {
 
   // Serial and GPIO LED
-  Serial.begin(115200);
+  Serial.begin(115200); 
 
   // this number should match to wait time in sender
   Serial.setTimeout(40);
