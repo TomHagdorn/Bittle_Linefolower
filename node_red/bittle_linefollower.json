@@ -1,0 +1,84 @@
+[
+    {
+        "id": "5f04dd18.4f1a5",
+        "type": "ui_template",
+        "z": "",
+        "group": "87a6fca4.f4d4d8",
+        "name": "Status Monitor",
+        "order": 1,
+        "width": "3",
+        "height": "3",
+        "format": "<div class=\"well\">\n    <h3>API Status</h3>\n    <p>{{msg.payload}}</p>\n</div>",
+        "storeOutMessages": true,
+        "fwdInMessages": true,
+        "templateScope": "local",
+        "x": 470,
+        "y": 120,
+        "wires": [
+            [
+                "b150e382.68c07"
+            ]
+        ]
+    },
+    {
+        "id": "c13e064f.14d0a8",
+        "type": "ui_button",
+        "z": "",
+        "name": "Start",
+        "group": "87a6fca4.f4d4d8",
+        "order": 2,
+        "width": "3",
+        "height": "1",
+        "passthru": true,
+        "label": "Start",
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "icon": "",
+        "payload": "",
+        "payloadType": "str",
+        "topic": "",
+        "x": 470,
+        "y": 180,
+        "wires": [
+            [
+                "c6a7a4a4.d7c0e8"
+            ]
+        ]
+    },
+    {
+        "id": "e1c24b15.d9f2b8",
+        "type": "ui_button",
+        "z": "",
+        "name": "Emergency Stop",
+        "group": "87a6fca4.f4d4d8",
+        "order": 3,
+        "width": "3",
+        "height": "1",
+        "passthru": true,
+        "label": "Emergency Stop",
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "icon": "",
+        "payload": "",
+        "payloadType": "str",
+        "topic": "",
+        "x": 470,
+        "y": 220,
+        "wires": [
+            [
+                "c6a7a4a4.d7c0e8"
+            ]
+        ]
+    },
+    {
+        "id": "60b9c858.a9ecdc",
+        "type": "ui_group",
+        "z": "",
+        "name": "API Monitor",
+        "tab": "87a6fca4.f4d4d8",
+        "disp": true,
+        "width": "6"
+    }
+]
