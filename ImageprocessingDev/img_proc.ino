@@ -384,7 +384,7 @@ bool check_for_horizontal_line(const camera_fb_t *fb)
 // function for the linefollower
 bool linefollower(const camera_fb_t *fb)
 {
-    // initialize the line detection flag to false
+    // declare line_detected variable
     bool line_detected = false;
 
     // get the point of highest density in the image
@@ -403,15 +403,13 @@ bool linefollower(const camera_fb_t *fb)
         // move the robot forward
     }
 
-    // check if there is a horizontal line in the middle third of the image that is at least min_line_length pixels long
-    line_detected = check_for_horizontal_line(fb);
-    }
-    if (line_detected) {
+    // check if a horizontal line was detected
+    if (check_for_horizontal_line(fb)) {
         // if a horizontal line was detected, then walk forward for 1 second
-        serail.println("finished");
+        serial.println("finished");
         return true;
     }
 
+    // if no horizontal line was detected, then return false
     return false;
-
 }
