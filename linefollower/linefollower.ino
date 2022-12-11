@@ -3,6 +3,10 @@
 #include <ArduinoJson.h>
 #include <esp_camera.h>
 
+
+#include "soc/soc.h" //disable brownout problems
+#include "soc/rtc_cntl_reg.h"  //disable brownout problems
+
 //Depenencies for image processing
 #include <iostream>
 #include <cstdlib>
@@ -45,6 +49,8 @@ const char* password = "your_network_password";
 const char* host = "your_api_url";
 const int port = 80; // or whichever port your API is running on
 
+// Functions
+
 // Function to send a command to the API
 void sendCommand(String command, String parameters) {
   // Create an HTTP client
@@ -74,7 +80,6 @@ void sendCommand(String command, String parameters) {
   // Close the connection
   http.end();
 }
-
 
 // Function that splits the image into 3 horizontal regions and returns a vector
 // containing the y-coordinates of the split points.
@@ -274,6 +279,9 @@ esp_camera_fb_t* thresholdImage(esp_camera_fb_t* fb, uint8_t threshold) {
 }
 
 
+
+
+
 void setup() {
   // Initialize serial communication
   Serial.begin(115200);
@@ -301,6 +309,8 @@ void setup() {
   config.pin_d7 = CAM_PIN_DATA;
   config.pin_xclk = CAM_PIN_XCLK;
   // TODO add these funtions to node red flow
+  // TODO Add a statemachine calling all the functions
+  
 }
 
 
