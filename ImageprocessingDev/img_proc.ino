@@ -26,7 +26,7 @@
 #include "soc/soc.h"          //! Used to disable brownout detection
 #include "soc/rtc_cntl_reg.h" //! Used to disable brownout detection
 
-#include <vector.h>
+#include <vector> 
 //Depenencies for image processing
 
 
@@ -150,12 +150,16 @@ void loop()
 {
 
     //if start command is received
-    //capture_still();
-    //linefolloer();
+    camera_capture();
+    
     if ((unsigned long)(millis() - lastCamera) >= 100UL)
     {
         lastCamera = millis(); // reset timer
-        if (linefollower() == true)
+        if (linefollower(camera_fb_t) == true)  //TODO find out how to pass the image to the function
+        {
+            //move the robot
+        }
+        else
         {
             //stop the robot
         }         // function call -> capture image
@@ -384,18 +388,16 @@ bool check_for_horizontal_line(const camera_fb_t *fb)
 // function for the linefollower
 bool linefollower(const camera_fb_t *fb)
 {
-    // declare line_detected variable
-    bool line_detected = false;
 
     // get the point of highest density in the image
     int max_density_point = get_max_density_point(fb);
 
     // if the point of highest density is in one of the 3/7th of the left side of the picture
-    if (max_density_point.x < fb->width * 3 / 7) {
+    if (max_density_point < fb->width * 3 / 7) {
         // move the robot to the left
     }
     // if the point of highest density is in one of the 3/7th of the right side of the picture
-    else if (max_density_point.x >= fb->width * 4 / 7) {
+    else if (max_density_point >= fb->width * 4 / 7) {
         // move the robot to the right
     }
     // if the point of highest density is within the 4/7th in the middle
@@ -406,10 +408,10 @@ bool linefollower(const camera_fb_t *fb)
     // check if a horizontal line was detected
     if (check_for_horizontal_line(fb)) {
         // if a horizontal line was detected, then walk forward for 1 second
-        serial.println("finished");
         return true;
     }
-
+    else {
     // if no horizontal line was detected, then return false
     return false;
+    }
 }
