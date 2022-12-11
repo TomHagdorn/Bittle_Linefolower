@@ -31,10 +31,6 @@
 
 
 
-// define a vector data type to represent a point in the image
-using point_vector_t = Vector<int, 2>;
-
-
 //! Image resolution:
 /*!
     default = "const framesize_t FRAME_SIZE_IMAGE = FRAMESIZE_VGA"
@@ -83,6 +79,9 @@ const uint8_t ledChannel = LEDC_CHANNEL_0; ///< Camera timer0
 const uint8_t pwmResolution = 8;           ///< resolution (8 = from 0 to 255)
 
 const int serialSpeed = 115200; ///< Serial data speed to use
+
+//minimum line lenth for line detection
+const int min_line_length = 10;
 
 //! Camera setting
 /*!
@@ -150,11 +149,16 @@ void setup()
 void loop()
 {
 
-    if ((unsigned long)(millis() - lastCamera) >= 10000UL)
+    //if start command is received
+    //capture_still();
+    //linefolloer();
+    if ((unsigned long)(millis() - lastCamera) >= 100UL)
     {
         lastCamera = millis(); // reset timer
-        capture_still();
-               // function call -> capture image
+        if (linefollower() == true)
+        {
+            //stop the robot
+        }         // function call -> capture image
     }
 }
 /**************************************************************************/
@@ -302,14 +306,14 @@ void setLedBrightness(byte ledBrightness)
 // Calculates the point with the highest density of white pixels in the
 // region of the image bounded by the specified y-coordinates.
 // define a function to return the point with the highest white pixel density in a given horizontal region of the frame buffer
-int get_max_density_point(const camera_fb_t *fb, int start_y, int end_y)
+int get_max_density_point(const camera_fb_t *fb)
 {
     // initialize the maximum density and the corresponding x-coordinate to zero
     int max_density = 0;
     int max_x = 0;
 
-    // iterate over the rows in the given region of the image
-    for (int y = start_y; y <= end_y; y++) {
+    // iterate over the rows in the bottom fourth of the image
+    for (int y = fb->height * 3/4; y < fb->height; y++) {
         // initialize the current density to zero
         int cur_density = 0;
 
@@ -325,103 +329,89 @@ int get_max_density_point(const camera_fb_t *fb, int start_y, int end_y)
             }
         }
 
-        // if the current density is greater than the maximum density so far,
+        // if the current density is at least 10 and greater than the maximum density so far,
         // then update the maximum density and the corresponding x-coordinate
-        if (cur_density > max_density) {
+        if (cur_density >= 10 && cur_density > max_density) {
             max_density = cur_density;
             max_x = x;
         }
     }
-
     // return the x-coordinate of the point with the highest density
     return max_x;
 }
 
-// Function that counts the amount of white pixels in the region of the image
-// bounded by the specified x and y-coordinates. Returns if the threshold for white pixels is met.
-bool countWhitePixels(int x1, int x2, int y1, int y2)
-{
-    // The current amount of white pixels
-    int whitePixels = 0;
 
-    // Loop through the region of the image bounded by the specified x and y-coordinates
-    for (int y = y1; y < y2; y++)
-    {
-        for (int x = x1; x < x2; x++)
-        {
-            // Count the white pixels at the current point
-            if (image[x][y] == 1)
-            {
-                whitePixels++;
+//function for detectiong the finish line
+bool check_for_horizontal_line(const camera_fb_t *fb)
+{
+    // calculate the start and end rows of the lowest third of the image
+    int start_row = fb->height * 2 / 3;
+    int end_row = fb->height - 1;
+
+    // iterate over the rows in the lowest third of the image
+    for (int y = start_row; y <= end_row; y++) {
+        // initialize the consecutive white pixel count to zero
+        int white_pixel_count = 0;
+
+        // iterate over the pixels in the current row
+        for (int x = 0; x < fb->width; x++) {
+            // get the current pixel value
+            uint8_t pixel = fb->buf[y * fb->width + x];
+
+            // if the pixel is white (i.e., its value is above the threshold)
+            // then increment the consecutive white pixel count
+            if (pixel >= pixel_threshold) {
+                white_pixel_count++;
+            }
+            // if the pixel is not white (i.e., its value is below the threshold)
+            // then reset the consecutive white pixel count
+            else {
+                white_pixel_count = 0;
+            }
+
+            // if there are at least min_line_length consecutive white pixels
+            // then return true (i.e., a horizontal line has been found)
+            if (white_pixel_count >= min_line_length) {
+                return true;
             }
         }
     }
 
-    // Return if the threshold for white pixels is met
-    if (whitePixels > pixel_threshold)
-    {
+    // if a horizontal line was not found, then return false
+    return false;
+}
+
+// function for the linefollower
+bool linefollower(const camera_fb_t *fb)
+{
+    // initialize the line detection flag to false
+    bool line_detected = false;
+
+    // get the point of highest density in the image
+    int max_density_point = get_max_density_point(fb);
+
+    // if the point of highest density is in one of the 3/7th of the left side of the picture
+    if (max_density_point.x < fb->width * 3 / 7) {
+        // move the robot to the left
+    }
+    // if the point of highest density is in one of the 3/7th of the right side of the picture
+    else if (max_density_point.x >= fb->width * 4 / 7) {
+        // move the robot to the right
+    }
+    // if the point of highest density is within the 4/7th in the middle
+    else {
+        // move the robot forward
+    }
+
+    // check if there is a horizontal line in the middle third of the image that is at least min_line_length pixels long
+    line_detected = check_for_horizontal_line(fb);
+    }
+    if (line_detected) {
+        // if a horizontal line was detected, then walk forward for 1 second
+        serail.println("finished");
         return true;
     }
-    else
-    {
-        return false;
-    }
+
+    return false;
+
 }
-
-// Function that splits the image into 3 horizontal regions and returns a vector
-// containing the y-coordinates of the split points.
-std::vector<int> splitImage()
-{
-    // The size of each region is 1/3 of the image height
-    int regionSize = IMAGE_HEIGHT / 3;
-
-    // The vector that will be returned, containing the y-coordinates
-    // of the split points.
-    std::vector<int> splitPoints;
-
-    // The first split point is at the top of the image
-    splitPoints.push_back(0);
-
-    // The next two split points are at the middle and bottom of the
-    // first and second regions, respectively.
-    splitPoints.push_back(regionSize);
-    splitPoints.push_back(2 * regionSize);
-
-    // The last split point is at the bottom of the image
-    splitPoints.push_back(IMAGE_HEIGHT);
-
-    // Return the vector of split points.
-    return splitPoints;
-}
-
-// Function that splits the image into 6 vertical regions and returns a vector
-// containing the x-coordinates of the split points.
-std::vector<int> splitImageVertically()
-{
-    // The size of each region is 1/6 of the image width
-    int regionSize = IMAGE_WIDTH / 6;
-
-    // The vector that will be returned, containing the x-coordinates
-    // of the split points.
-    std::vector<int> splitPoints;
-
-    // The first split point is at the left of the image
-    splitPoints.push_back(0);
-
-    // The next five split points are at the middle of the first, second,
-    // third, fourth, and fifth regions, respectively.
-    splitPoints.push_back(regionSize);
-    splitPoints.push_back(2 * regionSize);
-    splitPoints.push_back(3 * regionSize);
-    splitPoints.push_back(4 * regionSize);
-    splitPoints.push_back(5 * regionSize);
-
-    // The last split point is at the right of the image
-    splitPoints.push_back(IMAGE_WIDTH);
-
-    // Return the vector of split points.
-    return splitPoints;
-}
-
-
-
