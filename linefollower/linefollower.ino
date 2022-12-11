@@ -39,7 +39,7 @@ uint8_t imageData[IMAGE_WIDTH * IMAGE_HEIGHT * 3];
 // Region of the picture to be processed
 int selectedRegion = 0;
 // Threshold for the pixel density in a given area to be considered a line
-int pxel_threshold = 100;
+int pixel_threshold = 100;
 
 // Replace with your own Wi-Fi credentials
 const char* ssid = "your_network_name";
@@ -136,53 +136,7 @@ std::vector<int> splitImageVertically()
     return splitPoints;
 }
 
-// Calculates the point with the highest density of white pixels in the
-// region of the image bounded by the specified y-coordinates.
-std::vector<int> findHighestDensityPoint(int y1, int y2)
-{
-    // The current highest density of white pixels
-    int highestDensity = 0;
 
-    // The coordinates of the point with the highest density of white pixels
-    int highestDensityX = 0;
-    int highestDensityY = 0;
-
-    // Loop through the region of the image bounded by the specified y-coordinates
-    for (int y = y1; y < y2; y++)
-    {
-        for (int x = 0; x < IMAGE_WIDTH; x++)
-        {
-            // Calculate the density of white pixels at the current point
-            int density = 0;
-            for (int dy = -1; dy <= 1; dy++)
-            {
-                for (int dx = -1; dx <= 1; dx++)
-                {
-                    int xx = x + dx;
-                    int yy = y + dy;
-                    if (xx >= 0 && xx < IMAGE_WIDTH && yy >= 0 && yy < IMAGE_HEIGHT)
-                    {
-                        if (image[xx][yy] == 1)
-                        {
-                            density++;
-                        }
-                    }
-                }
-            }
-
-            // Update the current highest density and coordinates if necessary
-            if (density > highestDensity)
-            {
-                highestDensity = density;
-                highestDensityX = x;
-                highestDensityY = y;
-                //Write vector of highest density point
-                std::vector<int> highestDensityPoint = {highestDensityX, highestDensityY};
-                return highestDensityPoint;
-            }
-        }
-    }
-}
 
 // Function that counts the amount of white pixels in the region of the image
 // bounded by the specified x and y-coordinates. Returns if the threshold for white pixels is met.

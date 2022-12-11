@@ -6,7 +6,7 @@
     The image captured is stored in a form of 1D array. This image is a grayscale image.
     The contrast and exposure is set automatically.
 
-    \author Sameer Tuteja
+    \author Tom Hagdorn 
 */
 
 /*!
@@ -25,6 +25,15 @@
 
 #include "soc/soc.h"          //! Used to disable brownout detection
 #include "soc/rtc_cntl_reg.h" //! Used to disable brownout detection
+
+#include <vector.h>
+//Depenencies for image processing
+
+
+
+// define a vector data type to represent a point in the image
+using point_vector_t = Vector<int, 2>;
+
 
 //! Image resolution:
 /*!
@@ -46,8 +55,11 @@ const framesize_t FRAME_SIZE_IMAGE = FRAMESIZE_QQVGA;
 
 #define PIXFORMAT PIXFORMAT_GRAYSCALE;
 
-#define WIDTH 160  ///< Image size Width
-#define HEIGHT 120 ///< Image size Height
+int pixel_threshold = 100;
+
+
+#define IMAGE_WIDTH 160  ///< Image size Width
+#define IMAGE_HEIGHT 120 ///< Image size Height
 
 //! Camera exposure
 /*!
@@ -141,7 +153,8 @@ void loop()
     if ((unsigned long)(millis() - lastCamera) >= 10000UL)
     {
         lastCamera = millis(); // reset timer
-        capture_still();       // function call -> capture image
+        capture_still();
+               // function call -> capture image
     }
 }
 /**************************************************************************/
@@ -243,25 +256,24 @@ bool cameraImageSettings()
   \return true: successful, false: failed
  */
 /**************************************************************************/
-bool capture_still()
-{
-    camera_fb_t *frame = esp_camera_fb_get();
-
-    if (!frame)
-        return false;
-
-    for (int row_index = 0; row_index < HEIGHT; ++row_index)
-    {
-        for (int col_index = 0; col_index < WIDTH; ++col_index)
-        {
-            Serial.print(frame->buf[WIDTH * row_index + col_index]);
-            Serial.print(" ");
-        }
-        Serial.print("\n");
+esp_err_t camera_capture(){
+    //acquire a frame
+    camera_fb_t * fb = esp_camera_fb_get();
+    if (!fb) {
+        ESP_LOGE(TAG, "Camera Capture Failed");
+        return ESP_FAIL;
     }
-    Serial.println();
-	esp_camera_fb_return(frame);
-    return true;
+    //threshold the image
+    for (int i = 0; i < fb->len; i++) {
+        // threshold the pixel at the current index
+        fb->buf[i] = (fb->buf[i] > 128) ? 255 : 0;
+    }
+    
+    //return the frame buffer back to the driver for reuse
+    esp_camera_fb_return(fb);
+    //print serial ok
+    Serial.println("Camera Capture OK");
+    return ESP_OK;
 }
 /**************************************************************************/
 /**
@@ -285,3 +297,131 @@ void setLedBrightness(byte ledBrightness)
 {
     ledcWrite(ledChannel, ledBrightness);
 }
+
+
+// Calculates the point with the highest density of white pixels in the
+// region of the image bounded by the specified y-coordinates.
+// define a function to return the point with the highest white pixel density in a given horizontal region of the frame buffer
+int get_max_density_point(const camera_fb_t *fb, int start_y, int end_y)
+{
+    // initialize the maximum density and the corresponding x-coordinate to zero
+    int max_density = 0;
+    int max_x = 0;
+
+    // iterate over the rows in the given region of the image
+    for (int y = start_y; y <= end_y; y++) {
+        // initialize the current density to zero
+        int cur_density = 0;
+
+        // iterate over the columns in the current row
+        for (int x = 0; x < fb->width; x++) {
+            // get the current pixel value
+            uint8_t pixel = fb->buf[y * fb->width + x];
+
+            // if the pixel is white (i.e., its value is above the threshold)
+            // then increment the current density
+            if (pixel >= pixel_threshold) {
+                cur_density++;
+            }
+        }
+
+        // if the current density is greater than the maximum density so far,
+        // then update the maximum density and the corresponding x-coordinate
+        if (cur_density > max_density) {
+            max_density = cur_density;
+            max_x = x;
+        }
+    }
+
+    // return the x-coordinate of the point with the highest density
+    return max_x;
+}
+
+// Function that counts the amount of white pixels in the region of the image
+// bounded by the specified x and y-coordinates. Returns if the threshold for white pixels is met.
+bool countWhitePixels(int x1, int x2, int y1, int y2)
+{
+    // The current amount of white pixels
+    int whitePixels = 0;
+
+    // Loop through the region of the image bounded by the specified x and y-coordinates
+    for (int y = y1; y < y2; y++)
+    {
+        for (int x = x1; x < x2; x++)
+        {
+            // Count the white pixels at the current point
+            if (image[x][y] == 1)
+            {
+                whitePixels++;
+            }
+        }
+    }
+
+    // Return if the threshold for white pixels is met
+    if (whitePixels > pixel_threshold)
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+}
+
+// Function that splits the image into 3 horizontal regions and returns a vector
+// containing the y-coordinates of the split points.
+std::vector<int> splitImage()
+{
+    // The size of each region is 1/3 of the image height
+    int regionSize = IMAGE_HEIGHT / 3;
+
+    // The vector that will be returned, containing the y-coordinates
+    // of the split points.
+    std::vector<int> splitPoints;
+
+    // The first split point is at the top of the image
+    splitPoints.push_back(0);
+
+    // The next two split points are at the middle and bottom of the
+    // first and second regions, respectively.
+    splitPoints.push_back(regionSize);
+    splitPoints.push_back(2 * regionSize);
+
+    // The last split point is at the bottom of the image
+    splitPoints.push_back(IMAGE_HEIGHT);
+
+    // Return the vector of split points.
+    return splitPoints;
+}
+
+// Function that splits the image into 6 vertical regions and returns a vector
+// containing the x-coordinates of the split points.
+std::vector<int> splitImageVertically()
+{
+    // The size of each region is 1/6 of the image width
+    int regionSize = IMAGE_WIDTH / 6;
+
+    // The vector that will be returned, containing the x-coordinates
+    // of the split points.
+    std::vector<int> splitPoints;
+
+    // The first split point is at the left of the image
+    splitPoints.push_back(0);
+
+    // The next five split points are at the middle of the first, second,
+    // third, fourth, and fifth regions, respectively.
+    splitPoints.push_back(regionSize);
+    splitPoints.push_back(2 * regionSize);
+    splitPoints.push_back(3 * regionSize);
+    splitPoints.push_back(4 * regionSize);
+    splitPoints.push_back(5 * regionSize);
+
+    // The last split point is at the right of the image
+    splitPoints.push_back(IMAGE_WIDTH);
+
+    // Return the vector of split points.
+    return splitPoints;
+}
+
+
+
