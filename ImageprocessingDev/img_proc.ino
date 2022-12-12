@@ -41,7 +41,8 @@
     1024x768 (XGA), 1280x1024 (SXGA), 1600x1200 (UXGA)
 */
 
-const framesize_t FRAME_SIZE_IMAGE = FRAMESIZE_QQVGA;
+const framesize_t FRAME_SIZE_IMAGE = FRAMESIZE_QQVGA;   //FRAMESIZE_QQVGA
+camera_fb_t fb;
 
 //! Image Format
 /*!
@@ -149,20 +150,25 @@ void setup()
 void loop()
 {
 
-    //if start command is received
-    camera_capture();
+
     
-    if ((unsigned long)(millis() - lastCamera) >= 100UL)
+    if ((unsigned long)(millis() - lastCamera) >= 10000UL)
     {
-        lastCamera = millis(); // reset timer
-        if (linefollower(camera_fb_t) == true)  //TODO find out how to pass the image to the function
-        {
-            //move the robot
-        }
-        else
-        {
-            //stop the robot
-        }         // function call -> capture image
+        //for test purposes
+        camera_capture();
+        capture_still(&fb);
+
+
+        // lastCamera = millis(); // reset timer
+        // if (linefollower(&fb) == true)  //TODO find out how to pass the image to the function
+        // {
+        //     //move the robot forward
+        //     //make 
+        // }
+        // else
+        // {
+        //     //stop the robot
+        // }         // function call -> capture image
     }
 }
 /**************************************************************************/
@@ -331,13 +337,14 @@ int get_max_density_point(const camera_fb_t *fb)
             if (pixel >= pixel_threshold) {
                 cur_density++;
             }
-        }
+        
 
-        // if the current density is at least 10 and greater than the maximum density so far,
-        // then update the maximum density and the corresponding x-coordinate
-        if (cur_density >= 10 && cur_density > max_density) {
-            max_density = cur_density;
-            max_x = x;
+            // if the current density is at least 10 and greater than the maximum density so far,
+            // then update the maximum density and the corresponding x-coordinate
+            if (cur_density >= 10 && cur_density > max_density) {
+                max_density = cur_density;
+                max_x = x;
+            }
         }
     }
     // return the x-coordinate of the point with the highest density
@@ -414,4 +421,21 @@ bool linefollower(const camera_fb_t *fb)
     // if no horizontal line was detected, then return false
     return false;
     }
+}
+
+
+bool capture_still(const camera_fb_t *fb)
+{
+
+    for (int row_index = 0; row_index < IMAGE_HEIGHT; ++row_index)
+    {
+        for (int col_index = 0; col_index < IMAGE_WIDTH; ++col_index)
+        {
+            Serial.print(fb->buf[IMAGE_WIDTH * row_index + col_index]);
+            Serial.print(" ");
+        }
+        Serial.print("\n");
+    }
+    Serial.println();
+    return true;
 }
