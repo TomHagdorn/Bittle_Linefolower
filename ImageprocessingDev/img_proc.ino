@@ -152,12 +152,13 @@ void loop()
 
 
     
-    if ((unsigned long)(millis() - lastCamera) >= 10000UL)
+    if ((unsigned long)(millis() - lastCamera) >= 1000UL)
     {
         //for test purposes
         camera_capture();
-        capture_still(&fb);
-
+        
+        //write new camera timer
+        lastCamera = millis(); // reset timer
 
         // lastCamera = millis(); // reset timer
         // if (linefollower(&fb) == true)  //TODO find out how to pass the image to the function
@@ -272,7 +273,10 @@ bool cameraImageSettings()
 /**************************************************************************/
 esp_err_t camera_capture(){
     //acquire a frame
+    //timer start
+    long time_start = millis() - lastCamera;
     camera_fb_t * fb = esp_camera_fb_get();
+    ESP_LOGE(TAG, "Camera Capture in progress");
     if (!fb) {
         ESP_LOGE(TAG, "Camera Capture Failed");
         return ESP_FAIL;
@@ -282,11 +286,16 @@ esp_err_t camera_capture(){
         // threshold the pixel at the current index
         fb->buf[i] = (fb->buf[i] > 128) ? 255 : 0;
     }
-    
+    //Test to see if the image is being thresholded
+    capture_still(fb);
     //return the frame buffer back to the driver for reuse
     esp_camera_fb_return(fb);
     //print serial ok
     Serial.println("Camera Capture OK");
+    //timer end
+    long time_end = millis() - lastCamera;
+    Serial.println("Camera Capture Time: " + String(time_end - time_start));
+
     return ESP_OK;
 }
 /**************************************************************************/
