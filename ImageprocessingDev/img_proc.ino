@@ -42,7 +42,7 @@
 */
 
 const framesize_t FRAME_SIZE_IMAGE = FRAMESIZE_QQVGA;   //FRAMESIZE_QQVGA
-camera_fb_t fb;
+camera_fb_t *fb;
 
 //! Image Format
 /*!
@@ -52,7 +52,7 @@ camera_fb_t fb;
 
 #define PIXFORMAT PIXFORMAT_GRAYSCALE;
 
-int pixel_threshold = 100;
+int pixel_threshold = 30;
 
 
 #define IMAGE_WIDTH 160  ///< Image size Width
@@ -154,23 +154,28 @@ void loop()
     
     if ((unsigned long)(millis() - lastCamera) >= 1000UL)
     {
-        //for test purposes
-        camera_capture();
-        
-        //write new camera timer
-        lastCamera = millis(); // reset timer
+        esp_err_t res = camera_capture(&fb);
+            if (res == ESP_OK) {
+                // use the frame buffer here
 
-        // lastCamera = millis(); // reset timer
-        // if (linefollower(&fb) == true)  //TODO find out how to pass the image to the function
-        // {
-        //     //move the robot forward
-        //     //make 
-        // }
-        // else
-        // {
-        //     //stop the robot
-        // }         // function call -> capture image
-    }
+            capture_still(fb);
+            lastCamera = millis(); // reset timer
+
+            if (linefollower(fb) == true)  
+            {
+                //move the robot forward
+                //TODO add code to move the robot forward
+                Serial.println("Finsh line detected");
+
+            }
+            else
+            {
+                //stop the robot
+            }         // function call -> capture image
+            //return the frame buffer back to the driver for reuse
+            esp_camera_fb_return(fb);
+        }
+    }   
 }
 /**************************************************************************/
 /**
@@ -271,30 +276,35 @@ bool cameraImageSettings()
   \return true: successful, false: failed
  */
 /**************************************************************************/
-esp_err_t camera_capture(){
-    //acquire a frame
-    //timer start
-    long time_start = millis() - lastCamera;
-    camera_fb_t * fb = esp_camera_fb_get();
+//TODO try if this works
+esp_err_t camera_capture(camera_fb_t **fb) {
+    // acquire a frame
+    *fb = esp_camera_fb_get();
     ESP_LOGE(TAG, "Camera Capture in progress");
-    if (!fb) {
+    if (!*fb) {
         ESP_LOGE(TAG, "Camera Capture Failed");
         return ESP_FAIL;
     }
-    //threshold the image
-    for (int i = 0; i < fb->len; i++) {
-        // threshold the pixel at the current index
-        fb->buf[i] = (fb->buf[i] > 128) ? 255 : 0;
+
+    // get the height and width of the frame
+    int height = (*fb)->height;
+    int width = (*fb)->width;
+
+    // calculate the starting and ending row indices for the lowest third of the frame
+    int startRow = 2 * height / 3;
+    int endRow = height - 1;
+
+    // threshold the lowest third of the frame
+    for (int row = startRow; row <= endRow; row++) {
+        for (int col = 0; col < width; col++) {
+            int index = row * width + col;
+
+            // threshold the pixel at the current index
+            (*fb)->buf[index] = ((*fb)->buf[index] < 150) ? 255 : 0;
+        }
     }
-    //Test to see if the image is being thresholded
-    capture_still(fb);
-    //return the frame buffer back to the driver for reuse
-    esp_camera_fb_return(fb);
-    //print serial ok
+    // print serial ok
     Serial.println("Camera Capture OK");
-    //timer end
-    long time_end = millis() - lastCamera;
-    Serial.println("Camera Capture Time: " + String(time_end - time_start));
 
     return ESP_OK;
 }
@@ -322,46 +332,72 @@ void setLedBrightness(byte ledBrightness)
 }
 
 
-// Calculates the point with the highest density of white pixels in the
-// region of the image bounded by the specified y-coordinates.
-// define a function to return the point with the highest white pixel density in a given horizontal region of the frame buffer
-int get_max_density_point(const camera_fb_t *fb)
+/**************************************************************************/
+/**
+  Get Middle Point
+  Get the middle point of the white pixels in the bottom third of the image
+  \param fb: pointer to the frame buffer
+  \return the x-coordinate of the middle point
+ */
+/**************************************************************************/
+int get_middle_point(const camera_fb_t *fb)
 {
-    // initialize the maximum density and the corresponding x-coordinate to zero
-    int max_density = 0;
-    int max_x = 0;
+    // initialize the starting and ending x-coordinates to zero
+    int start_x = 0;
+    int end_x = 0;
+    // flag to track if we have found the start of the white pixels
+    bool found_start = false;
+    // variable to track the number of consecutive non-white pixels
+    int consecutive_non_white = 0;
+    // row counter
+    int row_counter = 0;
+    
 
     // iterate over the rows in the bottom fourth of the image
     for (int y = fb->height * 3/4; y < fb->height; y++) {
-        // initialize the current density to zero
-        int cur_density = 0;
-
+        row_counter++;
         // iterate over the columns in the current row
         for (int x = 0; x < fb->width; x++) {
             // get the current pixel value
             uint8_t pixel = fb->buf[y * fb->width + x];
 
             // if the pixel is white (i.e., its value is above the threshold)
-            // then increment the current density
-            if (pixel >= pixel_threshold) {
-                cur_density++;
+            if (pixel == 255) {
+                // if we haven't found the start of the white pixels yet,
+                // set the start x-coordinate to the current x-coordinate
+                if (!found_start) {
+                    start_x = start_x + x;
+                    found_start = true;
+                }
+                // reset the consecutive non-white pixels counter
+                consecutive_non_white = 0;
+                // update the ending x-coordinate to the current x-coordinate
+                end_x = end_x + x;
+            } else {
+                // increment the consecutive non-white pixels counter
+                consecutive_non_white++;
             }
-        
-
-            // if the current density is at least 10 and greater than the maximum density so far,
-            // then update the maximum density and the corresponding x-coordinate
-            if (cur_density >= 10 && cur_density > max_density) {
-                max_density = cur_density;
-                max_x = x;
+            // if we have seen 15 consecutive non-white pixels, set the end x-coordinate to
+            // the current x-coordinate minus 15
+            if (consecutive_non_white >= 15) {
+            end_x = end_x + x - 15;
+            break;
             }
         }
+    // calculate the middle x-coordinate of the white pixels
+    int x_middle_point = ((start_x + end_x)/row_counter) / 2;
+    // return the middle x-coordinate
+    return x_middle_point;
     }
-    // return the x-coordinate of the point with the highest density
-    return max_x;
 }
-
-
-//function for detectiong the finish line
+/**************************************************************************/
+/**
+  Check for Horizontal Line
+  Check if there is a horizontal line in the bottom third of the image
+  \param fb: pointer to the frame buffer
+  \return true if there is a horizontal line, false otherwise
+ */
+/**************************************************************************/
 bool check_for_horizontal_line(const camera_fb_t *fb)
 {
     // calculate the start and end rows of the lowest third of the image
@@ -380,7 +416,7 @@ bool check_for_horizontal_line(const camera_fb_t *fb)
 
             // if the pixel is white (i.e., its value is above the threshold)
             // then increment the consecutive white pixel count
-            if (pixel >= pixel_threshold) {
+            if (pixel == 255) {
                 white_pixel_count++;
             }
             // if the pixel is not white (i.e., its value is below the threshold)
@@ -392,6 +428,8 @@ bool check_for_horizontal_line(const camera_fb_t *fb)
             // if there are at least min_line_length consecutive white pixels
             // then return true (i.e., a horizontal line has been found)
             if (white_pixel_count >= min_line_length) {
+                //print serial ok
+                Serial.println("Horizontal Line Found");
                 return true;
             }
         }
@@ -401,38 +439,64 @@ bool check_for_horizontal_line(const camera_fb_t *fb)
     return false;
 }
 
-// function for the linefollower
+/**************************************************************************/
+/**
+  Line Follower
+  Follow a line using the camera
+  \param fb: pointer to the frame buffer
+  \return true if a line is found, false otherwise
+ */
+/**************************************************************************/
 bool linefollower(const camera_fb_t *fb)
 {
 
     // get the point of highest density in the image
-    int max_density_point = get_max_density_point(fb);
+    int middle_point = get_middle_point(fb);
+    if (middle_point == 0) {
+        //print serial ok
+        Serial.println("No Line Found");
+        return false;
+    }
 
     // if the point of highest density is in one of the 3/7th of the left side of the picture
-    if (max_density_point < fb->width * 3 / 7) {
+    if (middle_point < fb->width * 3 / 7 ) {
         // move the robot to the left
+        //print move left
+        Serial.println("Robot moves left");
     }
     // if the point of highest density is in one of the 3/7th of the right side of the picture
-    else if (max_density_point >= fb->width * 4 / 7) {
+    else if (middle_point >= fb->width * 4 / 7) {
         // move the robot to the right
+        //print move right
+        Serial.println("Robot moves right");
     }
     // if the point of highest density is within the 4/7th in the middle
     else {
         // move the robot forward
+        //print move forward
+        Serial.println("Robot moves forward");
     }
 
     // check if a horizontal line was detected
-    if (check_for_horizontal_line(fb)) {
-        // if a horizontal line was detected, then walk forward for 1 second
-        return true;
-    }
-    else {
-    // if no horizontal line was detected, then return false
+    // if (check_for_horizontal_line(fb)) {
+    //     // if a horizontal line was detected, then walk forward for 1 second
+    //     return true;
+    // }
+    // else {
+    // // if no horizontal line was detected, then return false
+    //return false;
+    //}
     return false;
-    }
 }
 
-
+/**************************************************************************/
+/**
+  Capture Still
+  Capture a still image and print the pixel values to the serial monitor
+  \param fb: pointer to the frame buffer
+  \return true if the image was captured successfully, false otherwise
+ */
+/**************************************************************************/
 bool capture_still(const camera_fb_t *fb)
 {
 
@@ -448,3 +512,9 @@ bool capture_still(const camera_fb_t *fb)
     Serial.println();
     return true;
 }
+
+
+
+
+
+   
