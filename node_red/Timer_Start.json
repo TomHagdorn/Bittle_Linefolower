@@ -1,0 +1,388 @@
+[
+    {
+        "id": "694fb32518b8351e",
+        "type": "tab",
+        "label": "Timer",
+        "disabled": false,
+        "info": ""
+    },
+    {
+        "id": "f90472f2bdbcca1d",
+        "type": "tab",
+        "label": "Start",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "a33a5cbf5a4d1a63",
+        "type": "serial-port",
+        "serialport": "COM5",
+        "serialbaud": "115200",
+        "databits": "8",
+        "parity": "none",
+        "stopbits": "1",
+        "waitfor": "",
+        "dtr": "none",
+        "rts": "none",
+        "cts": "none",
+        "dsr": "none",
+        "newline": "\\n",
+        "bin": "false",
+        "out": "char",
+        "addchar": "",
+        "responsetimeout": "10000"
+    },
+    {
+        "id": "a9b0ce21eebf1c35",
+        "type": "ui_base",
+        "theme": {
+            "name": "theme-light",
+            "lightTheme": {
+                "default": "#0094CE",
+                "baseColor": "#808040",
+                "baseFont": "-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen-Sans,Ubuntu,Cantarell,Helvetica Neue,sans-serif",
+                "edited": true,
+                "reset": false
+            },
+            "darkTheme": {
+                "default": "#097479",
+                "baseColor": "#097479",
+                "baseFont": "-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen-Sans,Ubuntu,Cantarell,Helvetica Neue,sans-serif",
+                "edited": false
+            },
+            "customTheme": {
+                "name": "Untitled Theme 1",
+                "default": "#4B7930",
+                "baseColor": "#4B7930",
+                "baseFont": "-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen-Sans,Ubuntu,Cantarell,Helvetica Neue,sans-serif"
+            },
+            "themeState": {
+                "base-color": {
+                    "default": "#0094CE",
+                    "value": "#808040",
+                    "edited": true
+                },
+                "page-titlebar-backgroundColor": {
+                    "value": "#808040",
+                    "edited": false
+                },
+                "page-backgroundColor": {
+                    "value": "#fafafa",
+                    "edited": false
+                },
+                "page-sidebar-backgroundColor": {
+                    "value": "#ffffff",
+                    "edited": false
+                },
+                "group-textColor": {
+                    "value": "#aeae5e",
+                    "edited": false
+                },
+                "group-borderColor": {
+                    "value": "#ffffff",
+                    "edited": false
+                },
+                "group-backgroundColor": {
+                    "value": "#ffffff",
+                    "edited": false
+                },
+                "widget-textColor": {
+                    "value": "#111111",
+                    "edited": false
+                },
+                "widget-backgroundColor": {
+                    "value": "#808040",
+                    "edited": false
+                },
+                "widget-borderColor": {
+                    "value": "#ffffff",
+                    "edited": false
+                },
+                "base-font": {
+                    "value": "-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen-Sans,Ubuntu,Cantarell,Helvetica Neue,sans-serif"
+                }
+            },
+            "angularTheme": {
+                "primary": "indigo",
+                "accents": "blue",
+                "warn": "red",
+                "background": "grey",
+                "palette": "light"
+            }
+        },
+        "site": {
+            "name": "Node-RED Dashboard",
+            "hideToolbar": "false",
+            "allowSwipe": "false",
+            "lockMenu": "false",
+            "allowTempTheme": "true",
+            "dateFormat": "DD.MM.YYYY",
+            "sizes": {
+                "sx": 48,
+                "sy": 48,
+                "gx": 6,
+                "gy": 6,
+                "cx": 6,
+                "cy": 6,
+                "px": 0,
+                "py": 0
+            }
+        }
+    },
+    {
+        "id": "edd72335a521cadb",
+        "type": "ui_tab",
+        "name": "Timer 5min",
+        "icon": "fa-clock-o",
+        "order": 2,
+        "disabled": false,
+        "hidden": false
+    },
+    {
+        "id": "60b9c858.a9ecdc",
+        "type": "ui_group",
+        "name": "API Monitor",
+        "tab": "564a631a.2f096c",
+        "order": 1,
+        "disp": true,
+        "width": "6",
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "1d657f78.0c59f9",
+        "type": "ui_group",
+        "name": "Timer 5 Minuten",
+        "tab": "edd72335a521cadb",
+        "order": 1,
+        "disp": true,
+        "width": "6",
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "564a631a.2f096c",
+        "type": "ui_tab",
+        "name": "Start",
+        "icon": "dashboard",
+        "order": 1,
+        "disabled": false,
+        "hidden": false
+    },
+    {
+        "id": "fc1e21e41a3e4d10",
+        "type": "ui_spacer",
+        "z": "f90472f2bdbcca1d",
+        "name": "spacer",
+        "group": "1d657f78.0c59f9",
+        "order": 1,
+        "width": 1,
+        "height": 1
+    },
+    {
+        "id": "4ca0c1cf9c2d2102",
+        "type": "ui_button",
+        "z": "694fb32518b8351e",
+        "name": "",
+        "group": "1d657f78.0c59f9",
+        "order": 1,
+        "width": 0,
+        "height": 0,
+        "passthru": false,
+        "label": "Start",
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "fa-clock-o",
+        "payload": "{ \"payload\": \"on\", \"timeout\": 300 }",
+        "payloadType": "str",
+        "topic": "",
+        "topicType": "str",
+        "x": 150,
+        "y": 300,
+        "wires": [
+            [
+                "1e06b8562b236a6f"
+            ]
+        ]
+    },
+    {
+        "id": "1e06b8562b236a6f",
+        "type": "mytimeout",
+        "z": "694fb32518b8351e",
+        "name": "5 Minuten Timer",
+        "outtopic": "",
+        "outsafe": "",
+        "outwarning": "Warnung",
+        "outunsafe": "Zeit abgelaufen",
+        "warning": "5",
+        "timer": "10",
+        "debug": false,
+        "ndebug": false,
+        "ignoreCase": false,
+        "repeat": false,
+        "again": false,
+        "x": 380,
+        "y": 300,
+        "wires": [
+            [],
+            [
+                "54267518d90c2ad5"
+            ]
+        ]
+    },
+    {
+        "id": "54267518d90c2ad5",
+        "type": "function",
+        "z": "694fb32518b8351e",
+        "name": "Sekunden zu Minuten",
+        "func": "var minuten = msg.payload;\nmsg.payload=minuten;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 620,
+        "y": 300,
+        "wires": [
+            [
+                "bf022109ca685e5e"
+            ]
+        ]
+    },
+    {
+        "id": "918c858dd7e7a9e8",
+        "type": "comment",
+        "z": "694fb32518b8351e",
+        "name": "Countdown Timer",
+        "info": "",
+        "x": 180,
+        "y": 120,
+        "wires": []
+    },
+    {
+        "id": "bf022109ca685e5e",
+        "type": "ui_gauge",
+        "z": "694fb32518b8351e",
+        "name": "",
+        "group": "1d657f78.0c59f9",
+        "order": 2,
+        "width": 0,
+        "height": 0,
+        "gtype": "donut",
+        "title": "Countdown",
+        "label": "Sekunden",
+        "format": "{{value}}",
+        "min": "0",
+        "max": "300",
+        "colors": [
+            "#ff0000",
+            "#e6e600",
+            "#00ff00"
+        ],
+        "seg1": "",
+        "seg2": "",
+        "className": "",
+        "x": 970,
+        "y": 300,
+        "wires": []
+    },
+    {
+        "id": "2ac137aef1eb8a95",
+        "type": "ui_button",
+        "z": "694fb32518b8351e",
+        "name": "",
+        "group": "1d657f78.0c59f9",
+        "order": 3,
+        "width": 0,
+        "height": 0,
+        "passthru": false,
+        "label": "Stop",
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "fa-clock-o",
+        "payload": "{ \"payload\": \"stop\" }",
+        "payloadType": "str",
+        "topic": "",
+        "topicType": "str",
+        "x": 150,
+        "y": 380,
+        "wires": [
+            [
+                "1e06b8562b236a6f"
+            ]
+        ]
+    },
+    {
+        "id": "5f6da8b8f40a36a9",
+        "type": "http request",
+        "z": "f90472f2bdbcca1d",
+        "name": "",
+        "method": "GET",
+        "ret": "txt",
+        "paytoqs": "ignore",
+        "url": "http://192.168.0.156/H",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 550,
+        "y": 200,
+        "wires": [
+            [
+                "867a7147aeca588d"
+            ]
+        ]
+    },
+    {
+        "id": "c663394e3def9a6b",
+        "type": "ui_button",
+        "z": "f90472f2bdbcca1d",
+        "name": "",
+        "group": "60b9c858.a9ecdc",
+        "order": 0,
+        "width": 0,
+        "height": 0,
+        "passthru": false,
+        "label": "Start",
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "payload": "H",
+        "payloadType": "str",
+        "topic": "topic",
+        "topicType": "str",
+        "x": 250,
+        "y": 200,
+        "wires": [
+            [
+                "5f6da8b8f40a36a9"
+            ]
+        ]
+    },
+    {
+        "id": "867a7147aeca588d",
+        "type": "debug",
+        "z": "f90472f2bdbcca1d",
+        "name": "debug 2",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 900,
+        "y": 200,
+        "wires": []
+    }
+]
