@@ -304,7 +304,7 @@ esp_err_t camera_capture(camera_fb_t **fb) {
         }
     }
     // print serial ok
-    //Serial.println("Camera Capture OK");
+    Serial.println("Camera Capture OK");
 
     return ESP_OK;
 }
@@ -395,9 +395,8 @@ bool linefollower(const camera_fb_t *fb)
     int middle_point = get_middle_point(fb);
     if (middle_point == -1) {
         //print serial ok
-        // Serial.println("No Line Found");
-        // Serial.println("Robot stops");
-        Serial.println("kp");
+        Serial.println("No Line Found");
+        Serial.println("Robot stops");
         return false;
     }
 
@@ -405,22 +404,19 @@ bool linefollower(const camera_fb_t *fb)
     if (middle_point < fb->width * 4 / 11 ) {
         // move the robot to the left
         //print move left
-        //Serial.println("Robot moves right");
-        Serial.println("kwkR");
+        Serial.println("Robot moves left");
     }
     // if the point of highest density is in one of the 3/7th of the right side of the picture
     else if (middle_point >= fb->width * 8 / 11) {
         // move the robot to the right
         //print move right
-        //Serial.println("Robot moves left");
-        Serial.println("kwkL");
+        Serial.println("Robot moves right");
     }
     // if the point of highest density is within the 4/7th in the middle
     else {
         // move the robot forward
         //print move forward
-        //Serial.println("Robot moves forward");
-        Serial.println("kwkF");
+        Serial.println("Robot moves forward");
     }
 
     // check if a horizontal line was detected
