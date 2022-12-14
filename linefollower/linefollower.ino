@@ -160,18 +160,21 @@ void loop()
 
             //capture_still(fb);
             lastCamera = millis(); // reset timer
-            
-            if (linefollower(fb) == true)  
-            {
-                //move the robot forward
-                //TODO add code to move the robot forward
-                Serial.println("Finsh line detected");
+            //---------------------------------------------------------------
+            // if (DavidsFunction() == true)
+            // {
+              //start the line follower
+              if (linefollower(fb) == true)  
+              {
+                  //move the robot forward
+                  //TODO add code to move the robot forward
+                  //Serial.println("Finished line following");
+                  Serial.println("kp");
 
-            }
-            else
-            {
-                //stop the robot
-            }         // function call -> capture image
+
+              }
+            // }
+            //---------------------------------------------------------------
             //return the frame buffer back to the driver for reuse
             esp_camera_fb_return(fb);
         }
@@ -554,54 +557,5 @@ int get_middle_point(const camera_fb_t *fb)
     }
 }
 
-
-// int get_middle_point(const camera_fb_t *fb)
-// {
-//     // initialize the starting and ending x-coordinates to zero
-//     int start_x = 0;
-//     int end_x = 0;
-//     // flag to track if we have found the start of the white pixels
-//     bool found_start = false;
-//     // variable to track the number of consecutive non-white pixels
-//     int consecutive_non_white = 0;
-//     // row counter
-//     int row_counter = 0;
-//     // vector to store the middle points of each row
-//     std::vector<int> middle_points;
-    
-
-//     // iterate over the rows in the bottom third of the image
-//     for (int y = fb->height * 2/3; y < fb->height; y++) {
-//         row_counter++;
-//         // iterate over the columns in the current row
-//         for (int x = 0; x < fb->width; x++) {
-//             // get the current pixel value
-//             uint8_t pixel = fb->buf[y * fb->width + x];
-
-//             // if the pixel is white (i.e., its value is above the threshold)
-//             if (pixel == 255) {
-//                 // if we haven't found the start of the white pixels yet,
-//                 // set the start x-coordinate to the current x-coordinate
-//                 if (!found_start) {
-//                     start_x = start_x + x;
-//                     found_start = true;
-//                 }
-//                 // reset the consecutive non-white pixels counter
-//                 consecutive_non_white = 0;
-//                 // update the ending x-coordinate to the current x-coordinate
-//                 end_x = end_x + x;
-//             } else {
-//                 // increment the consecutive non-white pixels counter
-//                 consecutive_non_white++;
-//             }
-//             // if we have seen 15 consecutive non-white pixels, set the end x-coordinate to
-//             // the current x-coordinate minus 15
-//             if (consecutive_non_white >= 8) {
-//             end_x = end_x + x - 15;
-//             break;
-//             }
-//         }
-//     }
-// }
 
 
