@@ -177,7 +177,7 @@ void loop()
 
 
     
-    if ((unsigned long)(millis() - lastCamera) >= 1000UL)
+    if ((unsigned long)(millis() - lastCamera) >= 1000UL && HandleClient() == true)
     {
         esp_err_t res = camera_capture(&fb);
             if (res == ESP_OK) {
