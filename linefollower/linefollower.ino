@@ -29,6 +29,8 @@
 #include <vector> 
 //Depenencies for image processing
 #include <WiFi.h>
+#include <WiFiClient.h>
+#include <WebServer.h>
 
 const char* ssid     = "Vodafone-BC8D";
 const char* password = "T8hHQQCFQrpLMgGb";
@@ -160,56 +162,20 @@ void setup()
   Capture image every 10 seconds
 */
 /**************************************************************************/
-bool handleClient(WiFiClient client) {
-  bool status = false;
-  Serial.println("New Client.");           // print a message out the serial port
-
-  String currentLine = "";                // make a String to hold incoming data from the client
-  while (client.connected()) {            // loop while the client's connected
-    if (client.available()) {             // if there's bytes to read from the client,
-      char c = client.read();             // read a byte, then
-      Serial.write(c);                    // print it out the serial monitor
-      if (c == '\n') {                    // if the byte is a newline character
-
-        // if the current line is blank, you got two newline characters in a row.
-        // that's the end of the client HTTP request, so send a response:
-        if (currentLine.length() == 0) {
-
-          // break out of the while loop:
-          break;
-        } else {    // if you got a newline, then clear currentLine:
-          currentLine = "";
-        }
-      } else if (c != '\r') {  // if you got anything else but a carriage return character,
-        currentLine += c;      // add it to the end of the currentLine
-      }
-
-      // Check to see if the client request was "GET /H" or "GET /L":
-      if (currentLine.endsWith("GET /H")) {
-        status = true;
-        Serial.println("habe es geschafft");               // GET /H turns the LED on
-      }
-
-    }
-  }
-  // close the connection:
-  client.stop();
-  Serial.println("Client Disconnected.");
-
-  return status;
+bool HandleClient(){
+    
+    server.send(200, "text/plan", "OK");
+    return true;
 }
+
+server.on("/Start", HandleClient());
 
 
 
 void loop()
 {
 
-    WiFiClient client = server.available();   // listen for incoming clients
 
-    if (client)
-    {
-        handleClient(client);
-    }
     
     if ((unsigned long)(millis() - lastCamera) >= 1000UL)
     {
@@ -222,7 +188,7 @@ void loop()
             //---------------------------------------------------------------
             
 
-                           //start the line follower
+                //start the line follower
               if (linefollower(fb) == true)  
               {
                   //move the robot forward
