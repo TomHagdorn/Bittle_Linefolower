@@ -555,53 +555,47 @@ int get_middle_point(const camera_fb_t *fb)
 }
 
 
-// int get_middle_point(const camera_fb_t *fb)
-// {
-//     // initialize the starting and ending x-coordinates to zero
-//     int start_x = 0;
-//     int end_x = 0;
-//     // flag to track if we have found the start of the white pixels
-//     bool found_start = false;
-//     // variable to track the number of consecutive non-white pixels
-//     int consecutive_non_white = 0;
-//     // row counter
-//     int row_counter = 0;
-//     // vector to store the middle points of each row
-//     std::vector<int> middle_points;
-    
+/**
+ * @brief Automatically sets the threshold for a camera frame buffer so that the number of white pixels in the thresholded image falls within a given range.
+ *
+ * @param fb Pointer to a camera frame buffer struct.
+ * @param min_white_pixels Minimum acceptable number of white pixels in the thresholded image.
+ * @param max_white_pixels Maximum acceptable number of white pixels in the thresholded image.
+ */
+void auto_threshold(camera_fb_t *fb, int min_white_pixels, int max_white_pixels) {
+  // Set up variables for thresholding
+  uint8_t *data = fb->buf;
+  int width = fb->width;
+  int height = fb->height;
+  int threshold = 0;
+  int white_pixels = 0;
 
-//     // iterate over the rows in the bottom third of the image
-//     for (int y = fb->height * 2/3; y < fb->height; y++) {
-//         row_counter++;
-//         // iterate over the columns in the current row
-//         for (int x = 0; x < fb->width; x++) {
-//             // get the current pixel value
-//             uint8_t pixel = fb->buf[y * fb->width + x];
+  // Loop through threshold values until the number of white pixels is within the desired range
+  while (white_pixels < min_white_pixels || white_pixels > max_white_pixels) {
+    white_pixels = 0;
+    for (int i = 0; i < width * height; i++) {
+      // If the pixel value is greater than the threshold, consider it white
+      if (data[i] > threshold) {
+        white_pixels++;
+      }
+    }
 
-//             // if the pixel is white (i.e., its value is above the threshold)
-//             if (pixel == 255) {
-//                 // if we haven't found the start of the white pixels yet,
-//                 // set the start x-coordinate to the current x-coordinate
-//                 if (!found_start) {
-//                     start_x = start_x + x;
-//                     found_start = true;
-//                 }
-//                 // reset the consecutive non-white pixels counter
-//                 consecutive_non_white = 0;
-//                 // update the ending x-coordinate to the current x-coordinate
-//                 end_x = end_x + x;
-//             } else {
-//                 // increment the consecutive non-white pixels counter
-//                 consecutive_non_white++;
-//             }
-//             // if we have seen 15 consecutive non-white pixels, set the end x-coordinate to
-//             // the current x-coordinate minus 15
-//             if (consecutive_non_white >= 8) {
-//             end_x = end_x + x - 15;
-//             break;
-//             }
-//         }
-//     }
-// }
+    // Adjust the threshold for the next iteration
+    if (white_pixels < min_white_pixels) {
+      threshold++;
+    } else if (white_pixels > max_white_pixels) {
+      threshold--;
+    }
+  }
+
+  // Once the desired range has been reached, apply the threshold to the image
+  for (int i = 0; i < width * height; i++) {
+    if (data[i] > threshold) {
+      data[i] = 255;
+    } else {
+      data[i] = 0;
+    }
+  }
+}
 
 
