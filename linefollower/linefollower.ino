@@ -300,7 +300,7 @@ esp_err_t camera_capture(camera_fb_t **fb) {
 
             // threshold the pixel at the current index
             // if the pixel is less than 100, set it to 255 (white)
-            (*fb)->buf[index] = ((*fb)->buf[index] < 60) ? 255 : 0;
+            (*fb)->buf[index] = ((*fb)->buf[index] > 210) ? 255 : 0;
         }
     }
     // print serial ok
@@ -406,14 +406,14 @@ bool linefollower(const camera_fb_t *fb)
         // move the robot to the left
         //print move left
         //Serial.println("Robot moves right");
-        Serial.println("kwkR");
+        Serial.println("kwkL");
     }
     // if the point of highest density is in one of the 3/7th of the right side of the picture
     else if (middle_point >= fb->width * 8 / 11) {
         // move the robot to the right
         //print move right
         //Serial.println("Robot moves left");
-        Serial.println("kwkL");
+        Serial.println("kwkR");
     }
     // if the point of highest density is within the 4/7th in the middle
     else {
@@ -540,7 +540,7 @@ int get_middle_point(const camera_fb_t *fb)
         
     }
     // if we have found at least one valid row
-    if (valid_row_counter > 0) {
+    if (valid_row_counter > 5) {
         // sort the middle points
         std::sort(middle_points.begin(), middle_points.end());
         // calculate the median middle point
