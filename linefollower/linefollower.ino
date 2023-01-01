@@ -6,7 +6,7 @@
     The image captured is stored in a form of 1D array. This image is a grayscale image.
     The contrast and exposure is set automatically.
 
-    \author Tom Hagdorn 
+    \author Tom Hagdorn
 */
 
 /*!
@@ -562,6 +562,8 @@ int get_middle_point(const camera_fb_t *fb)
  * @param min_white_pixels Minimum acceptable number of white pixels in the thresholded image.
  * @param max_white_pixels Maximum acceptable number of white pixels in the thresholded image.
  */
+//TODO add function to the setup funtion in node red
+//TODO test the function with a calibration image
 void auto_threshold(camera_fb_t *fb, int min_white_pixels, int max_white_pixels) {
   // Set up variables for thresholding
   uint8_t *data = fb->buf;
