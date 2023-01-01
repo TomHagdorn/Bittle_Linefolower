@@ -600,4 +600,68 @@ void auto_threshold(camera_fb_t *fb, int min_white_pixels, int max_white_pixels)
   }
 }
 
+/**
+ * @brief Control the behavior of a robot that follows a line, avoids obstacles, and detects a finish line
+ *
+ * The state machine has four states: FOLLOW_LINE, AVOID_OBSTACLE, CROSS_FINISH_LINE, and FINISH.
+ * In the FOLLOW_LINE state, the robot follows the line until an obstacle is detected or the finish line is reached.
+ * If an obstacle is detected, the state changes to AVOID_OBSTACLE. If the finish line is detected, the state changes to CROSS_FINISH_LINE.
+ * In the AVOID_OBSTACLE state, the robot avoids the obstacle until it is no longer detected. Then, the state changes back to FOLLOW_LINE.
+ * In the CROSS_FINISH_LINE state, the robot crosses the finish line and then turns around to return to the start line.
+ * When the start line is detected, the state changes to FINISH. In this state, the robot stops and waits for further instructions.
+ *
+ * @param currentState The current state of the state machine
+ * @param followLine Function to control the movement of the robot while following the line
+ * @param avoidObstacle Function to control the movement of the robot while avoiding an obstacle
+ * @param crossFinishLine Function to control the movement of the robot while crossing the finish line
+ * @param update Function to update the state of the state machine based on sensor input
+ */
+//TODO rewrite stuff to fit state machine
+// enum State {
+//   FOLLOW_LINE,
+//   AVOID_OBSTACLE,
+//   CROSS_FINISH_LINE,
+//   FINISH,
+// };
 
+// State currentState = FOLLOW_LINE;
+
+// void followLine() {
+//   // code to follow the line goes here
+// }
+
+// void avoidObstacle() {
+//   // code to avoid the obstacle goes here
+// }
+
+// void crossFinishLine() {
+//   // code to cross the finish line goes here
+// }
+
+// void update() {
+//   switch (currentState) {
+//     case FOLLOW_LINE:
+//       followLine();
+//       if (obstacleDetected()) {
+//         currentState = AVOID_OBSTACLE;
+//       } else if (finishLineDetected()) {
+//         currentState = CROSS_FINISH_LINE;
+//       }
+//       break;
+//     case AVOID_OBSTACLE:
+//       avoidObstacle();
+//       if (!obstacleDetected()) {
+//         currentState = FOLLOW_LINE;
+//       }
+//       break;
+//     case CROSS_FINISH_LINE:
+//       crossFinishLine();
+//       if (startLineDetected()) {
+//         currentState = FINISH;
+//       }
+//       break;
+//     case FINISH:
+//       // Robot has finished, do nothing
+//       break;
+//   }
+// }
