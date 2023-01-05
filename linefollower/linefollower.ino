@@ -564,7 +564,7 @@ int get_middle_point(const camera_fb_t *fb)
  */
 //TODO add function to the setup funtion in node red
 //TODO test the function with a calibration image
-void auto_threshold(camera_fb_t *fb, int min_white_pixels, int max_white_pixels) {
+int auto_threshold(camera_fb_t *fb, int min_white_pixels, int max_white_pixels) {
   // Set up variables for thresholding
   uint8_t *data = fb->buf;
   int width = fb->width;
@@ -598,6 +598,7 @@ void auto_threshold(camera_fb_t *fb, int min_white_pixels, int max_white_pixels)
       data[i] = 0;
     }
   }
+  return threshold;
 }
 
 /**
