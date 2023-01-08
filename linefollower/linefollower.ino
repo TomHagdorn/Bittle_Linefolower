@@ -174,7 +174,7 @@ void setup()
 /**************************************************************************/
 void loop()
 {
-    if ((unsigned long)(millis() - lastCamera) >= 10000UL)
+    if ((unsigned long)(millis() - lastCamera) >= 600UL)
     {
         esp_err_t res = camera_capture(&fb);
         if (res == ESP_OK)
@@ -725,7 +725,7 @@ void recover()
 void cool_move()
 {
     // TODO David writes cool move and then we test
-    // TODO write function to turn on the spot
+    //write function to turn on the spot
 }
 
 void crossFinishLine()
@@ -794,11 +794,9 @@ void update()
     case AVOID_OBSTACLE:
         Serial.println("\nAVOID_OBSTACLE");
         avoid_obstacle();
-        if (!detect_obstacle(fb))
-        {
-            currentState = FOLLOW_LINE;
-            lastStateChangeTime = millis();
-        }
+        currentState = FOLLOW_LINE;
+        lastStateChangeTime = millis();
+        
         break;
     case CROSS_FINISH_LINE:
         Serial.println("\nCROSS_FINISH_LINE");
@@ -816,14 +814,13 @@ void update()
         }
         break;
     case RECOVER_FROM_NO_LINE:
+    //TODO recovery spams the serial monitor, with kp commands find the issue and fix it
+    // needs to loop somwhere wreid bc the update finction is called every 600ms and the kp command is sent at a rate way higher than that
         Serial.println("\nRECOVER_FROM_NO_LINE");
         recover();
-        if (line_follower(fb))
-        {
-            // line follower returned true, indicating that the line was found
-            currentState = FOLLOW_LINE;
-            lastStateChangeTime = millis();
-        }
+        // line follower returned true, indicating that the line was found
+        currentState = FOLLOW_LINE;
+        lastStateChangeTime = millis();
         break;
     case FINISH:
         // Robot has finished, do nothing
