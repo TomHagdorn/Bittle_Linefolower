@@ -6,7 +6,7 @@
     The image captured is stored in a form of 1D array. This image is a grayscale image.
     The contrast and exposure is set automatically.
 
-    \author Tom Hagdorn 
+    \author Tom Hagdorn
 */
 
 /*!
@@ -300,11 +300,11 @@ esp_err_t camera_capture(camera_fb_t **fb) {
 
             // threshold the pixel at the current index
             // if the pixel is less than 100, set it to 255 (white)
-            (*fb)->buf[index] = ((*fb)->buf[index] < 60) ? 255 : 0;
+            (*fb)->buf[index] = ((*fb)->buf[index] > 210) ? 255 : 0;
         }
     }
     // print serial ok
-    Serial.println("Camera Capture OK");
+    //Serial.println("Camera Capture OK");
 
     return ESP_OK;
 }
@@ -395,8 +395,9 @@ bool linefollower(const camera_fb_t *fb)
     int middle_point = get_middle_point(fb);
     if (middle_point == -1) {
         //print serial ok
-        Serial.println("No Line Found");
-        Serial.println("Robot stops");
+        // Serial.println("No Line Found");
+        // Serial.println("Robot stops");
+        Serial.println("kp");
         return false;
     }
 
@@ -404,19 +405,22 @@ bool linefollower(const camera_fb_t *fb)
     if (middle_point < fb->width * 4 / 11 ) {
         // move the robot to the left
         //print move left
-        Serial.println("Robot moves left");
+        //Serial.println("Robot moves right");
+        Serial.println("kwkL");
     }
     // if the point of highest density is in one of the 3/7th of the right side of the picture
     else if (middle_point >= fb->width * 8 / 11) {
         // move the robot to the right
         //print move right
-        Serial.println("Robot moves right");
+        //Serial.println("Robot moves left");
+        Serial.println("kwkR");
     }
     // if the point of highest density is within the 4/7th in the middle
     else {
         // move the robot forward
         //print move forward
-        Serial.println("Robot moves forward");
+        //Serial.println("Robot moves forward");
+        Serial.println("kwkF");
     }
 
     // check if a horizontal line was detected
@@ -536,7 +540,7 @@ int get_middle_point(const camera_fb_t *fb)
         
     }
     // if we have found at least one valid row
-    if (valid_row_counter > 0) {
+    if (valid_row_counter > 5) {
         // sort the middle points
         std::sort(middle_points.begin(), middle_points.end());
         // calculate the median middle point
@@ -558,7 +562,9 @@ int get_middle_point(const camera_fb_t *fb)
  * @param min_white_pixels Minimum acceptable number of white pixels in the thresholded image.
  * @param max_white_pixels Maximum acceptable number of white pixels in the thresholded image.
  */
-void auto_threshold(camera_fb_t *fb, int min_white_pixels, int max_white_pixels) {
+//TODO add function to the setup funtion in node red
+//TODO test the function with a calibration image
+int auto_threshold(camera_fb_t *fb, int min_white_pixels, int max_white_pixels) {
   // Set up variables for thresholding
   uint8_t *data = fb->buf;
   int width = fb->width;
@@ -592,5 +598,71 @@ void auto_threshold(camera_fb_t *fb, int min_white_pixels, int max_white_pixels)
       data[i] = 0;
     }
   }
+  return threshold;
 }
 
+/**
+ * @brief Control the behavior of a robot that follows a line, avoids obstacles, and detects a finish line
+ *
+ * The state machine has four states: FOLLOW_LINE, AVOID_OBSTACLE, CROSS_FINISH_LINE, and FINISH.
+ * In the FOLLOW_LINE state, the robot follows the line until an obstacle is detected or the finish line is reached.
+ * If an obstacle is detected, the state changes to AVOID_OBSTACLE. If the finish line is detected, the state changes to CROSS_FINISH_LINE.
+ * In the AVOID_OBSTACLE state, the robot avoids the obstacle until it is no longer detected. Then, the state changes back to FOLLOW_LINE.
+ * In the CROSS_FINISH_LINE state, the robot crosses the finish line and then turns around to return to the start line.
+ * When the start line is detected, the state changes to FINISH. In this state, the robot stops and waits for further instructions.
+ *
+ * @param currentState The current state of the state machine
+ * @param followLine Function to control the movement of the robot while following the line
+ * @param avoidObstacle Function to control the movement of the robot while avoiding an obstacle
+ * @param crossFinishLine Function to control the movement of the robot while crossing the finish line
+ * @param update Function to update the state of the state machine based on sensor input
+ */
+//TODO rewrite stuff to fit state machine
+// enum State {
+//   FOLLOW_LINE,
+//   AVOID_OBSTACLE,
+//   CROSS_FINISH_LINE,
+//   FINISH,
+// };
+
+// State currentState = FOLLOW_LINE;
+
+// void followLine() {
+//   // code to follow the line goes here
+// }
+
+// void avoidObstacle() {
+//   // code to avoid the obstacle goes here
+// }
+
+// void crossFinishLine() {
+//   // code to cross the finish line goes here
+// }
+
+// void update() {
+//   switch (currentState) {
+//     case FOLLOW_LINE:
+//       followLine();
+//       if (obstacleDetected()) {
+//         currentState = AVOID_OBSTACLE;
+//       } else if (finishLineDetected()) {
+//         currentState = CROSS_FINISH_LINE;
+//       }
+//       break;
+//     case AVOID_OBSTACLE:
+//       avoidObstacle();
+//       if (!obstacleDetected()) {
+//         currentState = FOLLOW_LINE;
+//       }
+//       break;
+//     case CROSS_FINISH_LINE:
+//       crossFinishLine();
+//       if (startLineDetected()) {
+//         currentState = FINISH;
+//       }
+//       break;
+//     case FINISH:
+//       // Robot has finished, do nothing
+//       break;
+//   }
+// }
