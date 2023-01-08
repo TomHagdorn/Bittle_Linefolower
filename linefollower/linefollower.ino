@@ -14,6 +14,7 @@
     \brief Check for ESP32 board.
 */
 
+
 #if !defined ESP32
 #error Wrong board selected
 #endif
@@ -30,7 +31,10 @@
 #include <vector> 
 //Depenencies for image processing
 
+#include <WiFi.h>
 
+const char* ssid = "Get off my Lan!";
+const char* password = "prettyflyforAWifi";
 
 //! Image resolution:
 /*!
@@ -110,10 +114,23 @@ const int min_line_length = 10;
 #define PCLK_GPIO_NUM 22
 #endif
 
-//bool to decide if the finish line has been crossed already
-bool finish_line_crossed = false;
+
 
 uint32_t lastCamera = 0; ///< To store time value for repeated capture
+
+enum State {
+  FOLLOW_LINE,
+  AVOID_OBSTACLE,
+  CROSS_FINISH_LINE,
+  FINISH,
+  RECOVER_FROM_NO_LINE,
+};
+
+State currentState = FOLLOW_LINE;
+//bool to decide if the finish line has been crossed already
+bool finish_line_crossed = false;
+//define the wifi server
+WiFiServer server(80);
 /**************************************************************************/
 /*!
   \brief  Setup function
@@ -127,23 +144,27 @@ uint32_t lastCamera = 0; ///< To store time value for repeated capture
 void setup()
 {
     Serial.begin(serialSpeed); ///< Initialize serial communication
-
+    
 
     WRITE_PERI_REG(RTC_CNTL_BROWN_OUT_REG, 0); ///< Disable 'brownout detector'
 
     //Serial.print(("\nInitialising camera: "));
     if (initialiseCamera())
     {
-        Serial.println("OK");
+        //Serial.println("OK");
     }
     else
     {
-        Serial.println("Error!");
+        //Serial.println("Error!");
     }
 
     setupOnBoardFlash();
-    Serial.println("Setup complete\n");
+    //Serial.println("Setup complete\n");
     setLedBrightness(ledBrightness);
+    //Start the web server for image upload comment out for normal operation
+    // setupWebServer(server);
+    // Serial.println(WiFi.begin(ssid, password));
+
 }
 /**************************************************************************/
 /*!
@@ -152,12 +173,17 @@ void setup()
 */
 /**************************************************************************/
 void loop()
-{
-    if ((unsigned long)(millis() - lastCamera) >= 1000UL)
+{   
+    if ((unsigned long)(millis() - lastCamera) >= 10000UL)
     {
         esp_err_t res = camera_capture(&fb);
             if (res == ESP_OK) {
                 update();
+
+                //capture_still(fb);
+
+                // publishes the image to the server
+                // publishPictureToServer(fb, server);
             }
             //return the frame buffer back to the driver for reuse
             esp_camera_fb_return(fb);
@@ -203,7 +229,7 @@ bool initialiseCamera()
     // Note: if not using "AI thinker esp32 cam" in the Arduino IDE, PSRAM must be enabled
     if (!psramFound())
     {
-        Serial.println("Warning: No PSRam found so defaulting to image size 'CIF'");
+        //Serial.println("Warning: No PSRam found so defaulting to image size 'CIF'");
         config.frame_size = FRAMESIZE_CIF;
     }
 
@@ -231,7 +257,7 @@ bool cameraImageSettings()
     sensor_t *s = esp_camera_sensor_get();
     if (s == NULL)
     {
-        Serial.println("Error: problem reading camera sensor settings");
+        //Serial.println("Error: problem reading camera sensor settings");
         return 0;
     }
 
@@ -410,8 +436,6 @@ bool capture_still(const camera_fb_t *fb)
  * @param min_white_pixels Minimum acceptable number of white pixels in the thresholded image.
  * @param max_white_pixels Maximum acceptable number of white pixels in the thresholded image.
  */
-//TODO add function to the setup funtion in node red
-//TODO test the function with a calibration image
 int auto_threshold(camera_fb_t *fb, int min_white_pixels, int max_white_pixels) {
   // Set up variables for thresholding
   uint8_t *data = fb->buf;
@@ -449,7 +473,14 @@ int auto_threshold(camera_fb_t *fb, int min_white_pixels, int max_white_pixels) 
   return threshold;
 }
 
-
+/**************************************************************************/
+/**
+  Line Follower
+  Follow a line using the camera
+  \param fb: pointer to the frame buffer
+  \return true if a line is found, false otherwise
+ */
+/**************************************************************************/
 bool line_follower(const camera_fb_t *fb) {
     // calculate the starting and ending fractions for the 3/4 to 1 portion of the frame
     double start_fraction = 3.0 / 4.0;
@@ -459,26 +490,26 @@ bool line_follower(const camera_fb_t *fb) {
     int middle_point = get_middle_point(fb, start_fraction, end_fraction);
     if (middle_point == -1) {
         // no line was found, so stop the robot
-        Serial.println("kp");
+        Serial.print("kp");
         return false;
     }
 
     // if the point of highest density is in one of the 3/7th of the left side of the picture
     if (middle_point < fb->width * 4 / 11 ) {
         // move the robot to the left
-        Serial.println("kwkL");
+        Serial.print("kwkL");
         return true;
     }
     // if the point of highest density is in one of the 3/7th of the right side of the picture
     else if (middle_point >= fb->width * 8 / 11) {
         // move the robot to the right
-        Serial.println("kwkR");
+        Serial.print("kwkR");
         return true;
     }
     // if the point of highest density is within the 4/7th in the middle
     else {
         // move the robot forward
-        Serial.println("kwkF");
+        Serial.print("kwkF");
         return true;
     }
 
@@ -625,46 +656,43 @@ void avoid_obstacle() {
 
     // turn the robot left for a certain amount of time
     unsigned long start_time = millis();
+    Serial.print("kwkL");
     while (millis() - start_time < 500) {
-        Serial.print("kwkL");
     }
-
+    start_time = millis();
     // turn the robot right until the line is found
-    while (!line_follower(fb)) {
-        Serial.print("kwkR");
+    Serial.print("kwkR");
+    while (get_middle_point(fb, 1.0/3.0, 2.0/3.0) < 0 || millis() - start_time < 500) {
     }
-
     // turn the robot left for a certain amount of time
     start_time = millis();
-    while (millis() - start_time < 500) {
-        Serial.print("kwkL");
+    Serial.print("kwkL");
+    while (millis() - start_time < 200) {
     }
-
+    Serial.print("kp");
 }
-void recover() {
-    // keep turning the robot left and walking backwards until the line is found
-    while (!line_follower(fb)) {
-        // walk backwards for a certain amount of time
-        unsigned long start_time = millis();
-        while (millis() - start_time < 500) {
-            Serial.println("kwkB");
-        }
-    }
 
-    // the line has been found, so stop the robot
-    Serial.println("kp");
+void recover() {
+    unsigned long start_time = millis();
+    // keep turning the robot left and walking backwards until the line is found
+    Serial.print("kwkB");
+    while (!line_follower(fb) || millis() - start_time < 200) {
+        }
+    Serial.print("kp");
 }
 
 void cool_move() {
   //TODO David writes cool move and then we test
+  //TODO write function to turn on the spot 
 }
 
 void crossFinishLine() {
     // walk backwards for a certain amount of time
-    unsigned long start_time = millis();
-    while (millis() - start_time < 500) {
     Serial.println("kwkF");
+    unsigned long start_time = millis();
+    while (millis() - start_time < 400) {
     }
+    Serial.println("kp");
 }
 /**************************************************************************/
 /**
@@ -685,27 +713,10 @@ void crossFinishLine() {
  * \param fb: pointer to the frame buffer.
  */
 /**************************************************************************/
-enum State {
-  FOLLOW_LINE,
-  AVOID_OBSTACLE,
-  CROSS_FINISH_LINE,
-  FINISH,
-  RECOVER_FROM_NO_LINE,
-};
-
-State currentState = FOLLOW_LINE;
-
-/**************************************************************************/
-/**
-  Line Follower
-  Follow a line using the camera
-  \param fb: pointer to the frame buffer
-  \return true if a line is found, false otherwise
- */
-/**************************************************************************/
 void update() {
   switch (currentState) {
     case FOLLOW_LINE:
+    Serial.println("\nFOLLOW_LINE");
       if (line_follower(fb)) {
         // line follower returned true, indicating that the line was found
         if (detect_obstacle(fb)) {
@@ -719,12 +730,14 @@ void update() {
       }
       break;
     case AVOID_OBSTACLE:
+    Serial.println("\nAVOID_OBSTACLE");
       avoid_obstacle();
       if (!detect_obstacle(fb)) {
         currentState = FOLLOW_LINE;
       }
       break;
     case CROSS_FINISH_LINE:
+    Serial.println("\nCROSS_FINISH_LINE");
       crossFinishLine();
       if (finish_line_crossed == false) {
             finish_line_crossed= true;
@@ -736,6 +749,7 @@ void update() {
       }
       break;
     case RECOVER_FROM_NO_LINE:
+        Serial.println("\nRECOVER_FROM_NO_LINE");
       recover();
       if (line_follower(fb)) {
         // line follower returned true, indicating that the line was found
@@ -746,4 +760,31 @@ void update() {
       // Robot has finished, do nothing
       break;
   }
+}
+
+void publishPictureToServer(const camera_fb_t *fb, WiFiServer server) {
+    // Wait for a client to connect
+    WiFiClient client = server.available();
+    while (!client) {
+        delay(1);
+    }
+
+    // Send the response header
+    client.println("HTTP/1.1 200 OK");
+    client.println("Content-Type: image/jpeg");
+    client.println("Content-Length: " + String(fb->len));
+    client.println();
+
+    // Send the image data
+    client.write((uint8_t *)fb->buf, fb->len);
+}
+
+void setupWebServer(WiFiServer server) {
+  // Start the server
+  server.begin();
+
+  // Print the URL to the serial monitor
+  Serial.print("Visit http://");
+  Serial.print(WiFi.localIP());
+  Serial.println("/ to view the image");
 }
