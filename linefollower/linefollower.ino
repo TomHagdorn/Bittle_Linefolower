@@ -1,15 +1,16 @@
-/*!
-    \file camera_dump.ino
-
-    \brief Dump array captured from camera to serial.
-
-    The image captured is stored in a form of 1D array. This image is a grayscale image.
-    The contrast and exposure is set automatically.
+/**
+ * @file linefollower.ino
+ * @brief Line follower robot using a camera.
+ *
+ * This file contains the code for a line follower robot that uses a camera to
+ * detect and follow a line. The robot has several behaviors, including
+ * following the line, avoiding obstacles, crossing the finish line, and
+ * recovering from losing the line.
 
     \author Tom Hagdorn
 */
 
-/*!
+/**
     \brief Check for ESP32 board.
 */
 
@@ -74,7 +75,7 @@ int cameraImageExposure = 0;
 int cameraImageGain = 0;
 
 const uint8_t ledPin = 4;                  ///< onboard Illumination/flash LED pin (4)
-int ledBrightness = 16;                    ///< Initial brightness (0 - 255)
+int ledBrightness = 8;                    ///< Initial brightness (0 - 255)
 const int pwmFrequency = 50000;            ///< PWM settings for ESP32
 const uint8_t ledChannel = LEDC_CHANNEL_0; ///< Camera timer0
 const uint8_t pwmResolution = 8;           ///< resolution (8 = from 0 to 255)
@@ -109,6 +110,9 @@ const int min_line_length = 10;
 #define PCLK_GPIO_NUM 22
 #endif
 
+//bool to decide if the finish line has been crossed already
+bool finish_line_crossed = false;
+
 uint32_t lastCamera = 0; ///< To store time value for repeated capture
 /**************************************************************************/
 /*!
@@ -123,11 +127,11 @@ uint32_t lastCamera = 0; ///< To store time value for repeated capture
 void setup()
 {
     Serial.begin(serialSpeed); ///< Initialize serial communication
-    Serial.println("\n");
+
 
     WRITE_PERI_REG(RTC_CNTL_BROWN_OUT_REG, 0); ///< Disable 'brownout detector'
 
-    Serial.print(("\nInitialising camera: "));
+    //Serial.print(("\nInitialising camera: "));
     if (initialiseCamera())
     {
         Serial.println("OK");
@@ -149,33 +153,16 @@ void setup()
 /**************************************************************************/
 void loop()
 {
-
-
-    
     if ((unsigned long)(millis() - lastCamera) >= 1000UL)
     {
         esp_err_t res = camera_capture(&fb);
             if (res == ESP_OK) {
-                // use the frame buffer here
-
-            //capture_still(fb);
-            lastCamera = millis(); // reset timer
-            
-            if (linefollower(fb) == true)  
-            {
-                //move the robot forward
-                //TODO add code to move the robot forward
-                Serial.println("Finsh line detected");
-
+                update();
             }
-            else
-            {
-                //stop the robot
-            }         // function call -> capture image
             //return the frame buffer back to the driver for reuse
             esp_camera_fb_return(fb);
-        }
-    }   
+            lastCamera = millis();
+    }  
 }
 /**************************************************************************/
 /**
@@ -289,17 +276,13 @@ esp_err_t camera_capture(camera_fb_t **fb) {
     int height = (*fb)->height;
     int width = (*fb)->width;
 
-    // calculate the starting and ending row indices for the lowest third of the frame
-    int startRow = 2 * height / 3;
-    int endRow = height - 1;
-
-    // threshold the lowest third of the frame
-    for (int row = startRow; row <= endRow; row++) {
+    // threshold the entire frame
+    for (int row = 0; row < height; row++) {
         for (int col = 0; col < width; col++) {
             int index = row * width + col;
 
             // threshold the pixel at the current index
-            // if the pixel is less than 100, set it to 255 (white)
+            // if the pixel is less than 210, set it to 255 (white)
             (*fb)->buf[index] = ((*fb)->buf[index] > 210) ? 255 : 0;
         }
     }
@@ -345,6 +328,9 @@ bool check_for_horizontal_line(const camera_fb_t *fb)
     int start_row = fb->height * 2 / 3;
     int end_row = fb->height - 1;
 
+    // counter for the number of lines found
+    int line_count = 0;
+
     // iterate over the rows in the lowest third of the image
     for (int y = start_row; y <= end_row; y++) {
         // initialize the consecutive white pixel count to zero
@@ -367,73 +353,24 @@ bool check_for_horizontal_line(const camera_fb_t *fb)
             }
 
             // if there are at least min_line_length consecutive white pixels
-            // then return true (i.e., a horizontal line has been found)
+            // then increment the line count
             if (white_pixel_count >= min_line_length) {
-                //print serial ok
-                Serial.println("Horizontal Line Found");
-                return true;
+                line_count++;
+                break;
             }
         }
     }
 
-    // if a horizontal line was not found, then return false
-    return false;
-}
-
-/**************************************************************************/
-/**
-  Line Follower
-  Follow a line using the camera
-  \param fb: pointer to the frame buffer
-  \return true if a line is found, false otherwise
- */
-/**************************************************************************/
-bool linefollower(const camera_fb_t *fb)
-{
-
-    // get the point of highest density in the image
-    int middle_point = get_middle_point(fb);
-    if (middle_point == -1) {
-        //print serial ok
-        // Serial.println("No Line Found");
-        // Serial.println("Robot stops");
-        Serial.println("kp");
+    // if three or more lines were found, return true
+    if (line_count >= 3) {
+        return true;
+    }
+    // otherwise, return false
+    else {
         return false;
     }
-
-    // if the point of highest density is in one of the 3/7th of the left side of the picture
-    if (middle_point < fb->width * 4 / 11 ) {
-        // move the robot to the left
-        //print move left
-        //Serial.println("Robot moves right");
-        Serial.println("kwkL");
-    }
-    // if the point of highest density is in one of the 3/7th of the right side of the picture
-    else if (middle_point >= fb->width * 8 / 11) {
-        // move the robot to the right
-        //print move right
-        //Serial.println("Robot moves left");
-        Serial.println("kwkR");
-    }
-    // if the point of highest density is within the 4/7th in the middle
-    else {
-        // move the robot forward
-        //print move forward
-        //Serial.println("Robot moves forward");
-        Serial.println("kwkF");
-    }
-
-    // check if a horizontal line was detected
-    // if (check_for_horizontal_line(fb)) {
-    //     // if a horizontal line was detected, then walk forward for 1 second
-    //     return true;
-    // }
-    // else {
-    // // if no horizontal line was detected, then return false
-    //return false;
-    //}
-    return false;
 }
+
 
 /**************************************************************************/
 /**
@@ -465,6 +402,89 @@ bool capture_still(const camera_fb_t *fb)
     // Return true to indicate that the still was successfully captured
     return true;
 }
+
+/**
+ * @brief Automatically sets the threshold for a camera frame buffer so that the number of white pixels in the thresholded image falls within a given range.
+ *
+ * @param fb Pointer to a camera frame buffer struct.
+ * @param min_white_pixels Minimum acceptable number of white pixels in the thresholded image.
+ * @param max_white_pixels Maximum acceptable number of white pixels in the thresholded image.
+ */
+//TODO add function to the setup funtion in node red
+//TODO test the function with a calibration image
+int auto_threshold(camera_fb_t *fb, int min_white_pixels, int max_white_pixels) {
+  // Set up variables for thresholding
+  uint8_t *data = fb->buf;
+  int width = fb->width;
+  int height = fb->height;
+  int threshold = 0;
+  int white_pixels = 0;
+
+  // Loop through threshold values until the number of white pixels is within the desired range
+  while (white_pixels < min_white_pixels || white_pixels > max_white_pixels) {
+    white_pixels = 0;
+    for (int i = 0; i < width * height; i++) {
+      // If the pixel value is greater than the threshold, consider it white
+      if (data[i] > threshold) {
+        white_pixels++;
+      }
+    }
+
+    // Adjust the threshold for the next iteration
+    if (white_pixels < min_white_pixels) {
+      threshold++;
+    } else if (white_pixels > max_white_pixels) {
+      threshold--;
+    }
+  }
+
+  // Once the desired range has been reached, apply the threshold to the image
+  for (int i = 0; i < width * height; i++) {
+    if (data[i] > threshold) {
+      data[i] = 255;
+    } else {
+      data[i] = 0;
+    }
+  }
+  return threshold;
+}
+
+
+bool line_follower(const camera_fb_t *fb) {
+    // calculate the starting and ending fractions for the 3/4 to 1 portion of the frame
+    double start_fraction = 3.0 / 4.0;
+    double end_fraction = 1.0;
+
+    // get the middle point for the 3/4 to 1 portion of the frame
+    int middle_point = get_middle_point(fb, start_fraction, end_fraction);
+    if (middle_point == -1) {
+        // no line was found, so stop the robot
+        Serial.println("kp");
+        return false;
+    }
+
+    // if the point of highest density is in one of the 3/7th of the left side of the picture
+    if (middle_point < fb->width * 4 / 11 ) {
+        // move the robot to the left
+        Serial.println("kwkL");
+        return true;
+    }
+    // if the point of highest density is in one of the 3/7th of the right side of the picture
+    else if (middle_point >= fb->width * 8 / 11) {
+        // move the robot to the right
+        Serial.println("kwkR");
+        return true;
+    }
+    // if the point of highest density is within the 4/7th in the middle
+    else {
+        // move the robot forward
+        Serial.println("kwkF");
+        return true;
+    }
+
+}
+
+
 /**************************************************************************/
 /**
   Get Middle Point
@@ -473,14 +493,11 @@ bool capture_still(const camera_fb_t *fb)
   \return the x-coordinate of the middle point
  */
 /**************************************************************************/
-
-int get_middle_point(const camera_fb_t *fb)
+int get_middle_point(const camera_fb_t *fb, double start_fraction, double end_fraction)
 {
     // initialize the starting and ending x-coordinates to zero
     int start_x = 0;
     int end_x = 0;
-    int median_end_x = 0;
-    int median_start_x = 0;
     // flag to track if we have found the start of the white pixels
     bool found_start = false;
     // variable to track the number of consecutive non-white pixels
@@ -491,10 +508,13 @@ int get_middle_point(const camera_fb_t *fb)
     int valid_row_counter = 0;
     // vector to store the middle points of each row
     std::vector<int> middle_points;
-    
 
-    // iterate over the rows in the bottom fourth of the image
-    for (int y = fb->height * 3/4; y < fb->height; y++) {
+    // calculate the start and end rows based on the start and end fractions
+    int start_row = fb->height * start_fraction;
+    int end_row = fb->height * end_fraction;
+
+    // iterate over the rows in the specified range
+    for (int y = start_row; y < end_row; y++) {
         // iterate over the columns in the current row
         for (int x = 0; x < fb->width; x++) {
             // get the current pixel value
@@ -554,115 +574,176 @@ int get_middle_point(const camera_fb_t *fb)
     }
 }
 
-
+/**************************************************************************/
 /**
- * @brief Automatically sets the threshold for a camera frame buffer so that the number of white pixels in the thresholded image falls within a given range.
- *
- * @param fb Pointer to a camera frame buffer struct.
- * @param min_white_pixels Minimum acceptable number of white pixels in the thresholded image.
- * @param max_white_pixels Maximum acceptable number of white pixels in the thresholded image.
+  Detect Obstacle
+  Detect an obstacle using the camera
+  \param fb: pointer to the frame buffer
+  \return true if an obstacle is found, false otherwise
  */
-//TODO add function to the setup funtion in node red
-//TODO test the function with a calibration image
-int auto_threshold(camera_fb_t *fb, int min_white_pixels, int max_white_pixels) {
-  // Set up variables for thresholding
-  uint8_t *data = fb->buf;
-  int width = fb->width;
-  int height = fb->height;
-  int threshold = 0;
-  int white_pixels = 0;
+bool detect_obstacle(const camera_fb_t *fb) {
+    // calculate the starting and ending fractions for the top, middle, and bottom thirds of the frame
+    double start_fraction_top = 0.0;
+    double end_fraction_top = 1.0 / 3.0;
+    double start_fraction_middle = 1.0 / 3.0;
+    double end_fraction_middle = 2.0 / 3.0;
+    double start_fraction_bottom = 2.0 / 3.0;
+    double end_fraction_bottom = 1.0;
 
-  // Loop through threshold values until the number of white pixels is within the desired range
-  while (white_pixels < min_white_pixels || white_pixels > max_white_pixels) {
-    white_pixels = 0;
-    for (int i = 0; i < width * height; i++) {
-      // If the pixel value is greater than the threshold, consider it white
-      if (data[i] > threshold) {
-        white_pixels++;
-      }
-    }
+    // get the middle points for the top, middle, and bottom thirds of the frame
+    int middle_point_top = get_middle_point(fb, start_fraction_top, end_fraction_top);
+    int middle_point_middle = get_middle_point(fb, start_fraction_middle, end_fraction_middle);
+    int middle_point_bottom = get_middle_point(fb, start_fraction_bottom, end_fraction_bottom);
 
-    // Adjust the threshold for the next iteration
-    if (white_pixels < min_white_pixels) {
-      threshold++;
-    } else if (white_pixels > max_white_pixels) {
-      threshold--;
-    }
-  }
-
-  // Once the desired range has been reached, apply the threshold to the image
-  for (int i = 0; i < width * height; i++) {
-    if (data[i] > threshold) {
-      data[i] = 255;
+    // if the middle point for the bottom third of the frame is not -1 (i.e., a valid row was found),
+    // and the middle points for the top and middle thirds are -1 (i.e., no valid rows were found),
+    // then we consider an obstacle to have been detected
+    if (middle_point_bottom != -1 && middle_point_top == -1 && middle_point_middle == -1) {
+        return true;
     } else {
-      data[i] = 0;
+        return false;
     }
-  }
-  return threshold;
 }
 
+// climbing over the obstacle
+// void avoid_obstacle() {
+//     // keep following the line until it is lost for one second
+//     unsigned long start_time = millis();
+//     while (line_follower()) {
+//         if (millis() - start_time > 1000) {
+//             break;
+//         }
+//     }
+
+//     // line has been lost for one second, so execute custom command
+//     //execute_custom_command();   David still has to write this function
+// }
+
+void avoid_obstacle() {
+    // stop the robot
+    Serial.print("kp");
+
+    // turn the robot left for a certain amount of time
+    unsigned long start_time = millis();
+    while (millis() - start_time < 500) {
+        Serial.print("kwkL");
+    }
+
+    // turn the robot right until the line is found
+    while (!line_follower(fb)) {
+        Serial.print("kwkR");
+    }
+
+    // turn the robot left for a certain amount of time
+    start_time = millis();
+    while (millis() - start_time < 500) {
+        Serial.print("kwkL");
+    }
+
+}
+void recover() {
+    // keep turning the robot left and walking backwards until the line is found
+    while (!line_follower(fb)) {
+        // walk backwards for a certain amount of time
+        unsigned long start_time = millis();
+        while (millis() - start_time < 500) {
+            Serial.println("kwkB");
+        }
+    }
+
+    // the line has been found, so stop the robot
+    Serial.println("kp");
+}
+
+void cool_move() {
+  //TODO David writes cool move and then we test
+}
+
+void crossFinishLine() {
+    // walk backwards for a certain amount of time
+    unsigned long start_time = millis();
+    while (millis() - start_time < 500) {
+    Serial.println("kwkF");
+    }
+}
+/**************************************************************************/
 /**
- * @brief Control the behavior of a robot that follows a line, avoids obstacles, and detects a finish line
+ * Update the current state of the line follower.
  *
- * The state machine has four states: FOLLOW_LINE, AVOID_OBSTACLE, CROSS_FINISH_LINE, and FINISH.
- * In the FOLLOW_LINE state, the robot follows the line until an obstacle is detected or the finish line is reached.
- * If an obstacle is detected, the state changes to AVOID_OBSTACLE. If the finish line is detected, the state changes to CROSS_FINISH_LINE.
- * In the AVOID_OBSTACLE state, the robot avoids the obstacle until it is no longer detected. Then, the state changes back to FOLLOW_LINE.
- * In the CROSS_FINISH_LINE state, the robot crosses the finish line and then turns around to return to the start line.
- * When the start line is detected, the state changes to FINISH. In this state, the robot stops and waits for further instructions.
+ * This function updates the current state of the line follower based on the
+ * current conditions of the line, the presence of obstacles, and the presence
+ * of the finish line. It then executes the appropriate behavior based on the
+ * current state.
  *
- * @param currentState The current state of the state machine
- * @param followLine Function to control the movement of the robot while following the line
- * @param avoidObstacle Function to control the movement of the robot while avoiding an obstacle
- * @param crossFinishLine Function to control the movement of the robot while crossing the finish line
- * @param update Function to update the state of the state machine based on sensor input
+ * The possible states are:
+ * - FOLLOW_LINE: Follow the line using the camera.
+ * - AVOID_OBSTACLE: Avoid an obstacle by walking around it.
+ * - CROSS_FINISH_LINE: Cross the finish line.
+ * - FINISH: The robot has finished the course.
+ * - RECOVER_FROM_NO_LINE: Recover from losing the line by walking backwards in a curve.
+ *
+ * \param fb: pointer to the frame buffer.
  */
-//TODO rewrite stuff to fit state machine
-// enum State {
-//   FOLLOW_LINE,
-//   AVOID_OBSTACLE,
-//   CROSS_FINISH_LINE,
-//   FINISH,
-// };
+/**************************************************************************/
+enum State {
+  FOLLOW_LINE,
+  AVOID_OBSTACLE,
+  CROSS_FINISH_LINE,
+  FINISH,
+  RECOVER_FROM_NO_LINE,
+};
 
-// State currentState = FOLLOW_LINE;
+State currentState = FOLLOW_LINE;
 
-// void followLine() {
-//   // code to follow the line goes here
-// }
-
-// void avoidObstacle() {
-//   // code to avoid the obstacle goes here
-// }
-
-// void crossFinishLine() {
-//   // code to cross the finish line goes here
-// }
-
-// void update() {
-//   switch (currentState) {
-//     case FOLLOW_LINE:
-//       followLine();
-//       if (obstacleDetected()) {
-//         currentState = AVOID_OBSTACLE;
-//       } else if (finishLineDetected()) {
-//         currentState = CROSS_FINISH_LINE;
-//       }
-//       break;
-//     case AVOID_OBSTACLE:
-//       avoidObstacle();
-//       if (!obstacleDetected()) {
-//         currentState = FOLLOW_LINE;
-//       }
-//       break;
-//     case CROSS_FINISH_LINE:
-//       crossFinishLine();
-//       if (startLineDetected()) {
-//         currentState = FINISH;
-//       }
-//       break;
-//     case FINISH:
-//       // Robot has finished, do nothing
-//       break;
-//   }
-// }
+/**************************************************************************/
+/**
+  Line Follower
+  Follow a line using the camera
+  \param fb: pointer to the frame buffer
+  \return true if a line is found, false otherwise
+ */
+/**************************************************************************/
+void update() {
+  switch (currentState) {
+    case FOLLOW_LINE:
+      if (line_follower(fb)) {
+        // line follower returned true, indicating that the line was found
+        if (detect_obstacle(fb)) {
+          currentState = AVOID_OBSTACLE;
+        } else if (check_for_horizontal_line(fb)) {
+          currentState = CROSS_FINISH_LINE;
+        }
+      } else {
+        // line follower returned false, indicating that the line was not found
+        currentState = RECOVER_FROM_NO_LINE;
+      }
+      break;
+    case AVOID_OBSTACLE:
+      avoid_obstacle();
+      if (!detect_obstacle(fb)) {
+        currentState = FOLLOW_LINE;
+      }
+      break;
+    case CROSS_FINISH_LINE:
+      crossFinishLine();
+      if (finish_line_crossed == false) {
+            finish_line_crossed= true;
+            cool_move();
+            currentState = FOLLOW_LINE;
+      }
+      else {
+        currentState = FINISH;
+      }
+      break;
+    case RECOVER_FROM_NO_LINE:
+      recover();
+      if (line_follower(fb)) {
+        // line follower returned true, indicating that the line was found
+        currentState = FOLLOW_LINE;
+      }
+      break;
+    case FINISH:
+      // Robot has finished, do nothing
+      break;
+  }
+}
