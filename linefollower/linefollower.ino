@@ -14,7 +14,6 @@
     \brief Check for ESP32 board.
 */
 
-
 #if !defined ESP32
 #error Wrong board selected
 #endif
@@ -28,13 +27,15 @@
 #include "soc/soc.h"          //! Used to disable brownout detection
 #include "soc/rtc_cntl_reg.h" //! Used to disable brownout detection
 
-#include <vector> 
-//Depenencies for image processing
+#include <vector>
+// Depenencies for image processing
 
 #include <WiFi.h>
 
-const char* ssid = "Get off my Lan!";
-const char* password = "prettyflyforAWifi";
+const char *ssid = "Get off my Lan!";
+const char *password = "prettyflyforAWifi";
+
+unsigned long stateTime = 0;
 
 //! Image resolution:
 /*!
@@ -46,7 +47,7 @@ const char* password = "prettyflyforAWifi";
     1024x768 (XGA), 1280x1024 (SXGA), 1600x1200 (UXGA)
 */
 
-const framesize_t FRAME_SIZE_IMAGE = FRAMESIZE_QQVGA;   //FRAMESIZE_QQVGA
+const framesize_t FRAME_SIZE_IMAGE = FRAMESIZE_QQVGA; // FRAMESIZE_QQVGA
 camera_fb_t *fb;
 
 //! Image Format
@@ -58,7 +59,6 @@ camera_fb_t *fb;
 #define PIXFORMAT PIXFORMAT_GRAYSCALE;
 
 int pixel_threshold = 30;
-
 
 #define IMAGE_WIDTH 160  ///< Image size Width
 #define IMAGE_HEIGHT 120 ///< Image size Height
@@ -79,14 +79,14 @@ int cameraImageExposure = 0;
 int cameraImageGain = 0;
 
 const uint8_t ledPin = 4;                  ///< onboard Illumination/flash LED pin (4)
-int ledBrightness = 8;                    ///< Initial brightness (0 - 255)
+int ledBrightness = 8;                     ///< Initial brightness (0 - 255)
 const int pwmFrequency = 50000;            ///< PWM settings for ESP32
 const uint8_t ledChannel = LEDC_CHANNEL_0; ///< Camera timer0
 const uint8_t pwmResolution = 8;           ///< resolution (8 = from 0 to 255)
 
 const int serialSpeed = 115200; ///< Serial data speed to use
 
-//minimum line lenth for line detection
+// minimum line lenth for line detection
 const int min_line_length = 10;
 
 //! Camera setting
@@ -114,23 +114,25 @@ const int min_line_length = 10;
 #define PCLK_GPIO_NUM 22
 #endif
 
-
-
 uint32_t lastCamera = 0; ///< To store time value for repeated capture
 
-enum State {
-  FOLLOW_LINE,
-  AVOID_OBSTACLE,
-  CROSS_FINISH_LINE,
-  FINISH,
-  RECOVER_FROM_NO_LINE,
+enum State
+{
+    FOLLOW_LINE,
+    AVOID_OBSTACLE,
+    CROSS_FINISH_LINE,
+    FINISH,
+    RECOVER_FROM_NO_LINE,
 };
 
 State currentState = FOLLOW_LINE;
-//bool to decide if the finish line has been crossed already
+// bool to decide if the finish line has been crossed already
 bool finish_line_crossed = false;
-//define the wifi server
+// define the wifi server
 WiFiServer server(80);
+
+//define state change time
+static unsigned long lastStateChangeTime = 0;
 /**************************************************************************/
 /*!
   \brief  Setup function
@@ -144,27 +146,25 @@ WiFiServer server(80);
 void setup()
 {
     Serial.begin(serialSpeed); ///< Initialize serial communication
-    
 
     WRITE_PERI_REG(RTC_CNTL_BROWN_OUT_REG, 0); ///< Disable 'brownout detector'
 
-    //Serial.print(("\nInitialising camera: "));
+    // Serial.print(("\nInitialising camera: "));
     if (initialiseCamera())
     {
-        //Serial.println("OK");
+        // Serial.println("OK");
     }
     else
     {
-        //Serial.println("Error!");
+        // Serial.println("Error!");
     }
 
     setupOnBoardFlash();
-    //Serial.println("Setup complete\n");
+    // Serial.println("Setup complete\n");
     setLedBrightness(ledBrightness);
-    //Start the web server for image upload comment out for normal operation
-    // setupWebServer(server);
-    // Serial.println(WiFi.begin(ssid, password));
-
+    // Start the web server for image upload comment out for normal operation
+    //  setupWebServer(server);
+    //  Serial.println(WiFi.begin(ssid, password));
 }
 /**************************************************************************/
 /*!
@@ -173,22 +173,23 @@ void setup()
 */
 /**************************************************************************/
 void loop()
-{   
+{
     if ((unsigned long)(millis() - lastCamera) >= 10000UL)
     {
         esp_err_t res = camera_capture(&fb);
-            if (res == ESP_OK) {
-                update();
+        if (res == ESP_OK)
+        {
+            update();
 
-                //capture_still(fb);
+            // capture_still(fb);
 
-                // publishes the image to the server
-                // publishPictureToServer(fb, server);
-            }
-            //return the frame buffer back to the driver for reuse
-            esp_camera_fb_return(fb);
-            lastCamera = millis();
-    }  
+            // publishes the image to the server
+            // publishPictureToServer(fb, server);
+        }
+        // return the frame buffer back to the driver for reuse
+        esp_camera_fb_return(fb);
+        lastCamera = millis();
+    }
 }
 /**************************************************************************/
 /**
@@ -229,7 +230,7 @@ bool initialiseCamera()
     // Note: if not using "AI thinker esp32 cam" in the Arduino IDE, PSRAM must be enabled
     if (!psramFound())
     {
-        //Serial.println("Warning: No PSRam found so defaulting to image size 'CIF'");
+        // Serial.println("Warning: No PSRam found so defaulting to image size 'CIF'");
         config.frame_size = FRAMESIZE_CIF;
     }
 
@@ -257,7 +258,7 @@ bool cameraImageSettings()
     sensor_t *s = esp_camera_sensor_get();
     if (s == NULL)
     {
-        //Serial.println("Error: problem reading camera sensor settings");
+        // Serial.println("Error: problem reading camera sensor settings");
         return 0;
     }
 
@@ -289,11 +290,13 @@ bool cameraImageSettings()
   \return true: successful, false: failed
  */
 /**************************************************************************/
-esp_err_t camera_capture(camera_fb_t **fb) {
+esp_err_t camera_capture(camera_fb_t **fb)
+{
     // acquire a frame
     *fb = esp_camera_fb_get();
     ESP_LOGE(TAG, "Camera Capture in progress");
-    if (!*fb) {
+    if (!*fb)
+    {
         ESP_LOGE(TAG, "Camera Capture Failed");
         return ESP_FAIL;
     }
@@ -303,17 +306,19 @@ esp_err_t camera_capture(camera_fb_t **fb) {
     int width = (*fb)->width;
 
     // threshold the entire frame
-    for (int row = 0; row < height; row++) {
-        for (int col = 0; col < width; col++) {
+    for (int row = 0; row < height; row++)
+    {
+        for (int col = 0; col < width; col++)
+        {
             int index = row * width + col;
 
             // threshold the pixel at the current index
             // if the pixel is less than 210, set it to 255 (white)
-            (*fb)->buf[index] = ((*fb)->buf[index] > 210) ? 255 : 0;
+            (*fb)->buf[index] = ((*fb)->buf[index] < 55) ? 255 : 0;
         }
     }
     // print serial ok
-    //Serial.println("Camera Capture OK");
+    // Serial.println("Camera Capture OK");
 
     return ESP_OK;
 }
@@ -358,29 +363,34 @@ bool check_for_horizontal_line(const camera_fb_t *fb)
     int line_count = 0;
 
     // iterate over the rows in the lowest third of the image
-    for (int y = start_row; y <= end_row; y++) {
+    for (int y = start_row; y <= end_row; y++)
+    {
         // initialize the consecutive white pixel count to zero
         int white_pixel_count = 0;
 
         // iterate over the pixels in the current row
-        for (int x = 0; x < fb->width; x++) {
+        for (int x = 0; x < fb->width; x++)
+        {
             // get the current pixel value
             uint8_t pixel = fb->buf[y * fb->width + x];
 
             // if the pixel is white (i.e., its value is above the threshold)
             // then increment the consecutive white pixel count
-            if (pixel == 255) {
+            if (pixel == 255)
+            {
                 white_pixel_count++;
             }
             // if the pixel is not white (i.e., its value is below the threshold)
             // then reset the consecutive white pixel count
-            else {
+            else
+            {
                 white_pixel_count = 0;
             }
 
             // if there are at least min_line_length consecutive white pixels
             // then increment the line count
-            if (white_pixel_count >= min_line_length) {
+            if (white_pixel_count >= min_line_length)
+            {
                 line_count++;
                 break;
             }
@@ -388,15 +398,16 @@ bool check_for_horizontal_line(const camera_fb_t *fb)
     }
 
     // if three or more lines were found, return true
-    if (line_count >= 3) {
+    if (line_count >= 3)
+    {
         return true;
     }
     // otherwise, return false
-    else {
+    else
+    {
         return false;
     }
 }
-
 
 /**************************************************************************/
 /**
@@ -436,41 +447,52 @@ bool capture_still(const camera_fb_t *fb)
  * @param min_white_pixels Minimum acceptable number of white pixels in the thresholded image.
  * @param max_white_pixels Maximum acceptable number of white pixels in the thresholded image.
  */
-int auto_threshold(camera_fb_t *fb, int min_white_pixels, int max_white_pixels) {
-  // Set up variables for thresholding
-  uint8_t *data = fb->buf;
-  int width = fb->width;
-  int height = fb->height;
-  int threshold = 0;
-  int white_pixels = 0;
+int auto_threshold(camera_fb_t *fb, int min_white_pixels, int max_white_pixels)
+{
+    // Set up variables for thresholding
+    uint8_t *data = fb->buf;
+    int width = fb->width;
+    int height = fb->height;
+    int threshold = 0;
+    int white_pixels = 0;
 
-  // Loop through threshold values until the number of white pixels is within the desired range
-  while (white_pixels < min_white_pixels || white_pixels > max_white_pixels) {
-    white_pixels = 0;
-    for (int i = 0; i < width * height; i++) {
-      // If the pixel value is greater than the threshold, consider it white
-      if (data[i] > threshold) {
-        white_pixels++;
-      }
+    // Loop through threshold values until the number of white pixels is within the desired range
+    while (white_pixels < min_white_pixels || white_pixels > max_white_pixels)
+    {
+        white_pixels = 0;
+        for (int i = 0; i < width * height; i++)
+        {
+            // If the pixel value is greater than the threshold, consider it white
+            if (data[i] > threshold)
+            {
+                white_pixels++;
+            }
+        }
+
+        // Adjust the threshold for the next iteration
+        if (white_pixels < min_white_pixels)
+        {
+            threshold++;
+        }
+        else if (white_pixels > max_white_pixels)
+        {
+            threshold--;
+        }
     }
 
-    // Adjust the threshold for the next iteration
-    if (white_pixels < min_white_pixels) {
-      threshold++;
-    } else if (white_pixels > max_white_pixels) {
-      threshold--;
+    // Once the desired range has been reached, apply the threshold to the image
+    for (int i = 0; i < width * height; i++)
+    {
+        if (data[i] > threshold)
+        {
+            data[i] = 255;
+        }
+        else
+        {
+            data[i] = 0;
+        }
     }
-  }
-
-  // Once the desired range has been reached, apply the threshold to the image
-  for (int i = 0; i < width * height; i++) {
-    if (data[i] > threshold) {
-      data[i] = 255;
-    } else {
-      data[i] = 0;
-    }
-  }
-  return threshold;
+    return threshold;
 }
 
 /**************************************************************************/
@@ -481,40 +503,43 @@ int auto_threshold(camera_fb_t *fb, int min_white_pixels, int max_white_pixels) 
   \return true if a line is found, false otherwise
  */
 /**************************************************************************/
-bool line_follower(const camera_fb_t *fb) {
+bool line_follower(const camera_fb_t *fb)
+{
     // calculate the starting and ending fractions for the 3/4 to 1 portion of the frame
     double start_fraction = 3.0 / 4.0;
     double end_fraction = 1.0;
 
     // get the middle point for the 3/4 to 1 portion of the frame
     int middle_point = get_middle_point(fb, start_fraction, end_fraction);
-    if (middle_point == -1) {
+    if (middle_point == -1)
+    {
         // no line was found, so stop the robot
         Serial.print("kp");
         return false;
     }
 
     // if the point of highest density is in one of the 3/7th of the left side of the picture
-    if (middle_point < fb->width * 4 / 11 ) {
+    if (middle_point < fb->width * 4 / 11)
+    {
         // move the robot to the left
         Serial.print("kwkL");
         return true;
     }
     // if the point of highest density is in one of the 3/7th of the right side of the picture
-    else if (middle_point >= fb->width * 8 / 11) {
+    else if (middle_point >= fb->width * 8 / 11)
+    {
         // move the robot to the right
         Serial.print("kwkR");
         return true;
     }
     // if the point of highest density is within the 4/7th in the middle
-    else {
+    else
+    {
         // move the robot forward
         Serial.print("kwkF");
         return true;
     }
-
 }
-
 
 /**************************************************************************/
 /**
@@ -545,53 +570,58 @@ int get_middle_point(const camera_fb_t *fb, double start_fraction, double end_fr
     int end_row = fb->height * end_fraction;
 
     // iterate over the rows in the specified range
-    for (int y = start_row; y < end_row; y++) {
+    for (int y = start_row; y < end_row; y++)
+    {
         // iterate over the columns in the current row
-        for (int x = 0; x < fb->width; x++) {
+        for (int x = 0; x < fb->width; x++)
+        {
             // get the current pixel value
             uint8_t pixel = fb->buf[y * fb->width + x];
 
             // if the pixel is white (i.e., its value is above the threshold)
-            if (pixel == 255) {
+            if (pixel == 255)
+            {
                 // if we haven't found the start of the white pixels yet,
                 // set the start x-coordinate to the current x-coordinate
                 consecutive_white++;
                 // reset the consecutive non-white pixels counter
                 consecutive_non_white = 0;
                 // if we haven't found the start of the white pixels yet,
-                if (!found_start) {
+                if (!found_start)
+                {
                     start_x = x;
                     found_start = true;
                 }
                 // update the ending x-coordinate to the current x-coordinate
                 end_x = x;
-
-            } else {
+            }
+            else
+            {
                 // increment the consecutive non-white pixels counter
                 consecutive_non_white++;
             }
             // if we have seen 15 consecutive non-white pixels, set the end x-coordinate to
             // the current x-coordinate minus 15
-            if (consecutive_non_white >= 8) {
-            end_x =  x - 15;
-            consecutive_non_white = 0;
-            found_start = false;
+            if (consecutive_non_white >= 8)
+            {
+                end_x = x - 15;
+                consecutive_non_white = 0;
+                found_start = false;
             }
             // if we have seen 40 consecutive white pixels, then we have found a valid row
-            if (consecutive_white >= 20 && found_start) {
+            if (consecutive_white >= 20 && found_start)
+            {
                 valid_row_counter++;
                 // calculate the middle x-coordinate of the white pixels
                 int middle_point = (end_x + start_x) / 2;
                 // add the middle point to the vector
                 middle_points.push_back(middle_point);
-
             }
-
         }
-        
     }
     // if we have found at least one valid row
-    if (valid_row_counter > 5) {
+    if (valid_row_counter > 5)
+    {
         // sort the middle points
         std::sort(middle_points.begin(), middle_points.end());
         // calculate the median middle point
@@ -600,7 +630,8 @@ int get_middle_point(const camera_fb_t *fb, double start_fraction, double end_fr
         return median_middle_point;
     }
     // if we haven't found any valid rows, return -1
-    else {
+    else
+    {
         return -1;
     }
 }
@@ -612,7 +643,8 @@ int get_middle_point(const camera_fb_t *fb, double start_fraction, double end_fr
   \param fb: pointer to the frame buffer
   \return true if an obstacle is found, false otherwise
  */
-bool detect_obstacle(const camera_fb_t *fb) {
+bool detect_obstacle(const camera_fb_t *fb)
+{
     // calculate the starting and ending fractions for the top, middle, and bottom thirds of the frame
     double start_fraction_top = 0.0;
     double end_fraction_top = 1.0 / 3.0;
@@ -629,9 +661,12 @@ bool detect_obstacle(const camera_fb_t *fb) {
     // if the middle point for the bottom third of the frame is not -1 (i.e., a valid row was found),
     // and the middle points for the top and middle thirds are -1 (i.e., no valid rows were found),
     // then we consider an obstacle to have been detected
-    if (middle_point_bottom != -1 && middle_point_top == -1 && middle_point_middle == -1) {
+    if (middle_point_bottom != -1 && middle_point_top == -1 && middle_point_middle == -1)
+    {
         return true;
-    } else {
+    }
+    else
+    {
         return false;
     }
 }
@@ -650,47 +685,56 @@ bool detect_obstacle(const camera_fb_t *fb) {
 //     //execute_custom_command();   David still has to write this function
 // }
 
-void avoid_obstacle() {
+void avoid_obstacle()
+{
     // stop the robot
     Serial.print("kp");
 
     // turn the robot left for a certain amount of time
     unsigned long start_time = millis();
     Serial.print("kwkL");
-    while (millis() - start_time < 500) {
+    while (millis() - start_time < 500)
+    {
     }
     start_time = millis();
     // turn the robot right until the line is found
     Serial.print("kwkR");
-    while (get_middle_point(fb, 1.0/3.0, 2.0/3.0) < 0 || millis() - start_time < 500) {
+    while (get_middle_point(fb, 1.0 / 3.0, 2.0 / 3.0) < 0 || millis() - start_time < 500)
+    {
     }
     // turn the robot left for a certain amount of time
     start_time = millis();
     Serial.print("kwkL");
-    while (millis() - start_time < 200) {
+    while (millis() - start_time < 200)
+    {
     }
     Serial.print("kp");
 }
 
-void recover() {
+void recover()
+{
     unsigned long start_time = millis();
     // keep turning the robot left and walking backwards until the line is found
     Serial.print("kwkB");
-    while (!line_follower(fb) || millis() - start_time < 200) {
-        }
+    while (!line_follower(fb) || millis() - start_time < 200)
+    {
+    }
     Serial.print("kp");
 }
 
-void cool_move() {
-  //TODO David writes cool move and then we test
-  //TODO write function to turn on the spot 
+void cool_move()
+{
+    // TODO David writes cool move and then we test
+    // TODO write function to turn on the spot
 }
 
-void crossFinishLine() {
+void crossFinishLine()
+{
     // walk backwards for a certain amount of time
     Serial.println("kwkF");
     unsigned long start_time = millis();
-    while (millis() - start_time < 400) {
+    while (millis() - start_time < 400)
+    {
     }
     Serial.println("kp");
 }
@@ -713,59 +757,86 @@ void crossFinishLine() {
  * \param fb: pointer to the frame buffer.
  */
 /**************************************************************************/
-void update() {
-  switch (currentState) {
+void update()
+{
+    static unsigned long startTime = millis();
+
+    switch (currentState)
+    {
     case FOLLOW_LINE:
-    Serial.println("\nFOLLOW_LINE");
-      if (line_follower(fb)) {
-        // line follower returned true, indicating that the line was found
-        if (detect_obstacle(fb)) {
-          currentState = AVOID_OBSTACLE;
-        } else if (check_for_horizontal_line(fb)) {
-          currentState = CROSS_FINISH_LINE;
+        Serial.println("\nFOLLOW_LINE");
+        if (line_follower(fb))
+        {
+            lastStateChangeTime = millis();
+            // line follower returned true, indicating that the line was found
+            if (detect_obstacle(fb))
+            {
+                currentState = AVOID_OBSTACLE;
+                lastStateChangeTime = millis();
+            }
+            else if (check_for_horizontal_line(fb) && (millis() - startTime >= 60000))
+            {
+                currentState = CROSS_FINISH_LINE;
+                lastStateChangeTime = millis();
+            }
         }
-      } else {
-        // line follower returned false, indicating that the line was not found
-        currentState = RECOVER_FROM_NO_LINE;
-      }
-      break;
+        else
+        {
+            if (millis() - lastStateChangeTime >= 3000)
+            {
+                // line follower returned false, indicating that the line was not found
+                // and at least 3 seconds have passed since the last state change
+                currentState = RECOVER_FROM_NO_LINE;
+                lastStateChangeTime = millis();
+            }
+        }
+        break;
     case AVOID_OBSTACLE:
-    Serial.println("\nAVOID_OBSTACLE");
-      avoid_obstacle();
-      if (!detect_obstacle(fb)) {
-        currentState = FOLLOW_LINE;
-      }
-      break;
+        Serial.println("\nAVOID_OBSTACLE");
+        avoid_obstacle();
+        if (!detect_obstacle(fb))
+        {
+            currentState = FOLLOW_LINE;
+            lastStateChangeTime = millis();
+        }
+        break;
     case CROSS_FINISH_LINE:
-    Serial.println("\nCROSS_FINISH_LINE");
-      crossFinishLine();
-      if (finish_line_crossed == false) {
-            finish_line_crossed= true;
+        Serial.println("\nCROSS_FINISH_LINE");
+        crossFinishLine();
+        if (finish_line_crossed == false)
+        {
+            finish_line_crossed = true;
             cool_move();
             currentState = FOLLOW_LINE;
-      }
-      else {
-        currentState = FINISH;
-      }
-      break;
+            lastStateChangeTime = millis();
+        }
+        else
+        {
+            currentState = FINISH;
+        }
+        break;
     case RECOVER_FROM_NO_LINE:
         Serial.println("\nRECOVER_FROM_NO_LINE");
-      recover();
-      if (line_follower(fb)) {
-        // line follower returned true, indicating that the line was found
-        currentState = FOLLOW_LINE;
-      }
-      break;
+        recover();
+        if (line_follower(fb))
+        {
+            // line follower returned true, indicating that the line was found
+            currentState = FOLLOW_LINE;
+            lastStateChangeTime = millis();
+        }
+        break;
     case FINISH:
-      // Robot has finished, do nothing
-      break;
-  }
+        // Robot has finished, do nothing
+        break;
+    }
 }
 
-void publishPictureToServer(const camera_fb_t *fb, WiFiServer server) {
+void publishPictureToServer(const camera_fb_t *fb, WiFiServer server)
+{
     // Wait for a client to connect
     WiFiClient client = server.available();
-    while (!client) {
+    while (!client)
+    {
         delay(1);
     }
 
@@ -779,12 +850,13 @@ void publishPictureToServer(const camera_fb_t *fb, WiFiServer server) {
     client.write((uint8_t *)fb->buf, fb->len);
 }
 
-void setupWebServer(WiFiServer server) {
-  // Start the server
-  server.begin();
+void setupWebServer(WiFiServer server)
+{
+    // Start the server
+    server.begin();
 
-  // Print the URL to the serial monitor
-  Serial.print("Visit http://");
-  Serial.print(WiFi.localIP());
-  Serial.println("/ to view the image");
+    // Print the URL to the serial monitor
+    Serial.print("Visit http://");
+    Serial.print(WiFi.localIP());
+    Serial.println("/ to view the image");
 }
