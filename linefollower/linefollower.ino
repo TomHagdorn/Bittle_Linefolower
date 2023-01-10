@@ -181,6 +181,7 @@ void loop()
         {
             update();
 
+            // print image to serial monitor
             // capture_still(fb);
 
             // publishes the image to the server
@@ -314,7 +315,7 @@ esp_err_t camera_capture(camera_fb_t **fb)
 
             // threshold the pixel at the current index
             // if the pixel is less than 210, set it to 255 (white)
-            (*fb)->buf[index] = ((*fb)->buf[index] < 55) ? 255 : 0;
+            (*fb)->buf[index] = ((*fb)->buf[index] < 25) ? 255 : 0;
         }
     }
     // print serial ok
