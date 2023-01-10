@@ -1,16 +1,15 @@
-/**
- * @file linefollower.ino
- * @brief Line follower robot using a camera.
- *
- * This file contains the code for a line follower robot that uses a camera to
- * detect and follow a line. The robot has several behaviors, including
- * following the line, avoiding obstacles, crossing the finish line, and
- * recovering from losing the line.
+/*!
+    \file camera_dump.ino
 
-    \author Tom Hagdorn
+    \brief Dump array captured from camera to serial.
+
+    The image captured is stored in a form of 1D array. This image is a grayscale image.
+    The contrast and exposure is set automatically.
+
+    \author Tom Hagdorn 
 */
 
-/**
+/*!
     \brief Check for ESP32 board.
 */
 
@@ -30,12 +29,7 @@
 #include <vector> 
 //Depenencies for image processing
 
-#include <WiFi.h>
 
-const char *ssid = "Get off my Lan!";
-const char *password = "prettyflyforAWifi";
-
-unsigned long stateTime = 0;
 
 //! Image resolution:
 /*!
@@ -47,7 +41,7 @@ unsigned long stateTime = 0;
     1024x768 (XGA), 1280x1024 (SXGA), 1600x1200 (UXGA)
 */
 
-const framesize_t FRAME_SIZE_IMAGE = FRAMESIZE_QQVGA; // FRAMESIZE_QQVGA
+const framesize_t FRAME_SIZE_IMAGE = FRAMESIZE_QQVGA;   //FRAMESIZE_QQVGA
 camera_fb_t *fb;
 
 //! Image Format
@@ -59,6 +53,7 @@ camera_fb_t *fb;
 #define PIXFORMAT PIXFORMAT_GRAYSCALE;
 
 int pixel_threshold = 30;
+
 
 #define IMAGE_WIDTH 160  ///< Image size Width
 #define IMAGE_HEIGHT 120 ///< Image size Height
@@ -79,14 +74,14 @@ int cameraImageExposure = 0;
 int cameraImageGain = 0;
 
 const uint8_t ledPin = 4;                  ///< onboard Illumination/flash LED pin (4)
-int ledBrightness = 8;                     ///< Initial brightness (0 - 255)
+int ledBrightness = 16;                    ///< Initial brightness (0 - 255)
 const int pwmFrequency = 50000;            ///< PWM settings for ESP32
 const uint8_t ledChannel = LEDC_CHANNEL_0; ///< Camera timer0
 const uint8_t pwmResolution = 8;           ///< resolution (8 = from 0 to 255)
 
 const int serialSpeed = 115200; ///< Serial data speed to use
 
-// minimum line lenth for line detection
+//minimum line lenth for line detection
 const int min_line_length = 10;
 
 //! Camera setting
@@ -115,24 +110,6 @@ const int min_line_length = 10;
 #endif
 
 uint32_t lastCamera = 0; ///< To store time value for repeated capture
-
-enum State
-{
-    FOLLOW_LINE,
-    AVOID_OBSTACLE,
-    CROSS_FINISH_LINE,
-    FINISH,
-    RECOVER_FROM_NO_LINE,
-};
-
-State currentState = FOLLOW_LINE;
-// bool to decide if the finish line has been crossed already
-bool finish_line_crossed = false;
-// define the wifi server
-WiFiServer server(80);
-
-//define state change time
-static unsigned long lastStateChangeTime = 0;
 /**************************************************************************/
 /*!
   \brief  Setup function
@@ -146,25 +123,23 @@ static unsigned long lastStateChangeTime = 0;
 void setup()
 {
     Serial.begin(serialSpeed); ///< Initialize serial communication
+    Serial.println("\n");
 
     WRITE_PERI_REG(RTC_CNTL_BROWN_OUT_REG, 0); ///< Disable 'brownout detector'
 
-    // Serial.print(("\nInitialising camera: "));
+    Serial.print(("\nInitialising camera: "));
     if (initialiseCamera())
     {
-        // Serial.println("OK");
+        Serial.println("OK");
     }
     else
     {
-        // Serial.println("Error!");
+        Serial.println("Error!");
     }
 
     setupOnBoardFlash();
-    // Serial.println("Setup complete\n");
+    Serial.println("Setup complete\n");
     setLedBrightness(ledBrightness);
-    // Start the web server for image upload comment out for normal operation
-    //  setupWebServer(server);
-    //  Serial.println(WiFi.begin(ssid, password));
 }
 /**************************************************************************/
 /*!
@@ -174,23 +149,33 @@ void setup()
 /**************************************************************************/
 void loop()
 {
-    if ((unsigned long)(millis() - lastCamera) >= 600UL)
+
+
+    
+    if ((unsigned long)(millis() - lastCamera) >= 1000UL)
     {
         esp_err_t res = camera_capture(&fb);
-        if (res == ESP_OK)
-        {
-            update();
+            if (res == ESP_OK) {
+                // use the frame buffer here
 
-            // print image to serial monitor
-            // capture_still(fb);
+            //capture_still(fb);
+            lastCamera = millis(); // reset timer
+            
+            if (linefollower(fb) == true)  
+            {
+                //move the robot forward
+                //TODO add code to move the robot forward
+                Serial.println("Finsh line detected");
 
-            // publishes the image to the server
-            // publishPictureToServer(fb, server);
+            }
+            else
+            {
+                //stop the robot
+            }         // function call -> capture image
+            //return the frame buffer back to the driver for reuse
+            esp_camera_fb_return(fb);
         }
-        // return the frame buffer back to the driver for reuse
-        esp_camera_fb_return(fb);
-        lastCamera = millis();
-    }
+    }   
 }
 /**************************************************************************/
 /**
@@ -231,7 +216,7 @@ bool initialiseCamera()
     // Note: if not using "AI thinker esp32 cam" in the Arduino IDE, PSRAM must be enabled
     if (!psramFound())
     {
-        // Serial.println("Warning: No PSRam found so defaulting to image size 'CIF'");
+        Serial.println("Warning: No PSRam found so defaulting to image size 'CIF'");
         config.frame_size = FRAMESIZE_CIF;
     }
 
@@ -259,7 +244,7 @@ bool cameraImageSettings()
     sensor_t *s = esp_camera_sensor_get();
     if (s == NULL)
     {
-        // Serial.println("Error: problem reading camera sensor settings");
+        Serial.println("Error: problem reading camera sensor settings");
         return 0;
     }
 
@@ -291,13 +276,11 @@ bool cameraImageSettings()
   \return true: successful, false: failed
  */
 /**************************************************************************/
-esp_err_t camera_capture(camera_fb_t **fb)
-{
+esp_err_t camera_capture(camera_fb_t **fb) {
     // acquire a frame
     *fb = esp_camera_fb_get();
     ESP_LOGE(TAG, "Camera Capture in progress");
-    if (!*fb)
-    {
+    if (!*fb) {
         ESP_LOGE(TAG, "Camera Capture Failed");
         return ESP_FAIL;
     }
@@ -306,20 +289,22 @@ esp_err_t camera_capture(camera_fb_t **fb)
     int height = (*fb)->height;
     int width = (*fb)->width;
 
-    // threshold the entire frame
-    for (int row = 0; row < height; row++)
-    {
-        for (int col = 0; col < width; col++)
-        {
+    // calculate the starting and ending row indices for the lowest third of the frame
+    int startRow = 2 * height / 3;
+    int endRow = height - 1;
+
+    // threshold the lowest third of the frame
+    for (int row = startRow; row <= endRow; row++) {
+        for (int col = 0; col < width; col++) {
             int index = row * width + col;
 
             // threshold the pixel at the current index
-            // if the pixel is less than 210, set it to 255 (white)
-            (*fb)->buf[index] = ((*fb)->buf[index] < 25) ? 255 : 0;
+            // if the pixel is less than 100, set it to 255 (white)
+            (*fb)->buf[index] = ((*fb)->buf[index] > 210) ? 255 : 0;
         }
     }
     // print serial ok
-    // Serial.println("Camera Capture OK");
+    //Serial.println("Camera Capture OK");
 
     return ESP_OK;
 }
@@ -360,54 +345,94 @@ bool check_for_horizontal_line(const camera_fb_t *fb)
     int start_row = fb->height * 2 / 3;
     int end_row = fb->height - 1;
 
-    // counter for the number of lines found
-    int line_count = 0;
-
     // iterate over the rows in the lowest third of the image
-    for (int y = start_row; y <= end_row; y++)
-    {
+    for (int y = start_row; y <= end_row; y++) {
         // initialize the consecutive white pixel count to zero
         int white_pixel_count = 0;
 
         // iterate over the pixels in the current row
-        for (int x = 0; x < fb->width; x++)
-        {
+        for (int x = 0; x < fb->width; x++) {
             // get the current pixel value
             uint8_t pixel = fb->buf[y * fb->width + x];
 
             // if the pixel is white (i.e., its value is above the threshold)
             // then increment the consecutive white pixel count
-            if (pixel == 255)
-            {
+            if (pixel == 255) {
                 white_pixel_count++;
             }
             // if the pixel is not white (i.e., its value is below the threshold)
             // then reset the consecutive white pixel count
-            else
-            {
+            else {
                 white_pixel_count = 0;
             }
 
             // if there are at least min_line_length consecutive white pixels
-            // then increment the line count
-            if (white_pixel_count >= min_line_length)
-            {
-                line_count++;
-                break;
+            // then return true (i.e., a horizontal line has been found)
+            if (white_pixel_count >= min_line_length) {
+                //print serial ok
+                Serial.println("Horizontal Line Found");
+                return true;
             }
         }
     }
 
-    // if three or more lines were found, return true
-    if (line_count >= 3)
-    {
-        return true;
-    }
-    // otherwise, return false
-    else
-    {
+    // if a horizontal line was not found, then return false
+    return false;
+}
+
+/**************************************************************************/
+/**
+  Line Follower
+  Follow a line using the camera
+  \param fb: pointer to the frame buffer
+  \return true if a line is found, false otherwise
+ */
+/**************************************************************************/
+bool linefollower(const camera_fb_t *fb)
+{
+
+    // get the point of highest density in the image
+    int middle_point = get_middle_point(fb);
+    if (middle_point == -1) {
+        //print serial ok
+        // Serial.println("No Line Found");
+        // Serial.println("Robot stops");
+        Serial.println("kp");
         return false;
     }
+
+    // if the point of highest density is in one of the 3/7th of the left side of the picture
+    if (middle_point < fb->width * 4 / 11 ) {
+        // move the robot to the left
+        //print move left
+        //Serial.println("Robot moves right");
+        Serial.println("kwkL");
+    }
+    // if the point of highest density is in one of the 3/7th of the right side of the picture
+    else if (middle_point >= fb->width * 8 / 11) {
+        // move the robot to the right
+        //print move right
+        //Serial.println("Robot moves left");
+        Serial.println("kwkR");
+    }
+    // if the point of highest density is within the 4/7th in the middle
+    else {
+        // move the robot forward
+        //print move forward
+        //Serial.println("Robot moves forward");
+        Serial.println("kwkF");
+    }
+
+    // check if a horizontal line was detected
+    // if (check_for_horizontal_line(fb)) {
+    //     // if a horizontal line was detected, then walk forward for 1 second
+    //     return true;
+    // }
+    // else {
+    // // if no horizontal line was detected, then return false
+    //return false;
+    //}
+    return false;
 }
 
 /**************************************************************************/
@@ -440,6 +465,95 @@ bool capture_still(const camera_fb_t *fb)
     // Return true to indicate that the still was successfully captured
     return true;
 }
+/**************************************************************************/
+/**
+  Get Middle Point
+  Get the middle point of the white pixels in the bottom third of the image
+  \param fb: pointer to the frame buffer
+  \return the x-coordinate of the middle point
+ */
+/**************************************************************************/
+
+int get_middle_point(const camera_fb_t *fb)
+{
+    // initialize the starting and ending x-coordinates to zero
+    int start_x = 0;
+    int end_x = 0;
+    int median_end_x = 0;
+    int median_start_x = 0;
+    // flag to track if we have found the start of the white pixels
+    bool found_start = false;
+    // variable to track the number of consecutive non-white pixels
+    int consecutive_non_white = 0;
+    // variable to track the number of consecutive white pixels to check row validity
+    int consecutive_white = 0;
+    // row counter
+    int valid_row_counter = 0;
+    // vector to store the middle points of each row
+    std::vector<int> middle_points;
+    
+
+    // iterate over the rows in the bottom fourth of the image
+    for (int y = fb->height * 3/4; y < fb->height; y++) {
+        // iterate over the columns in the current row
+        for (int x = 0; x < fb->width; x++) {
+            // get the current pixel value
+            uint8_t pixel = fb->buf[y * fb->width + x];
+
+            // if the pixel is white (i.e., its value is above the threshold)
+            if (pixel == 255) {
+                // if we haven't found the start of the white pixels yet,
+                // set the start x-coordinate to the current x-coordinate
+                consecutive_white++;
+                // reset the consecutive non-white pixels counter
+                consecutive_non_white = 0;
+                // if we haven't found the start of the white pixels yet,
+                if (!found_start) {
+                    start_x = x;
+                    found_start = true;
+                }
+                // update the ending x-coordinate to the current x-coordinate
+                end_x = x;
+
+            } else {
+                // increment the consecutive non-white pixels counter
+                consecutive_non_white++;
+            }
+            // if we have seen 15 consecutive non-white pixels, set the end x-coordinate to
+            // the current x-coordinate minus 15
+            if (consecutive_non_white >= 8) {
+            end_x =  x - 15;
+            consecutive_non_white = 0;
+            found_start = false;
+            }
+            // if we have seen 40 consecutive white pixels, then we have found a valid row
+            if (consecutive_white >= 20 && found_start) {
+                valid_row_counter++;
+                // calculate the middle x-coordinate of the white pixels
+                int middle_point = (end_x + start_x) / 2;
+                // add the middle point to the vector
+                middle_points.push_back(middle_point);
+
+            }
+
+        }
+        
+    }
+    // if we have found at least one valid row
+    if (valid_row_counter > 5) {
+        // sort the middle points
+        std::sort(middle_points.begin(), middle_points.end());
+        // calculate the median middle point
+        int median_middle_point = middle_points[middle_points.size() / 2];
+        // return the median middle point
+        return median_middle_point;
+    }
+    // if we haven't found any valid rows, return -1
+    else {
+        return -1;
+    }
+}
+
 
 /**
  * @brief Automatically sets the threshold for a camera frame buffer so that the number of white pixels in the thresholded image falls within a given range.
@@ -448,38 +562,31 @@ bool capture_still(const camera_fb_t *fb)
  * @param min_white_pixels Minimum acceptable number of white pixels in the thresholded image.
  * @param max_white_pixels Maximum acceptable number of white pixels in the thresholded image.
  */
-int auto_threshold(camera_fb_t *fb, int min_white_pixels, int max_white_pixels)
-{
-    // Set up variables for thresholding
-    uint8_t *data = fb->buf;
-    int width = fb->width;
-    int height = fb->height;
-    int threshold = 0;
-    int white_pixels = 0;
+void auto_threshold(camera_fb_t *fb, int min_white_pixels, int max_white_pixels) {
+  // Set up variables for thresholding
+  uint8_t *data = fb->buf;
+  int width = fb->width;
+  int height = fb->height;
+  int threshold = 0;
+  int white_pixels = 0;
 
-    // Loop through threshold values until the number of white pixels is within the desired range
-    while (white_pixels < min_white_pixels || white_pixels > max_white_pixels)
-    {
-        white_pixels = 0;
-        for (int i = 0; i < width * height; i++)
-        {
-            // If the pixel value is greater than the threshold, consider it white
-            if (data[i] > threshold)
-            {
-                white_pixels++;
-            }
-        }
-
-        // Adjust the threshold for the next iteration
-        if (white_pixels < min_white_pixels)
-        {
-            threshold++;
-        }
-        else if (white_pixels > max_white_pixels)
-        {
-            threshold--;
-        }
+  // Loop through threshold values until the number of white pixels is within the desired range
+  while (white_pixels < min_white_pixels || white_pixels > max_white_pixels) {
+    white_pixels = 0;
+    for (int i = 0; i < width * height; i++) {
+      // If the pixel value is greater than the threshold, consider it white
+      if (data[i] > threshold) {
+        white_pixels++;
+      }
     }
+
+    // Adjust the threshold for the next iteration
+    if (white_pixels < min_white_pixels) {
+      threshold++;
+    } else if (white_pixels > max_white_pixels) {
+      threshold--;
+    }
+  }
 
   // Once the desired range has been reached, apply the threshold to the image
   for (int i = 0; i < width * height; i++) {
