@@ -27,8 +27,8 @@
 #include "soc/soc.h"          //! Used to disable brownout detection
 #include "soc/rtc_cntl_reg.h" //! Used to disable brownout detection
 
-#include <vector> 
-//Depenencies for image processing
+#include <vector>
+// Depenencies for image processing
 
 #include <WiFi.h>
 
@@ -542,14 +542,20 @@ bool line_follower(const camera_fb_t *fb)
     }
 }
 
-/**************************************************************************/
 /**
-  Get Middle Point
-  Get the middle point of the white pixels in the bottom third of the image
-  \param fb: pointer to the frame buffer
-  \return the x-coordinate of the middle point
+ * @brief Finds the middle point of the white pixels in a region of the camera frame buffer.
+ *
+ * The function scans the specified region of the camera frame buffer for white pixels and calculates
+ * the middle point of the white pixels. The middle point is determined by averaging the starting and
+ * ending x-coordinates of the white pixels. The function also checks for the validity of the row
+ * by checking for consecutive white pixels.
+ *
+ * @param fb The camera frame buffer.
+ * @param start_fraction The fraction of the frame buffer's height at which to start scanning for white pixels.
+ * @param end_fraction The fraction of the frame buffer's height at which to end scanning for white pixels.
+ * @return The middle point of the white pixels in the specified region of the frame buffer, or -1 if no valid
+ *         white pixels were found.
  */
-/**************************************************************************/
 int get_middle_point(const camera_fb_t *fb, double start_fraction, double end_fraction)
 {
     // initialize the starting and ending x-coordinates to zero
@@ -569,7 +575,15 @@ int get_middle_point(const camera_fb_t *fb, double start_fraction, double end_fr
     // calculate the start and end rows based on the start and end fractions
     int start_row = fb->height * start_fraction;
     int end_row = fb->height * end_fraction;
-
+    // check if the start and end rows are valid
+    if ((end_row > fb->height) || (start_row < 0) || (start_row > end_row))
+    {
+        // invalid start and end rows, so return -1
+        Serial.println("Invalid start and end rows");
+        Serial.println("Height: " + String(fb->height) + ", Start Row: " + String(start_row) + ", End Row: " + String(end_row));
+        Serial.println("Need 0 <= start_row < end_row <= height");
+        return -1;
+    }
     // iterate over the rows in the specified range
     for (int y = start_row; y < end_row; y++)
     {
@@ -672,61 +686,58 @@ bool detect_obstacle(const camera_fb_t *fb)
     }
 }
 
-// climbing over the obstacle
-// void avoid_obstacle() {
-//     // keep following the line until it is lost for one second
-//     unsigned long start_time = millis();
-//     while (line_follower()) {
-//         if (millis() - start_time > 1000) {
-//             break;
-//         }
-//     }
 
-//     // line has been lost for one second, so execute custom command
-//     //execute_custom_command();   David still has to write this function
-// }
+void avoid_obstacle() {
+    //TODO fix this function
+    // // Stop the robot
+    // Serial.print("kp");
+    // // Turn the robot left for a certain amount of time
+    // unsigned long start_time = millis();
+    // Serial.print("kwkL");
+    // while (millis() - start_time < 500) {
+    //     // Wait
+    
+    // }
 
-void avoid_obstacle()
-{
-    // stop the robot
-    Serial.print("kp");
-
-    // turn the robot left for a certain amount of time
-    unsigned long start_time = millis();
-    Serial.print("kwkL");
-    while (millis() - start_time < 500)
-    {
-    }
-    start_time = millis();
-    // turn the robot right until the line is found
-    Serial.print("kwkR");
-    while (get_middle_point(fb, 1.0 / 3.0, 2.0 / 3.0) < 0 || millis() - start_time < 500)
-    {
-    }
-    // turn the robot left for a certain amount of time
-    start_time = millis();
-    Serial.print("kwkL");
-    while (millis() - start_time < 200)
-    {
-    }
-    Serial.print("kp");
+    // // Turn the robot right until the line is found or until a timeout occurs
+    // start_time = millis();
+    // Serial.print("kwkR");
+    // int middle_point;
+    // while ((middle_point = get_middle_point(fb, 1.0/2.0, 2.0/3.0)) == -1) {
+    //     // Keep checking the middle point until it's not -1
+    //     if(millis() - start_time >= 5000) {
+    //         Serial.println("Error: Timed out while trying to find line.");
+    //         return;
+    //     }
+    // }
+    // // Once the line is found, turn the robot left for a certain amount of time
+    // start_time = millis();
+    // Serial.print("kwkL");
+    // while (millis() - start_time < 200) {
+    //     // Wait
+    // }
+    // // Stop the robot
+    // Serial.print("kp");
+    // return;
+    return;
 }
 
 void recover()
 {
     unsigned long start_time = millis();
-    // keep turning the robot left and walking backwards until the line is found
+    // walk backwards for a certain amount of time
     Serial.print("kwkB");
-    while (!line_follower(fb) || millis() - start_time < 200)
-    {
+    while(millis() - start_time < 1000) {
     }
     Serial.print("kp");
+    return;
 }
 
 void cool_move()
 {
     // TODO David writes cool move and then we test
     //write function to turn on the spot
+    return;
 }
 
 void crossFinishLine()
@@ -738,6 +749,7 @@ void crossFinishLine()
     {
     }
     Serial.println("kp");
+    return;
 }
 /**************************************************************************/
 /**
@@ -770,7 +782,7 @@ void update()
         {
             lastStateChangeTime = millis();
             // line follower returned true, indicating that the line was found
-            if (detect_obstacle(fb))
+            if (detect_obstacle(fb) && millis() - lastStateChangeTime >= 9000)
             {
                 currentState = AVOID_OBSTACLE;
                 lastStateChangeTime = millis();
@@ -783,7 +795,7 @@ void update()
         }
         else
         {
-            if (millis() - lastStateChangeTime >= 3000)
+            if (millis() - lastStateChangeTime >= 9000)
             {
                 // line follower returned false, indicating that the line was not found
                 // and at least 3 seconds have passed since the last state change
@@ -797,7 +809,7 @@ void update()
         avoid_obstacle();
         currentState = FOLLOW_LINE;
         lastStateChangeTime = millis();
-        
+
         break;
     case CROSS_FINISH_LINE:
         Serial.println("\nCROSS_FINISH_LINE");
@@ -815,8 +827,6 @@ void update()
         }
         break;
     case RECOVER_FROM_NO_LINE:
-    //TODO recovery spams the serial monitor, with kp commands find the issue and fix it
-    // needs to loop somwhere wreid bc the update finction is called every 600ms and the kp command is sent at a rate way higher than that
         Serial.println("\nRECOVER_FROM_NO_LINE");
         recover();
         // line follower returned true, indicating that the line was found
