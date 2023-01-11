@@ -182,7 +182,7 @@ void loop()
             update();
 
             // print image to serial monitor
-            // capture_still(fb);
+            //capture_still(fb);
 
             // publishes the image to the server
             // publishPictureToServer(fb, server);
@@ -315,7 +315,7 @@ esp_err_t camera_capture(camera_fb_t **fb)
 
             // threshold the pixel at the current index
             // if the pixel is less than 210, set it to 255 (white)
-            (*fb)->buf[index] = ((*fb)->buf[index] < 25) ? 255 : 0;
+            (*fb)->buf[index] = ((*fb)->buf[index] < 55) ? 255 : 0;
         }
     }
     // print serial ok
@@ -743,12 +743,12 @@ void cool_move()
 void crossFinishLine()
 {
     // walk backwards for a certain amount of time
-    Serial.println("kwkF");
+    Serial.print("kwkF");
     unsigned long start_time = millis();
     while (millis() - start_time < 400)
     {
     }
-    Serial.println("kp");
+    Serial.print("kp");
     return;
 }
 /**************************************************************************/
@@ -777,7 +777,7 @@ void update()
     switch (currentState)
     {
     case FOLLOW_LINE:
-        Serial.println("\nFOLLOW_LINE");
+        //Serial.println("\nFOLLOW_LINE");
         if (line_follower(fb))
         {
             lastStateChangeTime = millis();
@@ -805,14 +805,14 @@ void update()
         }
         break;
     case AVOID_OBSTACLE:
-        Serial.println("\nAVOID_OBSTACLE");
+        //Serial.println("\nAVOID_OBSTACLE");
         avoid_obstacle();
         currentState = FOLLOW_LINE;
         lastStateChangeTime = millis();
 
         break;
     case CROSS_FINISH_LINE:
-        Serial.println("\nCROSS_FINISH_LINE");
+        //Serial.println("\nCROSS_FINISH_LINE");
         crossFinishLine();
         if (finish_line_crossed == false)
         {
@@ -827,7 +827,7 @@ void update()
         }
         break;
     case RECOVER_FROM_NO_LINE:
-        Serial.println("\nRECOVER_FROM_NO_LINE");
+        //Serial.println("\nRECOVER_FROM_NO_LINE");
         recover();
         // line follower returned true, indicating that the line was found
         currentState = FOLLOW_LINE;
