@@ -31,11 +31,14 @@
 // Depenencies for image processing
 
 #include <WiFi.h>
+#include <WebServer.h>
 
 const char *ssid = "Get off my Lan!";
 const char *password = "prettyflyforAWifi";
 
 unsigned long stateTime = 0;
+
+WebServer server(80);
 
 //! Image resolution:
 /*!
@@ -160,11 +163,13 @@ void setup()
     }
 
     setupOnBoardFlash();
-    // Serial.println("Setup complete\n");
     setLedBrightness(ledBrightness);
-    // Start the web server for image upload comment out for normal operation
-    //  setupWebServer(server);
-    //  Serial.println(WiFi.begin(ssid, password));
+    //Nodered setup
+    WiFi.begin(ssid, password);
+    Serial.println(WiFi.localIP());
+    server.begin();
+    Change_Treshold_value();
+
 }
 /**************************************************************************/
 /*!
@@ -173,14 +178,17 @@ void setup()
 */
 /**************************************************************************/
 void loop()
-{
+{   
+    server.handleClient();
     if ((unsigned long)(millis() - lastCamera) >= 600UL)
     {
         esp_err_t res = camera_capture(&fb);
         if (res == ESP_OK)
-        {
+        {   
+            Change_Treshold_value();
+            Serial.println(pixel_threshold);
             update();
-
+            
             // print image to serial monitor
             //capture_still(fb);
 
@@ -315,7 +323,7 @@ esp_err_t camera_capture(camera_fb_t **fb)
 
             // threshold the pixel at the current index
             // if the pixel is less than 210, set it to 255 (white)
-            (*fb)->buf[index] = ((*fb)->buf[index] < 55) ? 255 : 0;
+            (*fb)->buf[index] = ((*fb)->buf[index] < pixel_threshold) ? 255 : 0;
         }
     }
     // print serial ok
@@ -867,4 +875,14 @@ void setupWebServer(WiFiServer server)
     Serial.print("Visit http://");
     Serial.print(WiFi.localIP());
     Serial.println("/ to view the image");
+}
+
+
+// Noderred functions are following
+
+void Change_Treshold_value(){
+    server.on("/update-tresholdvalue", HTTP_GET, []() {
+    String newValue = server.arg("value");
+    pixel_threshold = newValue.toInt();
+  });
 }
