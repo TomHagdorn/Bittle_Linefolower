@@ -120,7 +120,7 @@ const int min_line_length = 10;
 uint32_t lastCamera = 0; ///< To store time value for repeated capture
 
 // variables updated by nodered
-int pixel_threshold = 55;
+int pixel_threshold = 39;
 int recover_time  = 500;
 int Obst_left_t =1;
 int Obst_straight_t=1;
@@ -177,20 +177,7 @@ void setup()
     setupOnBoardFlash();
     setLedBrightness(ledBrightness);
     //Nodered setup
-    WiFi.begin(ssid, password);
-    int connRes = WiFi.waitForConnectResult();
-    if (connRes == WL_CONNECTED) {
-        //Serial.print("Connected to WiFi network with IP: ");
-        //TODO uncomment this to print the IP address
-        //Serial.println(WiFi.localIP());
-        //server.begin();
-        //Call functions for the variable nodered values
-        //Change_Treshold_value();
-    } else {
-        Serial.println("Connection Failed!");
-        esp_restart();
-        return;
-    }
+
     
 
 }
@@ -202,12 +189,8 @@ void setup()
 /**************************************************************************/
 void loop()
 {       
-    if ((unsigned long)(millis() - lastCamera) >= 1200UL)
-    {
-        //server.handleClient();
     
-    }
-    if ((unsigned long)(millis() - lastCamera) >= 600UL)
+    if ((unsigned long)(millis() - lastCamera) >=700UL)
     {
         esp_err_t res = camera_capture(&fb);
         if (res == ESP_OK)
@@ -390,58 +373,59 @@ void setLedBrightness(byte ledBrightness)
 /**************************************************************************/
 bool check_for_horizontal_line(const camera_fb_t *fb)
 {
-    // calculate the start and end rows of the lowest third of the image
-    int start_row = fb->height * 2 / 3;
-    int end_row = fb->height - 1;
+    // // calculate the start and end rows of the lowest third of the image
+    // int start_row = fb->height * 2 / 3;
+    // int end_row = fb->height - 1;
 
-    // counter for the number of lines found
-    int line_count = 0;
+    // // counter for the number of lines found
+    // int line_count = 0;
 
-    // iterate over the rows in the lowest third of the image
-    for (int y = start_row; y <= end_row; y++)
-    {
-        // initialize the consecutive white pixel count to zero
-        int white_pixel_count = 0;
+    // // iterate over the rows in the lowest third of the image
+    // for (int y = start_row; y <= end_row; y++)
+    // {
+    //     // initialize the consecutive white pixel count to zero
+    //     int white_pixel_count = 0;
 
-        // iterate over the pixels in the current row
-        for (int x = 0; x < fb->width; x++)
-        {
-            // get the current pixel value
-            uint8_t pixel = fb->buf[y * fb->width + x];
+    //     // iterate over the pixels in the current row
+    //     for (int x = 0; x < fb->width; x++)
+    //     {
+    //         // get the current pixel value
+    //         uint8_t pixel = fb->buf[y * fb->width + x];
 
-            // if the pixel is white (i.e., its value is above the threshold)
-            // then increment the consecutive white pixel count
-            if (pixel == 255)
-            {
-                white_pixel_count++;
-            }
-            // if the pixel is not white (i.e., its value is below the threshold)
-            // then reset the consecutive white pixel count
-            else
-            {
-                white_pixel_count = 0;
-            }
+    //         // if the pixel is white (i.e., its value is above the threshold)
+    //         // then increment the consecutive white pixel count
+    //         if (pixel == 255)
+    //         {
+    //             white_pixel_count++;
+    //         }
+    //         // if the pixel is not white (i.e., its value is below the threshold)
+    //         // then reset the consecutive white pixel count
+    //         else
+    //         {
+    //             white_pixel_count = 0;
+    //         }
 
-            // if there are at least min_line_length consecutive white pixels
-            // then increment the line count
-            if (white_pixel_count >= min_line_length)
-            {
-                line_count++;
-                break;
-            }
-        }
-    }
+    //         // if there are at least min_line_length consecutive white pixels
+    //         // then increment the line count
+    //         if (white_pixel_count >= min_line_length)
+    //         {
+    //             line_count++;
+    //             break;
+    //         }
+    //     }
+    // }
 
-    // if three or more lines were found, return true
-    if (line_count >= 3)
-    {
-        return true;
-    }
-    // otherwise, return false
-    else
-    {
-        return false;
-    }
+    // // if three or more lines were found, return true
+    // if (line_count >= 3)
+    // {
+    //     return true;
+    // }
+    // // otherwise, return false
+    // else
+    // {
+    //     return false;
+    // }
+    return false;
 }
 
 /**************************************************************************/
@@ -494,7 +478,7 @@ bool line_follower(const camera_fb_t *fb)
     if (middle_point == -1)
     {
         // no line was found, so stop the robot
-        Serial.print("kp");
+        Serial.print("kbalance");
         return false;
     }
 
@@ -708,7 +692,7 @@ void recover()
     Serial.print("kwkB");
     while(millis() - start_time < 1000) {
     }
-    Serial.print("kp");
+    Serial.print("kbalanceI");
     return;
 }
 
@@ -727,7 +711,7 @@ void crossFinishLine()
     while (millis() - start_time < 400)
     {
     }
-    Serial.print("kp");
+    Serial.print("kbalance");
     return;
 }
 /**************************************************************************/
@@ -819,60 +803,3 @@ void update()
 }
 
 
-// Noderred functions are following
-
-void Change_Treshold_value(){
-    server.on("/update-tresholdvalue", HTTP_GET, []() {
-    String newValue = server.arg("value");
-    pixel_threshold = newValue.toInt();
-  });
-}
-
-void Change_recover_time (){
-    server.on("/update-recovertime ", HTTP_GET, []() {
-    String newValue = server.arg("value");
-    recover_time  = newValue.toInt();
-  });
-}
-void Change_Obst_left_t (){
-    server.on("/update-obstleftt ", HTTP_GET, []() {
-    String newValue = server.arg("value");
-    Obst_left_t  = newValue.toInt();
-  });
-}
-void Change_Obst_straight_t(){
-    server.on("/update-obststraightt", HTTP_GET, []() {
-    String newValue = server.arg("value");
-    Obst_straight_t = newValue.toInt();
-  });
-}
-void Change_Obst_right_t (){
-    server.on("/update-obstrightt ", HTTP_GET, []() {
-    String newValue = server.arg("value");
-    Obst_right_t  = newValue.toInt();
-  });
-}
-void Change_Line_width(){
-    server.on("/update-linewidth", HTTP_GET, []() {
-    String newValue = server.arg("value");
-    Line_width = newValue.toInt();
-  });
-}
-void Change_Fin_line_width(){
-    server.on("/update-finlinewidth", HTTP_GET, []() {
-    String newValue = server.arg("value");
-    Fin_line_width = newValue.toInt();
-  });
-}
-void Change_currentlinewidth(){
-    server.on("/update-currentlinewidth", HTTP_GET, []() {
-    String newValue = server.arg("value");
-    currentlinewidth = newValue.toInt();
-  });
-}
-void Change_currentfinlinewidth(){
-    server.on("/update-currentfinlinewidth", HTTP_GET, []() {
-    String newValue = server.arg("value");
-    currentfinlinewidth = newValue.toInt();
-  });
-}
