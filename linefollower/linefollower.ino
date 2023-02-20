@@ -50,7 +50,7 @@ WebServer server(80);
     1024x768 (XGA), 1280x1024 (SXGA), 1600x1200 (UXGA)
 */
 
-const framesize_t FRAME_SIZE_IMAGE = FRAMESIZE_QQVGA; // FRAMESIZE_QQVGA
+const framesize_t FRAME_SIZE_IMAGE = FRAMESIZE_UXGA; // FRAMESIZE_QQVGA
 camera_fb_t *fb;
 
 //! Image Format
@@ -61,10 +61,10 @@ camera_fb_t *fb;
 
 #define PIXFORMAT PIXFORMAT_GRAYSCALE;
 
+//TODO Mache die 
 
-
-#define IMAGE_WIDTH 160  ///< Image size Width
-#define IMAGE_HEIGHT 120 ///< Image size Height
+#define IMAGE_WIDTH 1600  ///< Image size Width
+#define IMAGE_HEIGHT 1200 ///< Image size Height
 
 //! Camera exposure
 /*!
@@ -182,8 +182,9 @@ void setup()
     if (connRes == WL_CONNECTED) {
         //Serial.print("Connected to WiFi network with IP: ");
         //TODO uncomment this to print the IP address
+        //TODO David
         //Serial.println(WiFi.localIP());
-        //server.begin();
+        server.begin();
         //Call functions for the variable nodered values
         //Change_Treshold_value();
     } else {
@@ -204,8 +205,8 @@ void loop()
 {       
     if ((unsigned long)(millis() - lastCamera) >= 1200UL)
     {
-        //server.handleClient();
-    
+        //TODO David
+        server.handleClient();
     }
     if ((unsigned long)(millis() - lastCamera) >= 600UL)
     {

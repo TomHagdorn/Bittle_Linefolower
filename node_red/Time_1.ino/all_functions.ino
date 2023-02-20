@@ -37,7 +37,7 @@ void setup() {
     Serial.print("Connected to WiFi network with IP: ");
     Serial.println(WiFi.localIP());
     server.begin();
-    //Change_Line_width();
+    Change_Line_width();
     Change_Treshold_value();
   
   } else {

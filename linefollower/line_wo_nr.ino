@@ -50,7 +50,7 @@ WebServer server(80);
     1024x768 (XGA), 1280x1024 (SXGA), 1600x1200 (UXGA)
 */
 
-const framesize_t FRAME_SIZE_IMAGE = FRAMESIZE_QQVGA; // FRAMESIZE_QQVGA
+const framesize_t FRAME_SIZE_IMAGE = FRAMESIZE_SVGA; // FRAMESIZE_QQVGA
 camera_fb_t *fb;
 
 //! Image Format
@@ -63,8 +63,8 @@ camera_fb_t *fb;
 
 
 
-#define IMAGE_WIDTH 160  ///< Image size Width
-#define IMAGE_HEIGHT 120 ///< Image size Height
+#define IMAGE_WIDTH 800  ///< Image size Width
+#define IMAGE_HEIGHT 600 ///< Image size Height
 
 //! Camera exposure
 /*!
@@ -82,7 +82,7 @@ int cameraImageExposure = 0;
 int cameraImageGain = 0;
 
 const uint8_t ledPin = 4;                  ///< onboard Illumination/flash LED pin (4)
-int ledBrightness = 8;                     ///< Initial brightness (0 - 255)
+int ledBrightness = 0;                     ///< Initial brightness (0 - 255)
 const int pwmFrequency = 50000;            ///< PWM settings for ESP32
 const uint8_t ledChannel = LEDC_CHANNEL_0; ///< Camera timer0
 const uint8_t pwmResolution = 8;           ///< resolution (8 = from 0 to 255)
@@ -90,7 +90,7 @@ const uint8_t pwmResolution = 8;           ///< resolution (8 = from 0 to 255)
 const int serialSpeed = 115200; ///< Serial data speed to use
 
 // minimum line lenth for line detection
-const int min_line_length = 10;
+const int min_line_length = 500;
 
 //! Camera setting
 /*!
@@ -120,7 +120,7 @@ const int min_line_length = 10;
 uint32_t lastCamera = 0; ///< To store time value for repeated capture
 
 // variables updated by nodered
-int pixel_threshold = 39;
+int pixel_threshold = 175;
 int recover_time  = 500;
 int Obst_left_t =1;
 int Obst_straight_t=1;
@@ -192,6 +192,8 @@ void loop()
     
     if ((unsigned long)(millis() - lastCamera) >=700UL)
     {
+        int start_time_loop = millis();
+
         esp_err_t res = camera_capture(&fb);
         if (res == ESP_OK)
         {   
@@ -207,7 +209,11 @@ void loop()
         // return the frame buffer back to the driver for reuse
         esp_camera_fb_return(fb);
         lastCamera = millis();
+        int runtime = lastCamera - start_time_loop;
+        //Serial.println("Main loop runtime: " + String(runtime) + "ms");
+
     }
+
 }
 /**************************************************************************/
 /**
@@ -310,6 +316,7 @@ bool cameraImageSettings()
 /**************************************************************************/
 esp_err_t camera_capture(camera_fb_t **fb)
 {
+    //int start_time_capture = millis();
     // acquire a frame
     *fb = esp_camera_fb_get();
     ESP_LOGE(TAG, "Camera Capture in progress");
@@ -332,11 +339,12 @@ esp_err_t camera_capture(camera_fb_t **fb)
 
             // threshold the pixel at the current index
             // if the pixel is less than 210, set it to 255 (white)
-            (*fb)->buf[index] = ((*fb)->buf[index] < pixel_threshold) ? 255 : 0;
+            (*fb)->buf[index] = ((*fb)->buf[index] > pixel_threshold) ? 255 : 0;
         }
     }
     // print serial ok
     // Serial.println("Camera Capture OK");
+
 
     return ESP_OK;
 }
@@ -373,59 +381,59 @@ void setLedBrightness(byte ledBrightness)
 /**************************************************************************/
 bool check_for_horizontal_line(const camera_fb_t *fb)
 {
-    // // calculate the start and end rows of the lowest third of the image
-    // int start_row = fb->height * 2 / 3;
-    // int end_row = fb->height - 1;
+    // calculate the start and end rows of the lowest third of the image
+    int start_row = fb->height * 2 / 3;
+    int end_row = fb->height - 1;
 
-    // // counter for the number of lines found
-    // int line_count = 0;
+    // counter for the number of lines found
+    int line_count = 0;
 
-    // // iterate over the rows in the lowest third of the image
-    // for (int y = start_row; y <= end_row; y++)
-    // {
-    //     // initialize the consecutive white pixel count to zero
-    //     int white_pixel_count = 0;
+    // iterate over the rows in the lowest third of the image
+    for (int y = start_row; y <= end_row; y++)
+    {
+        // initialize the consecutive white pixel count to zero
+        int white_pixel_count = 0;
 
-    //     // iterate over the pixels in the current row
-    //     for (int x = 0; x < fb->width; x++)
-    //     {
-    //         // get the current pixel value
-    //         uint8_t pixel = fb->buf[y * fb->width + x];
+        // iterate over the pixels in the current row
+        for (int x = 0; x < fb->width; x++)
+        {
+            // get the current pixel value
+            uint8_t pixel = fb->buf[y * fb->width + x];
 
-    //         // if the pixel is white (i.e., its value is above the threshold)
-    //         // then increment the consecutive white pixel count
-    //         if (pixel == 255)
-    //         {
-    //             white_pixel_count++;
-    //         }
-    //         // if the pixel is not white (i.e., its value is below the threshold)
-    //         // then reset the consecutive white pixel count
-    //         else
-    //         {
-    //             white_pixel_count = 0;
-    //         }
+            // if the pixel is white (i.e., its value is above the threshold)
+            // then increment the consecutive white pixel count
+            if (pixel == 255)
+            {
+                white_pixel_count++;
+            }
+            // if the pixel is not white (i.e., its value is below the threshold)
+            // then reset the consecutive white pixel count
+            else
+            {
+                white_pixel_count = 0;
+            }
 
-    //         // if there are at least min_line_length consecutive white pixels
-    //         // then increment the line count
-    //         if (white_pixel_count >= min_line_length)
-    //         {
-    //             line_count++;
-    //             break;
-    //         }
-    //     }
-    // }
+            // if there are at least min_line_length consecutive white pixels
+            // then increment the line count
+            if (white_pixel_count >= min_line_length)
+            {
+                line_count++;
+                break;
+            }
+        }
+    }
 
-    // // if three or more lines were found, return true
-    // if (line_count >= 3)
-    // {
-    //     return true;
-    // }
-    // // otherwise, return false
-    // else
-    // {
-    //     return false;
-    // }
-    return false;
+    // if three or more lines were found, return true
+    if (line_count >= 5)
+    {
+        return true;
+    }
+    // otherwise, return false
+    else
+    {
+        return false;
+    }
+    
 }
 
 /**************************************************************************/
@@ -438,11 +446,8 @@ bool check_for_horizontal_line(const camera_fb_t *fb)
 /**************************************************************************/
 bool capture_still(const camera_fb_t *fb)
 {
-    // Calculate the height of the lowest third of the image
-    int third_height = IMAGE_HEIGHT / 3;
-
-    // Iterate over the rows in the lowest third of the image
-    for (int row_index = 2 * third_height; row_index < IMAGE_HEIGHT; ++row_index)
+    // Iterate over the rows in the image
+    for (int row_index = 0; row_index < IMAGE_HEIGHT; ++row_index)
     {
         // Iterate over the columns in the current row
         for (int col_index = 0; col_index < IMAGE_WIDTH; ++col_index)
@@ -470,7 +475,7 @@ bool capture_still(const camera_fb_t *fb)
 bool line_follower(const camera_fb_t *fb)
 {
     // calculate the starting and ending fractions for the 3/4 to 1 portion of the frame
-    double start_fraction = 3.0 / 4.0;
+    double start_fraction = 2.0 / 4.0;
     double end_fraction = 1.0;
 
     // get the middle point for the 3/4 to 1 portion of the frame
@@ -580,14 +585,14 @@ int get_middle_point(const camera_fb_t *fb, double start_fraction, double end_fr
             }
             // if we have seen 15 consecutive non-white pixels, set the end x-coordinate to
             // the current x-coordinate minus 15
-            if (consecutive_non_white >= 8)
+            if (consecutive_non_white >= 40)
             {
-                end_x = x - 15;
+                end_x = x - 40;
                 consecutive_non_white = 0;
                 found_start = false;
             }
             // if we have seen 40 consecutive white pixels, then we have found a valid row
-            if (consecutive_white >= 20 && found_start)
+            if (consecutive_white >= 100 && found_start)
             {
                 valid_row_counter++;
                 // calculate the middle x-coordinate of the white pixels
@@ -598,7 +603,7 @@ int get_middle_point(const camera_fb_t *fb, double start_fraction, double end_fr
         }
     }
     // if we have found at least one valid row
-    if (valid_row_counter > 5)
+    if (valid_row_counter > 30)
     {
         // sort the middle points
         std::sort(middle_points.begin(), middle_points.end());
@@ -624,29 +629,30 @@ int get_middle_point(const camera_fb_t *fb, double start_fraction, double end_fr
 bool detect_obstacle(const camera_fb_t *fb)
 {
     // calculate the starting and ending fractions for the top, middle, and bottom thirds of the frame
-    double start_fraction_top = 0.0;
-    double end_fraction_top = 1.0 / 3.0;
-    double start_fraction_middle = 1.0 / 3.0;
-    double end_fraction_middle = 2.0 / 3.0;
-    double start_fraction_bottom = 2.0 / 3.0;
-    double end_fraction_bottom = 1.0;
+    // double start_fraction_top = 0.0;
+    // double end_fraction_top = 1.0 / 3.0;
+    // double start_fraction_middle = 1.0 / 3.0;
+    // double end_fraction_middle = 2.0 / 3.0;
+    // double start_fraction_bottom = 2.0 / 3.0;
+    // double end_fraction_bottom = 1.0;
 
-    // get the middle points for the top, middle, and bottom thirds of the frame
-    int middle_point_top = get_middle_point(fb, start_fraction_top, end_fraction_top);
-    int middle_point_middle = get_middle_point(fb, start_fraction_middle, end_fraction_middle);
-    int middle_point_bottom = get_middle_point(fb, start_fraction_bottom, end_fraction_bottom);
+    // // get the middle points for the top, middle, and bottom thirds of the frame
+    // int middle_point_top = get_middle_point(fb, start_fraction_top, end_fraction_top);
+    // int middle_point_middle = get_middle_point(fb, start_fraction_middle, end_fraction_middle);
+    // int middle_point_bottom = get_middle_point(fb, start_fraction_bottom, end_fraction_bottom);
 
-    // if the middle point for the bottom third of the frame is not -1 (i.e., a valid row was found),
-    // and the middle points for the top and middle thirds are -1 (i.e., no valid rows were found),
-    // then we consider an obstacle to have been detected
-    if (middle_point_bottom != -1 && middle_point_top == -1 && middle_point_middle == -1)
-    {
-        return true;
-    }
-    else
-    {
-        return false;
-    }
+    // // if the middle point for the bottom third of the frame is not -1 (i.e., a valid row was found),
+    // // and the middle points for the top and middle thirds are -1 (i.e., no valid rows were found),
+    // // then we consider an obstacle to have been detected
+    // if (middle_point_bottom != -1 && middle_point_top == -1 && middle_point_middle == -1)
+    // {
+    //     return true;
+    // }
+    // else
+    // {
+    //     return false;
+    // }
+    return false;
 }
 
 
@@ -690,9 +696,9 @@ void recover()
     unsigned long start_time = millis();
     // walk backwards for a certain amount of time
     Serial.print("kwkB");
-    while(millis() - start_time < 1000) {
+    while(millis() - start_time < 1500) {
     }
-    Serial.print("kbalanceI");
+    Serial.print("kbalance");
     return;
 }
 
@@ -745,7 +751,7 @@ void update()
         {
             lastStateChangeTime = millis();
             // line follower returned true, indicating that the line was found
-            if (detect_obstacle(fb) && millis() - lastStateChangeTime >= 9000)
+            if (detect_obstacle(fb) && millis() - lastStateChangeTime >= 4000)
             {
                 currentState = AVOID_OBSTACLE;
                 lastStateChangeTime = millis();
