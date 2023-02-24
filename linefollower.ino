@@ -1,6 +1,7 @@
 #include "board_sensor_setup.ino"
 #include "img_proc_sensordata.ino"
 #include "node_red.ino"
+#include "calibration.ino"
 
 
 /**************************************************************************/
@@ -86,9 +87,8 @@ bool detect_obstacle(const camera_fb_t *fb)
     }
 }
 
-
+//TODO fix this function
 void avoid_obstacle() {
-    //TODO fix this function
     // // Stop the robot
     // Serial.print("kp");
     // // Turn the robot left for a certain amount of time

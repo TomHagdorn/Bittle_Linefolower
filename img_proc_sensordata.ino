@@ -13,7 +13,7 @@
  *
  * @return void
  */
-void threshold_image(camera_fb_t *fb)
+void threshold_image(const camera_fb_t *fb)
 {
     // get the height and width of the frame
     int height = fb->height;
@@ -205,4 +205,39 @@ int get_middle_point(const camera_fb_t *fb, double start_fraction, double end_fr
     {
         return -1;
     }
+}
+
+/**
+ * Detects obstacles using an ultrasonic sensor.
+ *
+ * @return True if an obstacle is detected within 30 cm, false otherwise.
+ */
+bool detect_obstacle_ultrasonic()
+{
+  static unsigned long last_trigger_time = 0;
+  
+  // Trigger the ultrasonic sensor every 100ms
+  if (millis() - last_trigger_time >= 100) {
+    digitalWrite(TRIGGER_PIN, LOW);
+    delayMicroseconds(2);
+    digitalWrite(TRIGGER_PIN, HIGH);
+    delayMicroseconds(10);
+    digitalWrite(TRIGGER_PIN, LOW);
+    
+    last_trigger_time = millis();
+  }
+
+  // Measure the distance to the obstacle
+  long duration = pulseIn(ECHO_PIN, HIGH, 30000);  // Wait up to 30ms for the echo pulse
+  float distance = duration * 0.034 / 2;
+
+  // If the distance is less than 30 cm, an obstacle is detected
+  if (distance < 30)
+  {
+    return true;
+  }
+  else
+  {
+    return false;
+  }
 }

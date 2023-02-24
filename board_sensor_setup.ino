@@ -45,10 +45,10 @@ camera_fb_t *fb;
 
 #define PIXFORMAT PIXFORMAT_GRAYSCALE;
 
-//TODO Mache die 
 
-#define IMAGE_WIDTH 1600  ///< Image size Width
-#define IMAGE_HEIGHT 1200 ///< Image size Height
+
+#define IMAGE_WIDTH 800  ///< Image size Width
+#define IMAGE_HEIGHT 600 ///< Image size Height
 
 //! Camera exposure
 /*!
@@ -115,8 +115,8 @@ int currentlinewidth = 1;
 int currentfinlinewidth =1;
 
 
-//*************************************************************************************************
-//possible states of the robot
+
+//possible states of the robot  **************************************************************
 enum State
 {
     FOLLOW_LINE,
@@ -133,6 +133,10 @@ bool finish_line_crossed = false;
 
 //define state change time
 static unsigned long lastStateChangeTime = 0;
+
+// Setup Ultrsonic sensor   ********************************************************************
+const int TRIGGER_PIN = 4;
+const int ECHO_PIN = 5;
 
 
 void setup()
@@ -346,3 +350,6 @@ bool capture_still(const camera_fb_t *fb)
     // Return true to indicate that the still was successfully captured
     return true;
 }
+
+
+
