@@ -1,6 +1,0 @@
-English
-Bittle
-./release
-2.0
-NyBoard_V1_0
-Standard
