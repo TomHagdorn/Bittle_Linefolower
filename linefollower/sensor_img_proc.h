@@ -1,103 +1,3 @@
-#include "board_sensor_setup.ino"
-
-
-/**
- * @brief Thresholds a camera frame to black and white.
- *
- * This function thresholds a camera frame to black and white by checking the value
- * of each pixel and setting it to white (255) if its value is less than a given
- * threshold, or black (0) otherwise.
- *
- * @param[in,out] fb Pointer to the camera frame to threshold.
- * @param[in] threshold The pixel threshold value.
- *
- * @return void
- */
-void threshold_image(const camera_fb_t *fb)
-{
-    // get the height and width of the frame
-    int height = fb->height;
-    int width = fb->width;
-
-    // threshold the entire frame
-    for (int row = 0; row < height; row++)
-    {
-        for (int col = 0; col < width; col++)
-        {
-            int index = row * width + col;
-
-            // threshold the pixel at the current index
-            // if the pixel is less than 210, set it to 255 (white)
-            fb->buf[index] = (fb->buf[index] < pixel_threshold) ? 255 : 0;
-        }
-    }
-}
-
-
-/**************************************************************************/
-/**
-  Check for Horizontal Line
-  Check if there is a horizontal line in the bottom third of the image
-  \param fb: pointer to the frame buffer
-  \return true if there is a horizontal line, false otherwise
- */
-/**************************************************************************/
-bool check_for_horizontal_line(const camera_fb_t *fb)
-{
-    // calculate the start and end rows of the lowest third of the image
-    int start_row = fb->height * 2 / 3;
-    int end_row = fb->height - 1;
-
-    // counter for the number of lines found
-    int line_count = 0;
-
-    // iterate over the rows in the lowest third of the image
-    for (int y = start_row; y <= end_row; y++)
-    {
-        // initialize the consecutive white pixel count to zero
-        int white_pixel_count = 0;
-
-        // iterate over the pixels in the current row
-        for (int x = 0; x < fb->width; x++)
-        {
-            // get the current pixel value
-            uint8_t pixel = fb->buf[y * fb->width + x];
-
-            // if the pixel is white (i.e., its value is above the threshold)
-            // then increment the consecutive white pixel count
-            if (pixel == 255)
-            {
-                white_pixel_count++;
-            }
-            // if the pixel is not white (i.e., its value is below the threshold)
-            // then reset the consecutive white pixel count
-            else
-            {
-                white_pixel_count = 0;
-            }
-
-            // if there are at least min_line_length consecutive white pixels
-            // then increment the line count
-            if (white_pixel_count >= min_line_length)
-            {
-                line_count++;
-                break;
-            }
-        }
-    }
-
-    // if three or more lines were found, return true
-    if (line_count >= 3)
-    {
-        return true;
-    }
-    // otherwise, return false
-    else
-    {
-        return false;
-    }
-}
-
 /**
  * @brief Finds the middle point of the white pixels in a region of the camera frame buffer.
  *
@@ -207,37 +107,102 @@ int get_middle_point(const camera_fb_t *fb, double start_fraction, double end_fr
     }
 }
 
+/**************************************************************************/
 /**
- * Detects obstacles using an ultrasonic sensor.
- *
- * @return True if an obstacle is detected within 30 cm, false otherwise.
+  Detect Obstacle
+  Detect an obstacle using the camera
+  \param fb: pointer to the frame buffer
+  \return true if an obstacle is found, false otherwise
  */
-bool detect_obstacle_ultrasonic()
+bool detect_obstacle(const camera_fb_t *fb)
 {
-  static unsigned long last_trigger_time = 0;
-  
-  // Trigger the ultrasonic sensor every 100ms
-  if (millis() - last_trigger_time >= 100) {
-    digitalWrite(TRIGGER_PIN, LOW);
-    delayMicroseconds(2);
-    digitalWrite(TRIGGER_PIN, HIGH);
-    delayMicroseconds(10);
-    digitalWrite(TRIGGER_PIN, LOW);
-    
-    last_trigger_time = millis();
-  }
+    // calculate the starting and ending fractions for the top, middle, and bottom thirds of the frame
+    double start_fraction_top = 0.0;
+    double end_fraction_top = 1.0 / 3.0;
+    double start_fraction_middle = 1.0 / 3.0;
+    double end_fraction_middle = 2.0 / 3.0;
+    double start_fraction_bottom = 2.0 / 3.0;
+    double end_fraction_bottom = 1.0;
 
-  // Measure the distance to the obstacle
-  long duration = pulseIn(ECHO_PIN, HIGH, 30000);  // Wait up to 30ms for the echo pulse
-  float distance = duration * 0.034 / 2;
+    // get the middle points for the top, middle, and bottom thirds of the frame
+    int middle_point_top = get_middle_point(fb, start_fraction_top, end_fraction_top);
+    int middle_point_middle = get_middle_point(fb, start_fraction_middle, end_fraction_middle);
+    int middle_point_bottom = get_middle_point(fb, start_fraction_bottom, end_fraction_bottom);
 
-  // If the distance is less than 30 cm, an obstacle is detected
-  if (distance < 30)
-  {
-    return true;
-  }
-  else
-  {
+    // if the middle point for the bottom third of the frame is not -1 (i.e., a valid row was found),
+    // and the middle points for the top and middle thirds are -1 (i.e., no valid rows were found),
+    // then we consider an obstacle to have been detected
+    if (middle_point_bottom != -1 && middle_point_top == -1 && middle_point_middle == -1)
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+}
+
+/**************************************************************************/
+/**
+  Check for Horizontal Line
+  Check if there is a horizontal line in the bottom third of the image
+  \param fb: pointer to the frame buffer
+  \return true if there is a horizontal line, false otherwise
+ */
+/**************************************************************************/
+bool check_for_horizontal_line(const camera_fb_t *fb)
+{
+    // // calculate the start and end rows of the lowest third of the image
+    // int start_row = fb->height * 2 / 3;
+    // int end_row = fb->height - 1;
+
+    // // counter for the number of lines found
+    // int line_count = 0;
+
+    // // iterate over the rows in the lowest third of the image
+    // for (int y = start_row; y <= end_row; y++)
+    // {
+    //     // initialize the consecutive white pixel count to zero
+    //     int white_pixel_count = 0;
+
+    //     // iterate over the pixels in the current row
+    //     for (int x = 0; x < fb->width; x++)
+    //     {
+    //         // get the current pixel value
+    //         uint8_t pixel = fb->buf[y * fb->width + x];
+
+    //         // if the pixel is white (i.e., its value is above the threshold)
+    //         // then increment the consecutive white pixel count
+    //         if (pixel == 255)
+    //         {
+    //             white_pixel_count++;
+    //         }
+    //         // if the pixel is not white (i.e., its value is below the threshold)
+    //         // then reset the consecutive white pixel count
+    //         else
+    //         {
+    //             white_pixel_count = 0;
+    //         }
+
+    //         // if there are at least min_line_length consecutive white pixels
+    //         // then increment the line count
+    //         if (white_pixel_count >= min_line_length)
+    //         {
+    //             line_count++;
+    //             break;
+    //         }
+    //     }
+    // }
+
+    // // if three or more lines were found, return true
+    // if (line_count >= 3)
+    // {
+    //     return true;
+    // }
+    // // otherwise, return false
+    // else
+    // {
+    //     return false;
+    // }
     return false;
-  }
 }

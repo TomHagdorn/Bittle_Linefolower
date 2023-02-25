@@ -1,3 +1,18 @@
+/**
+ * @file linefollower.ino
+ * @brief Line follower robot using a camera.
+ *
+ * This file contains the code for a line follower robot that uses a camera to
+ * detect and follow a line. The robot has several behaviors, including
+ * following the line, avoiding obstacles, crossing the finish line, and
+ * recovering from losing the line.
+    \author Tom Hagdorn
+*/
+
+/**
+    \brief Check for ESP32 board.
+*/
+
 #if !defined ESP32
 #error Wrong board selected
 #endif
@@ -17,8 +32,11 @@
 #include <WiFi.h>
 #include <WebServer.h>
 
-const char *ssid = "Get off my Lan!";
-const char *password = "prettyflyforAWifi";
+//My files 
+#include "control.h"
+
+//const char *ssid = "Get off my Lan!";
+//const char *password = "prettyflyforAWifi";
 
 unsigned long stateTime = 0;
 
@@ -27,14 +45,13 @@ WebServer server(80);
 //! Image resolution:
 /*!
     default = "const framesize_t FRAME_SIZE_IMAGE = FRAMESIZE_VGA"
-
     Other available Frame Sizes:
     160x120 (QQVGA), 128x160 (QQVGA2), 176x144 (QCIF), 240x176 (HQVGA),
     320x240 (QVGA), 400x296 (CIF), 640x480 (VGA, default), 800x600 (SVGA),
     1024x768 (XGA), 1280x1024 (SXGA), 1600x1200 (UXGA)
 */
 
-const framesize_t FRAME_SIZE_IMAGE = FRAMESIZE_UXGA; // FRAMESIZE_QQVGA
+const framesize_t FRAME_SIZE_IMAGE = FRAMESIZE_QQVGA; // FRAMESIZE_QQVGA
 camera_fb_t *fb;
 
 //! Image Format
@@ -47,8 +64,8 @@ camera_fb_t *fb;
 
 
 
-#define IMAGE_WIDTH 800  ///< Image size Width
-#define IMAGE_HEIGHT 600 ///< Image size Height
+#define IMAGE_WIDTH 160  ///< Image size Width
+#define IMAGE_HEIGHT 120 ///< Image size Height
 
 //! Camera exposure
 /*!
@@ -80,7 +97,6 @@ const int min_line_length = 10;
 /*!
     Camera settings for CAMERA_MODEL_AI_THINKER OV2640
     Based on CameraWebServer sample code by ESP32 Arduino
-
 */
 #if defined(CAMERA_MODEL_AI_THINKER)
 #define PWDN_GPIO_NUM 32
@@ -104,7 +120,7 @@ const int min_line_length = 10;
 uint32_t lastCamera = 0; ///< To store time value for repeated capture
 
 // variables updated by nodered
-int pixel_threshold = 55;
+int pixel_threshold = 39;
 int recover_time  = 500;
 int Obst_left_t =1;
 int Obst_straight_t=1;
@@ -114,9 +130,7 @@ int Fin_line_width=1;
 int currentlinewidth = 1;
 int currentfinlinewidth =1;
 
-
-
-//possible states of the robot  **************************************************************
+//possible states of the robot
 enum State
 {
     FOLLOW_LINE,
@@ -131,14 +145,17 @@ State currentState = FOLLOW_LINE;
 bool finish_line_crossed = false;
 // define the wifi server
 
+
 //define state change time
 static unsigned long lastStateChangeTime = 0;
-
-// Setup Ultrsonic sensor   ********************************************************************
-const int TRIGGER_PIN = 4;
-const int ECHO_PIN = 5;
-
-
+/**************************************************************************/
+/*!
+  \brief  Setup function
+  Initialization for following:
+    disable Brownout detection
+    camera
+*/
+/**************************************************************************/
 void setup()
 {
     Serial.begin(serialSpeed); ///< Initialize serial communication
@@ -158,25 +175,38 @@ void setup()
     setupOnBoardFlash();
     setLedBrightness(ledBrightness);
     //Nodered setup
-    WiFi.begin(ssid, password);
-    int connRes = WiFi.waitForConnectResult();
-    if (connRes == WL_CONNECTED) {
-        //Serial.print("Connected to WiFi network with IP: ");
-        //TODO uncomment this to print the IP address
-        //TODO David
-        //Serial.println(WiFi.localIP());
-        server.begin();
-        //Call functions for the variable nodered values
-        //Change_Treshold_value();
-    } else {
-        Serial.println("Connection Failed!");
-        esp_restart();
-        return;
-    }
+
     
 
 }
+/**************************************************************************/
+/*!
+  \brief  Loop function
+  Capture image every 10 seconds
+*/
+/**************************************************************************/
+void loop()
+{       
+    
+    if ((unsigned long)(millis() - lastCamera) >=700UL)
+    {
+        esp_err_t res = camera_capture(&fb);
+        if (res == ESP_OK)
+        {   
+            //Serial.println(pixel_threshold);
+            update();
+            
+            // print image to serial monitor
+            //capture_still(fb);
 
+            // publishes the image to the server
+            // publishPictureToServer(fb, server);
+        }
+        // return the frame buffer back to the driver for reuse
+        esp_camera_fb_return(fb);
+        lastCamera = millis();
+    }
+}
 /**************************************************************************/
 /**
   Initialise Camera
@@ -230,8 +260,6 @@ bool initialiseCamera()
 
     return (camerr == ESP_OK); // Return boolean result of camera initialisation
 }
-
-
 /**************************************************************************/
 /**
   Camera Image Settings
@@ -270,17 +298,14 @@ bool cameraImageSettings()
 
     return true;
 }
-
+/**************************************************************************/
 /**
- * @brief Captures a frame from the camera and thresholds the image.
- *
- * This function captures a frame from the camera, checks for errors,
- * and thresholds the image to black and white.
- *
- * @param[out] fb Pointer to a camera_fb_t struct to store the captured frame.
- *
- * @return Returns `ESP_OK` if the function executed successfully, `ESP_FAIL` otherwise.
+  Camera Image Settings
+  Set Image parameters
+  Based on CameraWebServer sample code by ESP32 Arduino
+  \return true: successful, false: failed
  */
+/**************************************************************************/
 esp_err_t camera_capture(camera_fb_t **fb)
 {
     // acquire a frame
@@ -292,11 +317,27 @@ esp_err_t camera_capture(camera_fb_t **fb)
         return ESP_FAIL;
     }
 
-    // threshold the image
-    threshold_image(*fb);
+    // get the height and width of the frame
+    int height = (*fb)->height;
+    int width = (*fb)->width;
+
+    // threshold the entire frame
+    for (int row = 0; row < height; row++)
+    {
+        for (int col = 0; col < width; col++)
+        {
+            int index = row * width + col;
+
+            // threshold the pixel at the current index
+            // if the pixel is less than 210, set it to 255 (white)
+            (*fb)->buf[index] = ((*fb)->buf[index] < pixel_threshold) ? 255 : 0;
+        }
+    }
+    // print serial ok
+    // Serial.println("Camera Capture OK");
+
     return ESP_OK;
 }
-
 /**************************************************************************/
 /**
   Setup On Board Flash
@@ -321,37 +362,90 @@ void setLedBrightness(byte ledBrightness)
 }
 
 
-
 /**************************************************************************/
 /**
-  Capture Still
-  Capture a still image and print the pixel values to the serial monitor
-  \param fb: pointer to the frame buffer
-  \return true if the image was captured successfully, false otherwise
+ * Update the current state of the line follower.
+ *
+ * This function updates the current state of the line follower based on the
+ * current conditions of the line, the presence of obstacles, and the presence
+ * of the finish line. It then executes the appropriate behavior based on the
+ * current state.
+ *
+ * The possible states are:
+ * - FOLLOW_LINE: Follow the line using the camera.
+ * - AVOID_OBSTACLE: Avoid an obstacle by walking around it.
+ * - CROSS_FINISH_LINE: Cross the finish line.
+ * - FINISH: The robot has finished the course.
+ * - RECOVER_FROM_NO_LINE: Recover from losing the line by walking backwards in a curve.
+ *
+ * \param fb: pointer to the frame buffer.
  */
 /**************************************************************************/
-bool capture_still(const camera_fb_t *fb)
+void update()
 {
-    // Calculate the height of the lowest third of the image
-    int third_height = IMAGE_HEIGHT / 3;
+    static unsigned long startTime = millis();
 
-    // Iterate over the rows in the lowest third of the image
-    for (int row_index = 2 * third_height; row_index < IMAGE_HEIGHT; ++row_index)
+    switch (currentState)
     {
-        // Iterate over the columns in the current row
-        for (int col_index = 0; col_index < IMAGE_WIDTH; ++col_index)
+    case FOLLOW_LINE:
+        //Serial.println("\nFOLLOW_LINE");
+        if (line_follower(fb))
         {
-            // Print the value of the current pixel
-            Serial.print(fb->buf[IMAGE_WIDTH * row_index + col_index]);
-            Serial.print(" ");
+            lastStateChangeTime = millis();
+            // line follower returned true, indicating that the line was found
+            if (detect_obstacle(fb) && millis() - lastStateChangeTime >= 9000)
+            {
+                currentState = AVOID_OBSTACLE;
+                lastStateChangeTime = millis();
+            }
+            else if (check_for_horizontal_line(fb) && (millis() - startTime >= 60000))
+            {
+                currentState = CROSS_FINISH_LINE;
+                lastStateChangeTime = millis();
+            }
         }
-        // Move to the next line after printing the values for the current row
-        Serial.print("\n");
+        else
+        {
+            if (millis() - lastStateChangeTime >= 9000)
+            {
+                // line follower returned false, indicating that the line was not found
+                // and at least 3 seconds have passed since the last state change
+                currentState = RECOVER_FROM_NO_LINE;
+                lastStateChangeTime = millis();
+            }
+        }
+        break;
+    case AVOID_OBSTACLE:
+        //Serial.println("\nAVOID_OBSTACLE");
+        avoid_obstacle();
+        currentState = FOLLOW_LINE;
+        lastStateChangeTime = millis();
+
+        break;
+    case CROSS_FINISH_LINE:
+        //Serial.println("\nCROSS_FINISH_LINE");
+        crossFinishLine();
+        if (finish_line_crossed == false)
+        {
+            finish_line_crossed = true;
+            cool_move();
+            currentState = FOLLOW_LINE;
+            lastStateChangeTime = millis();
+        }
+        else
+        {
+            currentState = FINISH;
+        }
+        break;
+    case RECOVER_FROM_NO_LINE:
+        //Serial.println("\nRECOVER_FROM_NO_LINE");
+        recover();
+        // line follower returned true, indicating that the line was found
+        currentState = FOLLOW_LINE;
+        lastStateChangeTime = millis();
+        break;
+    case FINISH:
+        // Robot has finished, do nothing
+        break;
     }
-    Serial.println();
-    // Return true to indicate that the still was successfully captured
-    return true;
 }
-
-
-
