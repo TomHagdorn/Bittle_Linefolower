@@ -292,6 +292,8 @@ esp_err_t camera_capture(camera_fb_t **fb)
         return ESP_FAIL;
     }
 
+    // threshold the image
+    threshold_image(*fb);
     return ESP_OK;
 }
 
