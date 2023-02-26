@@ -410,7 +410,7 @@ void update()
         {
             lastStateChangeTime = millis();
             // line follower returned true, indicating that the line was found
-            if (detect_obstacle(fb) && millis() - lastStateChangeTime >= 9000)
+            if (detect_obstacle())
             {
                 currentState = AVOID_OBSTACLE;
                 lastStateChangeTime = millis();
