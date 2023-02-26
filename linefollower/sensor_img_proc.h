@@ -114,7 +114,7 @@ int get_middle_point(const camera_fb_t *fb, double start_fraction, double end_fr
   \param fb: pointer to the frame buffer
   \return true if an obstacle is found, false otherwise
  */
-bool detect_obstacle(const camera_fb_t *fb)
+int get_distance()
 {
     // Clears the trigPin
     digitalWrite(trigPin, LOW);
@@ -130,14 +130,7 @@ bool detect_obstacle(const camera_fb_t *fb)
     // Prints the distance on the Serial Monitor
     //Serial.print("Distance: ");
     //Serial.println(distance);
-    if (if (distance <= 15))
-    {
-        return true;
-    }
-    else
-    {
-        return false;
-    }
+    return distance;
 }
 
 /**************************************************************************/

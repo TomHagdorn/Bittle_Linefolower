@@ -154,6 +154,7 @@ bool finish_line_crossed = false;
 
 // define variables for the ultrasound sensor
 long duration;
+long start_duration;
 int distance;
 
 
