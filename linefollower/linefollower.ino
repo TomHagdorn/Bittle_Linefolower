@@ -130,6 +130,13 @@ int Fin_line_width=1;
 int currentlinewidth = 1;
 int currentfinlinewidth =1;
 
+// Pin definitions for ultrasound sensor
+const int trigPin = 12;
+const int echoPin = 13;
+
+//Pin definitions for LEDs
+const int led_control = 4;
+
 //possible states of the robot
 enum State
 {
@@ -144,6 +151,10 @@ State currentState = FOLLOW_LINE;
 // bool to decide if the finish line has been crossed already
 bool finish_line_crossed = false;
 // define the wifi server
+
+// define variables for the ultrasound sensor
+long duration;
+int distance;
 
 
 //define state change time
@@ -160,6 +171,8 @@ void setup()
 {
     Serial.begin(serialSpeed); ///< Initialize serial communication
 
+
+
     WRITE_PERI_REG(RTC_CNTL_BROWN_OUT_REG, 0); ///< Disable 'brownout detector'
 
     // Serial.print(("\nInitialising camera: "));
@@ -174,6 +187,9 @@ void setup()
 
     setupOnBoardFlash();
     setLedBrightness(ledBrightness);
+    // Ultrasound sensor setup
+    pinMode(trigPin, OUTPUT); // Sets the trigPin as an Output
+    pinMode(echoPin, INPUT); // Sets the echoPin as an Input
     //Nodered setup
 
     

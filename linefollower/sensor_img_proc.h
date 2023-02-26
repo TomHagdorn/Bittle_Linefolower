@@ -116,23 +116,21 @@ int get_middle_point(const camera_fb_t *fb, double start_fraction, double end_fr
  */
 bool detect_obstacle(const camera_fb_t *fb)
 {
-    // calculate the starting and ending fractions for the top, middle, and bottom thirds of the frame
-    double start_fraction_top = 0.0;
-    double end_fraction_top = 1.0 / 3.0;
-    double start_fraction_middle = 1.0 / 3.0;
-    double end_fraction_middle = 2.0 / 3.0;
-    double start_fraction_bottom = 2.0 / 3.0;
-    double end_fraction_bottom = 1.0;
-
-    // get the middle points for the top, middle, and bottom thirds of the frame
-    int middle_point_top = get_middle_point(fb, start_fraction_top, end_fraction_top);
-    int middle_point_middle = get_middle_point(fb, start_fraction_middle, end_fraction_middle);
-    int middle_point_bottom = get_middle_point(fb, start_fraction_bottom, end_fraction_bottom);
-
-    // if the middle point for the bottom third of the frame is not -1 (i.e., a valid row was found),
-    // and the middle points for the top and middle thirds are -1 (i.e., no valid rows were found),
-    // then we consider an obstacle to have been detected
-    if (middle_point_bottom != -1 && middle_point_top == -1 && middle_point_middle == -1)
+    // Clears the trigPin
+    digitalWrite(trigPin, LOW);
+    delayMicroseconds(2);
+    // Sets the trigPin on HIGH state for 10 micro seconds
+    digitalWrite(trigPin, HIGH);
+    delayMicroseconds(10);
+    digitalWrite(trigPin, LOW);
+    // Reads the echoPin, returns the sound wave travel time in microseconds
+    duration = pulseIn(echoPin, HIGH);
+    // Calculating the distance
+    distance = duration * 0.034 / 2;
+    // Prints the distance on the Serial Monitor
+    //Serial.print("Distance: ");
+    //Serial.println(distance);
+    if (if (distance <= 15))
     {
         return true;
     }
