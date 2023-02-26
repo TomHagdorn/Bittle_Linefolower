@@ -47,6 +47,13 @@ bool line_follower(const camera_fb_t *fb)
 }
 
 
+bool detect_obstacle() { 
+    if (get_distance() < 15 && get_distance() != -1) {
+        return true;
+    }
+    return false;
+}
+
 void avoid_obstacle() {
     //TODO fix this function
     // // Stop the robot
