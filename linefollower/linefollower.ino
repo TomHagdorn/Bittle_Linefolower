@@ -32,6 +32,8 @@
 #include <WiFi.h>
 #include <WebServer.h>
 
+#include <cmath>
+
 //My files 
 #include "control.h"
 
@@ -120,7 +122,7 @@ const int min_line_length = 10;
 uint32_t lastCamera = 0; ///< To store time value for repeated capture
 
 // variables updated by nodered
-int pixel_threshold = 39;
+int pixel_threshold = 200;
 int recover_time  = 500;
 int Obst_left_t =1;
 int Obst_straight_t=1;
@@ -129,6 +131,20 @@ int Line_width=1;
 int Fin_line_width=1;
 int currentlinewidth = 1;
 int currentfinlinewidth =1;
+int obstacle_detection_dist = 15;
+
+//filter settings
+const int kernelSize = 3; // kernel size for gaussian blur
+
+// poiner to the sobel gradient
+//int *gradient;
+
+// Pin definitions for ultrasound sensor
+const int trigPin = 12;
+const int echoPin = 13;
+
+//Pin definitions for LEDs
+const int led_control = 4;
 
 //possible states of the robot
 enum State
@@ -146,6 +162,9 @@ bool finish_line_crossed = false;
 // define the wifi server
 
 
+
+
+
 //define state change time
 static unsigned long lastStateChangeTime = 0;
 /**************************************************************************/
@@ -159,6 +178,8 @@ static unsigned long lastStateChangeTime = 0;
 void setup()
 {
     Serial.begin(serialSpeed); ///< Initialize serial communication
+
+
 
     WRITE_PERI_REG(RTC_CNTL_BROWN_OUT_REG, 0); ///< Disable 'brownout detector'
 
@@ -174,6 +195,9 @@ void setup()
 
     setupOnBoardFlash();
     setLedBrightness(ledBrightness);
+    // Ultrasound sensor setup
+    pinMode(trigPin, OUTPUT); // Sets the trigPin as an Output
+    pinMode(echoPin, INPUT); // Sets the echoPin as an Input
     //Nodered setup
 
     
@@ -189,7 +213,8 @@ void loop()
 {       
     
     if ((unsigned long)(millis() - lastCamera) >=700UL)
-    {
+    {   
+        
         esp_err_t res = camera_capture(&fb);
         if (res == ESP_OK)
         {   
@@ -204,6 +229,8 @@ void loop()
         }
         // return the frame buffer back to the driver for reuse
         esp_camera_fb_return(fb);
+        //free(gradient);
+        // free the gradient
         lastCamera = millis();
     }
 }
@@ -317,24 +344,19 @@ esp_err_t camera_capture(camera_fb_t **fb)
         return ESP_FAIL;
     }
 
-    // get the height and width of the frame
-    int height = (*fb)->height;
-    int width = (*fb)->width;
+    // int height = (*fb)->height;
+    // int width = (*fb)->width;
 
-    // threshold the entire frame
-    for (int row = 0; row < height; row++)
-    {
-        for (int col = 0; col < width; col++)
-        {
-            int index = row * width + col;
+    // int *gradient = (int*) malloc(height * width * sizeof(int));
 
-            // threshold the pixel at the current index
-            // if the pixel is less than 210, set it to 255 (white)
-            (*fb)->buf[index] = ((*fb)->buf[index] < pixel_threshold) ? 255 : 0;
-        }
-    }
-    // print serial ok
-    // Serial.println("Camera Capture OK");
+    // gaussianBlur(*fb, kernelSize);
+
+    // sobel(*fb, gradient);
+
+    // threshold(*fb, pixel_threshold, gradient);
+
+    // free(gradient);
+    threshold_image(*fb, pixel_threshold);
 
     return ESP_OK;
 }
@@ -393,12 +415,12 @@ void update()
         {
             lastStateChangeTime = millis();
             // line follower returned true, indicating that the line was found
-            if (detect_obstacle(fb) && millis() - lastStateChangeTime >= 9000)
+            if (detect_obstacle())
             {
                 currentState = AVOID_OBSTACLE;
                 lastStateChangeTime = millis();
             }
-            else if (check_for_horizontal_line(fb) && (millis() - startTime >= 60000))
+            else if (check_for_horizontal_line(fb,min_line_length) && (millis() - startTime >= 60000))
             {
                 currentState = CROSS_FINISH_LINE;
                 lastStateChangeTime = millis();

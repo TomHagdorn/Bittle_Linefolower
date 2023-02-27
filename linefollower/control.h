@@ -8,12 +8,11 @@
   \return true if a line is found, false otherwise
  */
 /**************************************************************************/
-bool line_follower(const camera_fb_t *fb)
+bool line_follower(camera_fb_t *fb)
 {
     // calculate the starting and ending fractions for the 3/4 to 1 portion of the frame
     double start_fraction = 3.0 / 4.0;
     double end_fraction = 1.0;
-
     // get the middle point for the 3/4 to 1 portion of the frame
     int middle_point = get_middle_point(fb, start_fraction, end_fraction);
     if (middle_point == -1)
@@ -46,6 +45,14 @@ bool line_follower(const camera_fb_t *fb)
     }
 }
 
+
+bool detect_obstacle() { 
+    //TODO fix this function
+    // if (get_distance(trigPin ,echoPin) < obstacle_detection_dist && get_distance(trigPin,echoPin) != -1) {
+    //     return true;
+    // }
+    return false;
+}
 
 void avoid_obstacle() {
     //TODO fix this function
