@@ -36,6 +36,7 @@
 
 //My files 
 #include "control.h"
+#include "calibration.h"
 
 //const char *ssid = "Get off my Lan!";
 //const char *password = "prettyflyforAWifi";
@@ -222,7 +223,8 @@ void loop()
             update();
             
             // print image to serial monitor
-            //capture_still(fb);
+            capture_still(fb);
+            
 
             // publishes the image to the server
             // publishPictureToServer(fb, server);
@@ -353,10 +355,10 @@ esp_err_t camera_capture(camera_fb_t **fb)
 
     // sobel(*fb, gradient);
 
-    // threshold(*fb, pixel_threshold, gradient);
+    // threshold_gradient(*fb, pixel_threshold, gradient);
 
     // free(gradient);
-    threshold_image(*fb, pixel_threshold);
+    //threshold_image(*fb, pixel_threshold);
 
     return ESP_OK;
 }

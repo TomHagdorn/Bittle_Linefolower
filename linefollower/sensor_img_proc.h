@@ -90,7 +90,7 @@ void threshold_gradient(camera_fb_t *fb, int threshold, int* gradient) {
 }
 
 //TODO Implement the newer functions later on. 
-void threshold_image(const camera_fb_t *fb, int threshold)
+void threshold_image(camera_fb_t *fb, int threshold)
 {
     // get the height and width of the frame
     int height = fb->height;
