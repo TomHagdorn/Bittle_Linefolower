@@ -32,6 +32,8 @@
 #include <WiFi.h>
 #include <WebServer.h>
 
+#include <cmath>
+
 //My files 
 #include "control.h"
 
@@ -130,6 +132,12 @@ int Fin_line_width=1;
 int currentlinewidth = 1;
 int currentfinlinewidth =1;
 
+//filter settings
+const kernelSize = 3; // kernel size for gaussian blur
+
+// poiner to the sobel gradient
+int* gradient
+
 // Pin definitions for ultrasound sensor
 const int trigPin = 12;
 const int echoPin = 13;
@@ -156,6 +164,8 @@ bool finish_line_crossed = false;
 long duration;
 long start_duration;
 int distance;
+
+
 
 
 //define state change time
@@ -334,22 +344,10 @@ esp_err_t camera_capture(camera_fb_t **fb)
         return ESP_FAIL;
     }
 
-    // get the height and width of the frame
-    int height = (*fb)->height;
-    int width = (*fb)->width;
+    gaussianBlur(*fb, kernelSize);
+    sobel(*fb);
+    threshold(*fb, pixel_threshold);
 
-    // threshold the entire frame
-    for (int row = 0; row < height; row++)
-    {
-        for (int col = 0; col < width; col++)
-        {
-            int index = row * width + col;
-
-            // threshold the pixel at the current index
-            // if the pixel is less than 210, set it to 255 (white)
-            (*fb)->buf[index] = ((*fb)->buf[index] < pixel_threshold) ? 255 : 0;
-        }
-    }
     // print serial ok
     // Serial.println("Camera Capture OK");
 

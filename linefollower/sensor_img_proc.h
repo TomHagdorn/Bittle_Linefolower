@@ -1,3 +1,94 @@
+
+
+void gaussianBlur(camera_fb_t *fb, int kernelSize) {
+  float kernel[] = { 1, 2, 1, 2, 4, 2, 1, 2, 1 }; // 3x3 Gaussian kernel
+  int radius = kernelSize / 2;   
+
+  int height = fb->height;
+  int width = fb->width;
+
+  for (int y = 0; y < height; y++) {
+    for (int x = 0; x < width; x++) {
+      float sum = 0;
+      float weight = 0;
+
+      for (int ky = -radius; ky <= radius; ky++) {
+        for (int kx = -radius; kx <= radius; kx++) {
+          int px = x + kx;
+          int py = y + ky;
+
+          if (px >= 0 && px < width && py >= 0 && py < height) {
+            float w = kernel[(ky + radius) * kernelSize + (kx + radius)];
+            sum += w * fb->buf[py * width + px];
+            weight += w;
+          }
+        }
+      }
+
+      fb->buf[y * width + x] = (uint8_t)(sum / weight);
+    }
+  }
+}
+
+void sobel(const camera_fb_t *fb) {
+  int sobelX[] = { -1, 0, 1, -2, 0, 2, -1, 0, 1 }; // Sobel operator for x direction
+  int sobelY[] = { -1, -2, -1, 0, 0, 0, 1, 2, 1 }; // Sobel operator for y direction
+
+  int radius = 1;
+
+  int height = fb->height;
+  int width = fb->width;
+
+  for (int y = radius; y < height - radius; y++) {
+    for (int x = radius; x < width - radius; x++) {
+      int sumX = 0;
+      int sumY = 0;
+
+      for (int ky = -radius; ky <= radius; ky++) {
+        for (int kx = -radius; kx <= radius; kx++) {
+          int px = x + kx;
+          int py = y + ky;
+
+          int index = (ky + radius) * (radius * 2 + 1) + (kx + radius);
+          int value = fb->buf[py * width + px];
+
+          sumX += sobelX[index] * value;
+          sumY += sobelY[index] * value;
+        }
+      }
+
+      gradient[y * width + x] = abs(sumX) + abs(sumY); // Compute the gradient magnitude
+    }
+  }
+}
+
+void threshold(const int* gradient, const camera_fb_t *fb, int threshold) {
+    // get the height and width of the frame
+    int height = fb->height;
+    int width = fb->width;
+
+    // threshold the entire frame using the gradient magnitude
+    for (int row = 0; row < height; row++)
+    {
+        for (int col = 0; col < width; col++)
+        {
+            int index = row * width + col;
+
+            // compare the magnitude of the gradient at the current index to the threshold
+            int mag = gradient[index];
+            if (mag < threshold) {
+                // if the magnitude is less than the threshold, set the pixel to white (255)
+                fb->buf[index] = 255;
+            } else {
+                // otherwise, set the pixel to black (0)
+                fb->buf[index] = 0;
+            }
+        }
+    }
+}
+
+
+
 /**
  * @brief Finds the middle point of the white pixels in a region of the camera frame buffer.
  *
@@ -143,57 +234,60 @@ int get_distance()
 /**************************************************************************/
 bool check_for_horizontal_line(const camera_fb_t *fb)
 {
-    // // calculate the start and end rows of the lowest third of the image
-    // int start_row = fb->height * 2 / 3;
-    // int end_row = fb->height - 1;
+    // calculate the start and end rows of the lowest third of the image
+    int start_row = fb->height * 2 / 3;
+    int end_row = fb->height - 1;
 
-    // // counter for the number of lines found
-    // int line_count = 0;
+    // counter for the number of lines found
+    int line_count = 0;
 
-    // // iterate over the rows in the lowest third of the image
-    // for (int y = start_row; y <= end_row; y++)
-    // {
-    //     // initialize the consecutive white pixel count to zero
-    //     int white_pixel_count = 0;
+    // iterate over the rows in the lowest third of the image
+    for (int y = start_row; y <= end_row; y++)
+    {
+        // initialize the consecutive white pixel count to zero
+        int white_pixel_count = 0;
 
-    //     // iterate over the pixels in the current row
-    //     for (int x = 0; x < fb->width; x++)
-    //     {
-    //         // get the current pixel value
-    //         uint8_t pixel = fb->buf[y * fb->width + x];
+        // iterate over the pixels in the current row
+        for (int x = 0; x < fb->width; x++)
+        {
+            // get the current pixel value
+            uint8_t pixel = fb->buf[y * fb->width + x];
 
-    //         // if the pixel is white (i.e., its value is above the threshold)
-    //         // then increment the consecutive white pixel count
-    //         if (pixel == 255)
-    //         {
-    //             white_pixel_count++;
-    //         }
-    //         // if the pixel is not white (i.e., its value is below the threshold)
-    //         // then reset the consecutive white pixel count
-    //         else
-    //         {
-    //             white_pixel_count = 0;
-    //         }
+            // if the pixel is white (i.e., its value is above the threshold)
+            // then increment the consecutive white pixel count
+            if (pixel == 255)
+            {
+                white_pixel_count++;
+            }
+            // if the pixel is not white (i.e., its value is below the threshold)
+            // then reset the consecutive white pixel count
+            else
+            {
+                white_pixel_count = 0;
+            }
 
-    //         // if there are at least min_line_length consecutive white pixels
-    //         // then increment the line count
-    //         if (white_pixel_count >= min_line_length)
-    //         {
-    //             line_count++;
-    //             break;
-    //         }
-    //     }
-    // }
+            // if there are at least min_line_length consecutive white pixels
+            // then increment the line count
+            if (white_pixel_count >= min_line_length)
+            {
+                line_count++;
+                break;
+            }
+        }
+    }
 
-    // // if three or more lines were found, return true
-    // if (line_count >= 3)
-    // {
-    //     return true;
-    // }
-    // // otherwise, return false
-    // else
-    // {
-    //     return false;
-    // }
-    return false;
+    // if three or more lines were found, return true
+    if (line_count >= 3)
+    {
+        return true;
+    }
+    // otherwise, return false
+    else
+    {
+        return false;
+    }
+    //return false;
 }
+
+
+
