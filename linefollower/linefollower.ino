@@ -122,7 +122,7 @@ const int min_line_length = 10;
 uint32_t lastCamera = 0; ///< To store time value for repeated capture
 
 // variables updated by nodered
-int pixel_threshold = 39;
+int pixel_threshold = 200;
 int recover_time  = 500;
 int Obst_left_t =1;
 int Obst_straight_t=1;
@@ -131,12 +131,13 @@ int Line_width=1;
 int Fin_line_width=1;
 int currentlinewidth = 1;
 int currentfinlinewidth =1;
+int obstacle_detection_dist = 15;
 
 //filter settings
-const kernelSize = 3; // kernel size for gaussian blur
+const int kernelSize = 3; // kernel size for gaussian blur
 
 // poiner to the sobel gradient
-int* gradient
+//int *gradient;
 
 // Pin definitions for ultrasound sensor
 const int trigPin = 12;
@@ -160,10 +161,6 @@ State currentState = FOLLOW_LINE;
 bool finish_line_crossed = false;
 // define the wifi server
 
-// define variables for the ultrasound sensor
-long duration;
-long start_duration;
-int distance;
 
 
 
@@ -216,7 +213,8 @@ void loop()
 {       
     
     if ((unsigned long)(millis() - lastCamera) >=700UL)
-    {
+    {   
+        
         esp_err_t res = camera_capture(&fb);
         if (res == ESP_OK)
         {   
@@ -231,6 +229,8 @@ void loop()
         }
         // return the frame buffer back to the driver for reuse
         esp_camera_fb_return(fb);
+        //free(gradient);
+        // free the gradient
         lastCamera = millis();
     }
 }
@@ -344,12 +344,19 @@ esp_err_t camera_capture(camera_fb_t **fb)
         return ESP_FAIL;
     }
 
-    gaussianBlur(*fb, kernelSize);
-    sobel(*fb);
-    threshold(*fb, pixel_threshold);
+    // int height = (*fb)->height;
+    // int width = (*fb)->width;
 
-    // print serial ok
-    // Serial.println("Camera Capture OK");
+    // int *gradient = (int*) malloc(height * width * sizeof(int));
+
+    // gaussianBlur(*fb, kernelSize);
+
+    // sobel(*fb, gradient);
+
+    // threshold(*fb, pixel_threshold, gradient);
+
+    // free(gradient);
+    threshold_image(*fb, pixel_threshold);
 
     return ESP_OK;
 }
@@ -413,7 +420,7 @@ void update()
                 currentState = AVOID_OBSTACLE;
                 lastStateChangeTime = millis();
             }
-            else if (check_for_horizontal_line(fb) && (millis() - startTime >= 60000))
+            else if (check_for_horizontal_line(fb,min_line_length) && (millis() - startTime >= 60000))
             {
                 currentState = CROSS_FINISH_LINE;
                 lastStateChangeTime = millis();

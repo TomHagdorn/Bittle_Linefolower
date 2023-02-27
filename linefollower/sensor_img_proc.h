@@ -30,7 +30,7 @@ void gaussianBlur(camera_fb_t *fb, int kernelSize) {
   }
 }
 
-void sobel(const camera_fb_t *fb) {
+void sobel(camera_fb_t *fb, int *gradient) {
   int sobelX[] = { -1, 0, 1, -2, 0, 2, -1, 0, 1 }; // Sobel operator for x direction
   int sobelY[] = { -1, -2, -1, 0, 0, 0, 1, 2, 1 }; // Sobel operator for y direction
 
@@ -61,11 +61,11 @@ void sobel(const camera_fb_t *fb) {
     }
   }
 }
-
-void threshold(const int* gradient, const camera_fb_t *fb, int threshold) {
+//TODO kust include the global variable pixel_threshold insted giving the function a threshold
+void threshold_gradient(camera_fb_t *fb, int threshold, int* gradient) {
     // get the height and width of the frame
-    int height = fb->height;
-    int width = fb->width;
+  int height = fb->height;
+  int width = fb->width;
 
     // threshold the entire frame using the gradient magnitude
     for (int row = 0; row < height; row++)
@@ -76,6 +76,8 @@ void threshold(const int* gradient, const camera_fb_t *fb, int threshold) {
 
             // compare the magnitude of the gradient at the current index to the threshold
             int mag = gradient[index];
+            // adding this print somehow causes 
+            //Serial.println(mag  +"\t" + threshold);
             if (mag < threshold) {
                 // if the magnitude is less than the threshold, set the pixel to white (255)
                 fb->buf[index] = 255;
@@ -83,6 +85,27 @@ void threshold(const int* gradient, const camera_fb_t *fb, int threshold) {
                 // otherwise, set the pixel to black (0)
                 fb->buf[index] = 0;
             }
+        }
+    }
+}
+
+//TODO Implement the newer functions later on. 
+void threshold_image(const camera_fb_t *fb, int threshold)
+{
+    // get the height and width of the frame
+    int height = fb->height;
+    int width = fb->width;
+
+    // threshold the entire frame
+    for (int row = 0; row < height; row++)
+    {
+        for (int col = 0; col < width; col++)
+        {
+            int index = row * width + col;
+
+            // threshold the pixel at the current index
+            // if the pixel is less than 210, set it to 255 (white)
+            fb->buf[index] = (fb->buf[index] < threshold) ? 255 : 0;
         }
     }
 }
@@ -104,7 +127,7 @@ void threshold(const int* gradient, const camera_fb_t *fb, int threshold) {
  *         white pixels were found.
  */
 int get_middle_point(const camera_fb_t *fb, double start_fraction, double end_fraction)
-{
+{   
     // initialize the starting and ending x-coordinates to zero
     int start_x = 0;
     int end_x = 0;
@@ -136,7 +159,8 @@ int get_middle_point(const camera_fb_t *fb, double start_fraction, double end_fr
     {
         // iterate over the columns in the current row
         for (int x = 0; x < fb->width; x++)
-        {
+        {   
+    
             // get the current pixel value
             uint8_t pixel = fb->buf[y * fb->width + x];
 
@@ -177,6 +201,7 @@ int get_middle_point(const camera_fb_t *fb, double start_fraction, double end_fr
                 // calculate the middle x-coordinate of the white pixels
                 int middle_point = (end_x + start_x) / 2;
                 // add the middle point to the vector
+
                 middle_points.push_back(middle_point);
             }
         }
@@ -205,7 +230,7 @@ int get_middle_point(const camera_fb_t *fb, double start_fraction, double end_fr
   \param fb: pointer to the frame buffer
   \return true if an obstacle is found, false otherwise
  */
-int get_distance()
+int get_distance(int trigPin, int echoPin)
 {
     // Clears the trigPin
     digitalWrite(trigPin, LOW);
@@ -215,9 +240,9 @@ int get_distance()
     delayMicroseconds(10);
     digitalWrite(trigPin, LOW);
     // Reads the echoPin, returns the sound wave travel time in microseconds
-    duration = pulseIn(echoPin, HIGH);
+    long duration = pulseIn(echoPin, HIGH);
     // Calculating the distance
-    distance = duration * 0.034 / 2;
+    int distance = duration * 0.034 / 2;
     // Prints the distance on the Serial Monitor
     //Serial.print("Distance: ");
     //Serial.println(distance);
@@ -232,7 +257,7 @@ int get_distance()
   \return true if there is a horizontal line, false otherwise
  */
 /**************************************************************************/
-bool check_for_horizontal_line(const camera_fb_t *fb)
+bool check_for_horizontal_line(const camera_fb_t *fb, int min_line_length)
 {
     // calculate the start and end rows of the lowest third of the image
     int start_row = fb->height * 2 / 3;
