@@ -7,7 +7,7 @@
 
 const char* ssid = "Get off my Lan!";
 const char* password = "SchroedingersChat";
-int pixel_threshold = 220; // the variable that you want to update
+int pixel_threshold = 1; // the variable that you want to update
 
 WebServer server(80);
 
@@ -19,16 +19,18 @@ void Change_Treshold_value(){
   });
 }
 
-void setup_server(camera_fb_t *fb) {
+void setup_server() {
     // server will do the following every time [esp32-ip]/image is requested:
     server.on(F("/image"), [&]() {
         // send message on serial for debugging
-        threshold_image(fb, pixel_threshold);
+        // take picture
+        camera_fb_t * frame_buffer = esp_camera_fb_get();
+        threshold_image(frame_buffer, pixel_threshold);
 
         // convert frame to bmp
         uint8_t * bmp_buffer = NULL;
         size_t bmp_buffer_length = 0;
-        frame2bmp(fb, &bmp_buffer, &bmp_buffer_length);
+        frame2bmp(frame_buffer, &bmp_buffer, &bmp_buffer_length);
 
         // send image
         server.send_P(200, "image/bmp", (const char *)bmp_buffer, bmp_buffer_length);
@@ -36,8 +38,8 @@ void setup_server(camera_fb_t *fb) {
         // free memory and return buffer
         // note that the picture is actually taken when you return the frame buffer
         free(bmp_buffer);
-        }
-    );
+        esp_camera_fb_return(frame_buffer);
+    });
 
     // start server
     server.begin();
