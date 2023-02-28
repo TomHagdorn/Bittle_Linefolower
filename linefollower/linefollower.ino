@@ -27,6 +27,7 @@
 #include "camera_setup.h"
 #include "control.h"
 #include "node_red.h"
+#include "calibration.h"
 
 
 
@@ -107,7 +108,7 @@ void setup()
     // wifi setup
     setup_wifi();
     // configure server
-    setup_server();
+    setup_server(fb);
 
     WiFi.begin(ssid, password);
     int connRes = WiFi.waitForConnectResult();
@@ -142,14 +143,15 @@ void setup()
 */
 /**************************************************************************/
 void loop()
-{       
+{    
+     server.handleClient(); 
     
     if ((unsigned long)(millis() - lastCamera) >=700UL)
     {   
         
 
-        // esp_err_t res = camera_capture();
-        // server.handleClient();
+        //esp_err_t res = camera_capture();
+        
 
         // if (res == ESP_OK)
         // {   
@@ -157,14 +159,14 @@ void loop()
         //     //update();
             
         //     // print image to serial monitor
-        //     //capture_still(fb);
+        threshold_image(fb,pixel_threshold);
+        //capture_still(fb);
             
 
-        //     // publishes the image to the server
-        //     // publishPictureToServer(fb, server);
         // }
         // return the frame buffer back to the driver for reuse
-        //esp_camera_fb_return(fb);
+        
+        esp_camera_fb_return(fb);
         
         //free(gradient);
         // free the gradient
