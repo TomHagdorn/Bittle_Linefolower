@@ -40,8 +40,12 @@
 //My files 
 #include "control.h"
 #include "node_red.h"
+
+
+
 #define SSID "esp32_server"
 #define PWD "123456789"
+
 
 
 unsigned long stateTime = 0;
@@ -243,21 +247,24 @@ void loop()
     if ((unsigned long)(millis() - lastCamera) >=700UL)
     {   
         
+
         esp_err_t res = camera_capture(&fb);
         server.handleClient();
+
         if (res == ESP_OK)
         {   
             //Serial.println(pixel_threshold);
             update();
             
             // print image to serial monitor
-            //capture_still(fb);
+            capture_still(fb);
+            
 
             // publishes the image to the server
             // publishPictureToServer(fb, server);
         }
         // return the frame buffer back to the driver for reuse
-        //esp_camera_fb_return(fb);
+        esp_camera_fb_return(fb);
         
         //free(gradient);
         // free the gradient
@@ -363,22 +370,35 @@ bool cameraImageSettings()
   \return true: successful, false: failed
  */
 /**************************************************************************/
-esp_err_t camera_capture(camera_fb_t **fb)
+esp_err_t camera_capture()
 {
     // acquire a frame
-    *fb = esp_camera_fb_get();
+    fb = esp_camera_fb_get();
     ESP_LOGE(TAG, "Camera Capture in progress");
-    if (!*fb)
+    if (!fb)
     {
         ESP_LOGE(TAG, "Camera Capture Failed");
         return ESP_FAIL;
     }
 
-
-    threshold_image(*fb, pixel_threshold);
-    // return buffer to camera
-    esp_camera_fb_return(*fb);
+    threshold_image(*fb, pixel_threshold)
     
+
+    // int height = (fb)->height;
+    // int width = (fb)->width;
+
+    // int *gradient = (int*) malloc(height * width * sizeof(int));
+
+    // gaussianBlur(fb ,kernelSize);
+
+    // sobel(fb ,gradient);
+
+    // threshold_gradient(fb, pixel_threshold, gradient);
+
+    // free(gradient);
+    //threshold_image(pixel_threshold);
+
+
     return ESP_OK;
 }
 /**************************************************************************/
@@ -532,8 +552,4 @@ void setup_server() {
     IPAddress myIP = WiFi.softAPIP();
     Serial.printf("IP   - %s\n", myIP.toString());
 }*/
-
-
-
-
 

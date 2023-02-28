@@ -96,7 +96,7 @@ void recover()
     Serial.print("kwkB");
     while(millis() - start_time < 1000) {
     }
-    Serial.print("kbalanceI");
+    Serial.print("kbalance");
     return;
 }
 

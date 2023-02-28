@@ -1,7 +1,7 @@
-
-
 void gaussianBlur(camera_fb_t *fb, int kernelSize) {
   float kernel[] = { 1, 2, 1, 2, 4, 2, 1, 2, 1 }; // 3x3 Gaussian kernel
+
+  //TODO doesnt make sense is not an int
   int radius = kernelSize / 2;   
 
   int height = fb->height;
@@ -76,7 +76,7 @@ void threshold_gradient(camera_fb_t *fb, int threshold, int* gradient) {
 
             // compare the magnitude of the gradient at the current index to the threshold
             int mag = gradient[index];
-            // adding this print somehow causes 
+            // adding this print somehow causes it to break
             //Serial.println(mag  +"\t" + threshold);
             if (mag < threshold) {
                 // if the magnitude is less than the threshold, set the pixel to white (255)
@@ -90,11 +90,13 @@ void threshold_gradient(camera_fb_t *fb, int threshold, int* gradient) {
 }
 
 //TODO Implement the newer functions later on. 
-void threshold_image(const camera_fb_t *fb, int threshold)
+void threshold_image(camera_fb_t *fb, int threshold)
 {
     // get the height and width of the frame
     int height = fb->height;
     int width = fb->width;
+
+    
 
     // threshold the entire frame
     for (int row = 0; row < height; row++)
