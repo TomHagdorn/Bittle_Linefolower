@@ -5,8 +5,8 @@
 #define SSID "esp32_server"
 #define PWD "123456789"
 
-const char* ssid     = "Vodafone-BC8D";
-const char* password = "T8hHQQCFQrpLMgGb";
+const char* ssid = "Get off my Lan!";
+const char* password = "SchroedingersChat";
 int pixel_threshold = 1; // the variable that you want to update
 
 WebServer server(80);

@@ -248,23 +248,23 @@ void loop()
     {   
         
 
-        esp_err_t res = camera_capture(&fb);
+        esp_err_t res = camera_capture();
         server.handleClient();
 
         if (res == ESP_OK)
         {   
             //Serial.println(pixel_threshold);
-            update();
+            //update();
             
             // print image to serial monitor
-            capture_still(fb);
+            //capture_still(fb);
             
 
             // publishes the image to the server
             // publishPictureToServer(fb, server);
         }
         // return the frame buffer back to the driver for reuse
-        esp_camera_fb_return(fb);
+        //esp_camera_fb_return(fb);
         
         //free(gradient);
         // free the gradient
@@ -380,23 +380,6 @@ esp_err_t camera_capture()
         ESP_LOGE(TAG, "Camera Capture Failed");
         return ESP_FAIL;
     }
-
-    threshold_image(*fb, pixel_threshold)
-    
-
-    // int height = (fb)->height;
-    // int width = (fb)->width;
-
-    // int *gradient = (int*) malloc(height * width * sizeof(int));
-
-    // gaussianBlur(fb ,kernelSize);
-
-    // sobel(fb ,gradient);
-
-    // threshold_gradient(fb, pixel_threshold, gradient);
-
-    // free(gradient);
-    //threshold_image(pixel_threshold);
 
 
     return ESP_OK;
