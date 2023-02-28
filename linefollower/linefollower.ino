@@ -19,6 +19,7 @@
 
 #define CAMERA_MODEL_AI_THINKER
 
+
 #include "esp_camera.h" ///< Header file for camera obtained from https://github.com/espressif/
 
 #include "driver/ledc.h" ///< To enable onboard Illumination/flash LED pin attached on 4
@@ -29,21 +30,28 @@
 #include <vector>
 // Depenencies for image processing
 
+#include <ArduinoJson.h>
 #include <WiFi.h>
 #include <WebServer.h>
+#include <HTTPClient.h>
 
 #include <cmath>
 
 //My files 
 #include "control.h"
-#include "calibration.h"
+#include "node_red.h"
 
-//const char *ssid = "Get off my Lan!";
-//const char *password = "prettyflyforAWifi";
+
+
+#define SSID "esp32_server"
+#define PWD "123456789"
+
+
 
 unsigned long stateTime = 0;
 
-WebServer server(80);
+//WebServer * server = new WebServer(80);
+//WebServer server(80);
 
 //! Image resolution:
 /*!
@@ -123,7 +131,7 @@ const int min_line_length = 10;
 uint32_t lastCamera = 0; ///< To store time value for repeated capture
 
 // variables updated by nodered
-int pixel_threshold = 200;
+//int pixel_threshold = 125;
 int recover_time  = 500;
 int Obst_left_t =1;
 int Obst_straight_t=1;
@@ -181,7 +189,6 @@ void setup()
     Serial.begin(serialSpeed); ///< Initialize serial communication
 
 
-
     WRITE_PERI_REG(RTC_CNTL_BROWN_OUT_REG, 0); ///< Disable 'brownout detector'
 
     // Serial.print(("\nInitialising camera: "));
@@ -196,7 +203,31 @@ void setup()
 
     setupOnBoardFlash();
     setLedBrightness(ledBrightness);
+    // wifi setup
+    setup_wifi();
+    // configure server
+    setup_server();
+
+    WiFi.begin(ssid, password);
+    int connRes = WiFi.waitForConnectResult();
+    if (connRes == WL_CONNECTED) {
+        //Serial.print("Connected to WiFi network with IP: ");
+        //TODO uncomment this to print the IP address
+        //TODO David
+        Serial.println(WiFi.localIP());
+        
+        //Call functions for the variable nodered values
+        //Change_Treshold_value();
+    } else {
+        Serial.println("Connection Failed!");
+        esp_restart();
+        return;
+    }
+
+
+    //captureAndSendImage();
     // Ultrasound sensor setup
+    Change_Treshold_value();
     pinMode(trigPin, OUTPUT); // Sets the trigPin as an Output
     pinMode(echoPin, INPUT); // Sets the echoPin as an Input
     //Nodered setup
@@ -216,7 +247,10 @@ void loop()
     if ((unsigned long)(millis() - lastCamera) >=700UL)
     {   
         
-        esp_err_t res = camera_capture();
+
+        esp_err_t res = camera_capture(&fb);
+        server.handleClient();
+
         if (res == ESP_OK)
         {   
             //Serial.println(pixel_threshold);
@@ -231,6 +265,7 @@ void loop()
         }
         // return the frame buffer back to the driver for reuse
         esp_camera_fb_return(fb);
+        
         //free(gradient);
         // free the gradient
         lastCamera = millis();
@@ -346,6 +381,9 @@ esp_err_t camera_capture()
         return ESP_FAIL;
     }
 
+    threshold_image(*fb, pixel_threshold)
+    
+
     // int height = (fb)->height;
     // int width = (fb)->width;
 
@@ -359,6 +397,7 @@ esp_err_t camera_capture()
 
     // free(gradient);
     //threshold_image(pixel_threshold);
+
 
     return ESP_OK;
 }
@@ -473,4 +512,44 @@ void update()
         break;
     }
 }
+
+/*void setup_wifi() {
+    Serial.println("Configuring AP...");
+    if (!WiFi.softAP(SSID, PWD)) Serial.println("AP Config failed.");
+
+    // print ssid and pwd
+    Serial.printf("SSID - %s\n", SSID);
+    Serial.printf("PWD  - %s\n", PWD);
+}
+
+
+void setup_server() {
+    // server will do the following every time [esp32-ip]/image is requested:
+    server.on(F("/image"), [&]() {
+        // send message on serial for debugging
+        // take picture
+        camera_fb_t * frame_buffer = esp_camera_fb_get();
+        threshold_image(frame_buffer, pixel_threshold);
+
+        // convert frame to bmp
+        uint8_t * bmp_buffer = NULL;
+        size_t bmp_buffer_length = 0;
+        frame2bmp(frame_buffer, &bmp_buffer, &bmp_buffer_length);
+
+        // send image
+        server.send_P(200, "image/bmp", (const char *)bmp_buffer, bmp_buffer_length);
+
+        // free memory and return buffer
+        // note that the picture is actually taken when you return the frame buffer
+        free(bmp_buffer);
+        esp_camera_fb_return(frame_buffer);
+    });
+
+    // start server
+    server.begin();
+
+    // print ip
+    IPAddress myIP = WiFi.softAPIP();
+    Serial.printf("IP   - %s\n", myIP.toString());
+}*/
 
