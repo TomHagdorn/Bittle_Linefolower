@@ -1,3 +1,17 @@
+#include <ArduinoJson.h>
+#include <WiFi.h>
+#include <WebServer.h>
+#include <HTTPClient.h>
+#define SSID "esp32_server"
+#define PWD "123456789"
+
+const char* ssid     = "Vodafone-BC8D";
+const char* password = "T8hHQQCFQrpLMgGb";
+int pixel_threshold = 1; // the variable that you want to update
+
+WebServer server(80);
+
+
 void Change_Treshold_value(){
     server.on("/update-tresholdvalue", HTTP_GET, []() {
     String newValue = server.arg("value");
@@ -5,6 +19,49 @@ void Change_Treshold_value(){
   });
 }
 
+void setup_server() {
+    // server will do the following every time [esp32-ip]/image is requested:
+    server.on(F("/image"), [&]() {
+        // send message on serial for debugging
+        // take picture
+        camera_fb_t * frame_buffer = esp_camera_fb_get();
+        threshold_image(frame_buffer, pixel_threshold);
+
+        // convert frame to bmp
+        uint8_t * bmp_buffer = NULL;
+        size_t bmp_buffer_length = 0;
+        frame2bmp(frame_buffer, &bmp_buffer, &bmp_buffer_length);
+
+        // send image
+        server.send_P(200, "image/bmp", (const char *)bmp_buffer, bmp_buffer_length);
+
+        // free memory and return buffer
+        // note that the picture is actually taken when you return the frame buffer
+        free(bmp_buffer);
+        esp_camera_fb_return(frame_buffer);
+    });
+
+    // start server
+    server.begin();
+
+    // print ip
+    IPAddress myIP = WiFi.softAPIP();
+    Serial.printf("IP   - %s\n", myIP.toString());
+}
+
+void setup_wifi() {
+    Serial.println("Configuring AP...");
+    if (!WiFi.softAP(SSID, PWD)) Serial.println("AP Config failed.");
+
+    // print ssid and pwd
+    Serial.printf("SSID - %s\n", SSID);
+    Serial.printf("PWD  - %s\n", PWD);
+}
+
+
+
+
+/*
 void Change_recover_time (){
     server.on("/update-recovertime ", HTTP_GET, []() {
     String newValue = server.arg("value");
@@ -52,4 +109,4 @@ void Change_currentfinlinewidth(){
     String newValue = server.arg("value");
     currentfinlinewidth = newValue.toInt();
   });
-}
+}*/
