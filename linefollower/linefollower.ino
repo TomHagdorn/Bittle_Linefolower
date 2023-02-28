@@ -216,7 +216,7 @@ void loop()
     if ((unsigned long)(millis() - lastCamera) >=700UL)
     {   
         
-        esp_err_t res = camera_capture(&fb);
+        esp_err_t res = camera_capture();
         if (res == ESP_OK)
         {   
             //Serial.println(pixel_threshold);
@@ -335,30 +335,30 @@ bool cameraImageSettings()
   \return true: successful, false: failed
  */
 /**************************************************************************/
-esp_err_t camera_capture(camera_fb_t **fb)
+esp_err_t camera_capture()
 {
     // acquire a frame
-    *fb = esp_camera_fb_get();
+    fb = esp_camera_fb_get();
     ESP_LOGE(TAG, "Camera Capture in progress");
-    if (!*fb)
+    if (!fb)
     {
         ESP_LOGE(TAG, "Camera Capture Failed");
         return ESP_FAIL;
     }
 
-    // int height = (*fb)->height;
-    // int width = (*fb)->width;
+    // int height = (fb)->height;
+    // int width = (fb)->width;
 
     // int *gradient = (int*) malloc(height * width * sizeof(int));
 
-    // gaussianBlur(*fb, kernelSize);
+    // gaussianBlur(fb ,kernelSize);
 
-    // sobel(*fb, gradient);
+    // sobel(fb ,gradient);
 
-    // threshold_gradient(*fb, pixel_threshold, gradient);
+    // threshold_gradient(fb, pixel_threshold, gradient);
 
     // free(gradient);
-    //threshold_image(*fb, pixel_threshold);
+    //threshold_image(pixel_threshold);
 
     return ESP_OK;
 }
@@ -473,3 +473,4 @@ void update()
         break;
     }
 }
+
