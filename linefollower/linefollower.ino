@@ -200,7 +200,7 @@ void update()
         }
         break;
     case CROSS_FINISH_LINE:
-        Serial.println("\nCROSS_FINISH_LINE");
+        //Serial.println("\nCROSS_FINISH_LINE");
         if (crossFinishLine() == true && finish_line_crossed == false)
         {
             finish_line_crossed = true;

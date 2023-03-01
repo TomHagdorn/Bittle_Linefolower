@@ -13,7 +13,7 @@ int Fin_line_width=20;
 int min_line_length = 200;
 //define obstacle detection distance
 int obstacle_detection_dist = 15;
-int pixel_threshold = 40;
+int pixel_threshold = 180;
 
 //TODO Set the default values for the variables for
 //strip.color(0,0,0);
