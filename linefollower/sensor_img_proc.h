@@ -1,3 +1,14 @@
+// Pin definitions for ultrasound sensor
+#define trigPin     12
+#define echoPin     13
+
+//filter settings
+const int kernelSize = 3; // kernel size for gaussian blur
+
+// poiner to the sobel gradient
+//int *gradient;
+
+
 void gaussianBlur(camera_fb_t *fb, int kernelSize) {
   float kernel[] = { 1, 2, 1, 2, 4, 2, 1, 2, 1 }; // 3x3 Gaussian kernel
 
@@ -64,8 +75,8 @@ void sobel(camera_fb_t *fb, int *gradient) {
 //TODO kust include the global variable pixel_threshold insted giving the function a threshold
 void threshold_gradient(camera_fb_t *fb, int threshold, int* gradient) {
     // get the height and width of the frame
-  int height = fb->height;
-  int width = fb->width;
+    int height = fb->height;
+    int width = fb->width;
 
     // threshold the entire frame using the gradient magnitude
     for (int row = 0; row < height; row++)
@@ -90,7 +101,7 @@ void threshold_gradient(camera_fb_t *fb, int threshold, int* gradient) {
 }
 
 //TODO Implement the newer functions later on. 
-void threshold_image(camera_fb_t *fb, int threshold)
+void threshold_image()
 {
     // get the height and width of the frame
     int height = fb->height;
@@ -107,7 +118,7 @@ void threshold_image(camera_fb_t *fb, int threshold)
 
             // threshold the pixel at the current index
             // if the pixel is less than 210, set it to 255 (white)
-            fb->buf[index] = (fb->buf[index] < threshold) ? 255 : 0;
+            fb->buf[index] = (fb->buf[index] < pixel_threshold) ? 255 : 0;
         }
     }
 }
@@ -128,7 +139,7 @@ void threshold_image(camera_fb_t *fb, int threshold)
  * @return The middle point of the white pixels in the specified region of the frame buffer, or -1 if no valid
  *         white pixels were found.
  */
-int get_middle_point(const camera_fb_t *fb, double start_fraction, double end_fraction)
+int get_middle_point(double start_fraction, double end_fraction)
 {   
     // initialize the starting and ending x-coordinates to zero
     int start_x = 0;
@@ -209,7 +220,7 @@ int get_middle_point(const camera_fb_t *fb, double start_fraction, double end_fr
         }
     }
     // if we have found at least one valid row
-    if (valid_row_counter > 5)
+    if (valid_row_counter > line_width)
     {
         // sort the middle points
         std::sort(middle_points.begin(), middle_points.end());
@@ -232,7 +243,7 @@ int get_middle_point(const camera_fb_t *fb, double start_fraction, double end_fr
   \param fb: pointer to the frame buffer
   \return true if an obstacle is found, false otherwise
  */
-int get_distance(int trigPin, int echoPin)
+int get_distance()
 {
     // Clears the trigPin
     digitalWrite(trigPin, LOW);
@@ -246,8 +257,8 @@ int get_distance(int trigPin, int echoPin)
     // Calculating the distance
     int distance = duration * 0.034 / 2;
     // Prints the distance on the Serial Monitor
-    //Serial.print("Distance: ");
-    //Serial.println(distance);
+    // Serial.print("Distance: ");
+    // Serial.println(distance);
     return distance;
 }
 
@@ -259,7 +270,7 @@ int get_distance(int trigPin, int echoPin)
   \return true if there is a horizontal line, false otherwise
  */
 /**************************************************************************/
-bool check_for_horizontal_line(const camera_fb_t *fb, int min_line_length)
+bool check_for_horizontal_line()
 {
     // calculate the start and end rows of the lowest third of the image
     int start_row = fb->height * 2 / 3;

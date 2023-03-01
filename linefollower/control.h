@@ -14,6 +14,11 @@ enum MovementState
 MovementState currentMovementState = STATE_STOP;
 MovementState prevMovementState = STATE_MOVE_FORWARD;
 
+//define state change time
+static unsigned long lastStateChangeTime = 0;
+
+
+
 /**************************************************************************/
 /**
   Line Follower
@@ -22,17 +27,17 @@ MovementState prevMovementState = STATE_MOVE_FORWARD;
   \return true if a line is found, false otherwise
  */
 /**************************************************************************/
-bool line_follower(camera_fb_t *fb)
+bool line_follower()
 {
     // calculate the starting and ending fractions for the 3/4 to 1 portion of the frame
     double start_fraction = 3.0 / 4.0;
     double end_fraction = 1.0;
     // get the middle point for the 3/4 to 1 portion of the frame
-    int middle_point = get_middle_point(fb, start_fraction, end_fraction);
+    int middle_point = get_middle_point(start_fraction, end_fraction);
     if (middle_point == -1)
     {
         // no line was found, so stop the robot
-        MovementState = STATE_STOP;
+        currentMovementState = STATE_STOP;
         return false;
     }
 
@@ -40,21 +45,21 @@ bool line_follower(camera_fb_t *fb)
     if (middle_point < fb->width * 4 / 11)
     {
         // move the robot to the left
-        MovementState = STATE_TURN_LEFT;
+        currentMovementState = STATE_TURN_LEFT;
         return true;
     }
     // if the point of highest density is in one of the 3/7th of the right side of the picture
     else if (middle_point >= fb->width * 8 / 11)
     {
         // move the robot to the right
-        MovementState = STATE_TURN_RIGHT;
+        currentMovementState = STATE_TURN_RIGHT;
         return true;
     }
     // if the point of highest density is within the 4/7th in the middle
     else
     {
         // move the robot forward
-        MovementState = STATE_MOVE_FORWARD;
+        currentMovementState = STATE_MOVE_FORWARD;
         return true;
     }
 }
@@ -62,41 +67,42 @@ bool line_follower(camera_fb_t *fb)
 
 bool detect_obstacle() { 
     //TODO fix this function
-    // if (get_distance(trigPin ,echoPin) < obstacle_detection_dist && get_distance(trigPin,echoPin) != -1) {
-    //     return true;
-    // }
+    //Serial.println("detecting obstacle");
+    if (get_distance() < obstacle_detection_dist && get_distance() != -1) {
+        return true;
+    }
     return false;
 }
 
 bool avoid_obstacle() {
     //stop the robot
     if (millis() - lastStateChangeTime < 500) {
-        MovementState = STATE_STOP;
+        currentMovementState = STATE_STOP;
     }
     //turn left
     else if (millis() - lastStateChangeTime < 1000 && millis() - lastStateChangeTime > 500) {
-        MovementState = STATE_TURN_LEFT;
+        currentMovementState = STATE_TURN_LEFT;
     }
     //turn right
     else if (millis() - lastStateChangeTime < 1500 && millis() - lastStateChangeTime > 1000) {
-        MovementState = STATE_TURN_RIGHT;
+        currentMovementState = STATE_TURN_RIGHT;
     }
     //move forward
     else if (millis() - lastStateChangeTime < 2000 && millis() - lastStateChangeTime > 1500) {
-        MovementState = STATE_MOVE_FORWARD;
+        currentMovementState = STATE_MOVE_FORWARD;
     }
     //turn right
     else if (millis() - lastStateChangeTime < 2500 && millis() - lastStateChangeTime > 2000) {
-        MovementState = STATE_TURN_RIGHT;
+        currentMovementState = STATE_TURN_RIGHT;
     }
     //turn left
     else if (millis() - lastStateChangeTime < 3000 && millis() - lastStateChangeTime > 2500) {
-        MovementState = STATE_TURN_LEFT;
+        currentMovementState = STATE_TURN_LEFT;
     }
     //if line is found
     else if (millis() - lastStateChangeTime < 3500) {
         //TODO mabye check if line is found
-        MovementState = STATE_STOP;
+        currentMovementState = STATE_STOP;
         return true;
     }
     return false;
@@ -105,8 +111,8 @@ bool avoid_obstacle() {
 bool recover()
 {   
     //Walk backwards for a certain amount of time
-    if (millis() - lastStateChangeTime < 500) {
-        MovementState = STATE_MOVE_BACKWARD;
+    if (millis() - lastStateChangeTime < 1000) {
+        currentMovementState = STATE_MOVE_BACKWARD;
     }
     else{
         
@@ -126,7 +132,7 @@ bool crossFinishLine()
 {
     //walk forward for a certain amount of time then stop
     if (millis() - lastStateChangeTime < 500) {
-        MovementState = STATE_MOVE_FORWARD;
+        currentMovementState = STATE_MOVE_FORWARD;
     }
     else {
         
@@ -137,8 +143,8 @@ bool crossFinishLine()
 
 
 void update_movement(){
-    if (MovementState != prevMovementState) {
-        switch (MovementState) {
+    if (currentMovementState != prevMovementState) {
+        switch (currentMovementState) {
             case STATE_STOP:
                 Serial.print("kbalance");
                 break;
@@ -167,6 +173,6 @@ void update_movement(){
                 Serial.print("kwkB");
                 break;
         }
-        prevMovementState = MovementState;
+        prevMovementState = currentMovementState;
     }
 }
