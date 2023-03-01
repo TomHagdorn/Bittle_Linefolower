@@ -109,25 +109,6 @@ void setup()
     setupOnBoardFlash();
     setLedBrightness(ledBrightness);
     // wifi setup
-    setup_wifi();
-    // configure server
-    setup_server(fb);
-
-    WiFi.begin(ssid, password);
-    int connRes = WiFi.waitForConnectResult();
-    if (connRes == WL_CONNECTED) {
-        //Serial.print("Connected to WiFi network with IP: ");
-        //TODO uncomment this to print the IP address
-        //TODO David
-        Serial.println(WiFi.localIP());
-        
-        //Call functions for the variable nodered values
-        //Change_Treshold_value();
-    } else {
-        Serial.println("Connection Failed!");
-        esp_restart();
-        return;
-    }
 
 
     //captureAndSendImage();
@@ -159,16 +140,17 @@ void loop()
         if (res == ESP_OK)
         {   
             //Serial.println(pixel_threshold);
-            //update();
-            
+            update();
+            update_server();
             // print image to serial monitor
             //threshold_image(fb,pixel_threshold);
             //capture_still(fb);
             
 
         }
+
+
         //return the frame buffer back to the driver for reuse
-        server.handleClient(); 
         esp_camera_fb_return(fb);
         
         //free(gradient);

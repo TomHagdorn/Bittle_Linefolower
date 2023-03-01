@@ -7,47 +7,11 @@
 
 const char* ssid = "Get off my Lan!";
 const char* password = "SchroedingersChat";
+bool server_on = true;
+bool server_status = false;
 int pixel_threshold = 1; // the variable that you want to update
 
 WebServer server(80);
-
-
-void Change_Treshold_value(){
-    server.on("/update-tresholdvalue", HTTP_GET, []() {
-    String newValue = server.arg("value");
-    pixel_threshold = newValue.toInt();
-  });
-}
-
-void setup_server(camera_fb_t *fb) {
-    // server will do the following every time [esp32-ip]/image is requested:
-    server.on(F("/image"), [&]() {
-        // send message on serial for debugging
-        // take picture
-        //camera_fb_t * frame_buffer = esp_camera_fb_get();
-        
-        //preprocess_image(frame_buffer);
-        // convert frame to bmp
-        uint8_t * bmp_buffer = NULL;
-        size_t bmp_buffer_length = 0;
-        frame2bmp(fb, &bmp_buffer, &bmp_buffer_length);
-
-        // send image
-        server.send_P(200, "image/bmp", (const char *)bmp_buffer, bmp_buffer_length);
-
-        // free memory and return buffer
-        // note that the picture is actually taken when you return the frame buffer
-        free(bmp_buffer);
-        //esp_camera_fb_return(frame_buffer);
-    });
-
-    // start server
-    server.begin();
-
-    // print ip
-    IPAddress myIP = WiFi.softAPIP();
-    Serial.printf("IP   - %s\n", myIP.toString());
-}
 
 void setup_wifi() {
     Serial.println("Configuring AP...");
@@ -59,6 +23,81 @@ void setup_wifi() {
 }
 
 
+
+void Change_Treshold_value(){
+    server.on("/update-tresholdvalue", HTTP_GET, []() {
+    String newValue = server.arg("value");
+    pixel_threshold = newValue.toInt();
+  });
+}
+
+void setup_server() {
+    // server will do the following every time [esp32-ip]/image is requested:
+    server.on(F("/image"), [&]() {
+        // send message on serial for debugging
+        // take picture
+        camera_fb_t * frame_buffer = esp_camera_fb_get();
+        
+        threshold_image(frame_buffer,pixel_threshold);
+        // convert frame to bmp
+        uint8_t * bmp_buffer = NULL;
+        size_t bmp_buffer_length = 0;
+        frame2bmp(frame_buffer, &bmp_buffer, &bmp_buffer_length);
+
+        // send image
+        server.send_P(200, "image/bmp", (const char *)bmp_buffer, bmp_buffer_length);
+
+        // free memory and return buffer
+        // note that the picture is actually taken when you return the frame buffer
+        free(bmp_buffer);
+        esp_camera_fb_return(frame_buffer);
+    });
+
+    setup_wifi();
+
+    WiFi.begin(ssid, password);
+    int connRes = WiFi.waitForConnectResult();
+    if (connRes == WL_CONNECTED) {
+        //Serial.print("Connected to WiFi network with IP: ");
+        //TODO uncomment this to print the IP address
+        //TODO David
+        Serial.println(WiFi.localIP());
+        
+        //Call functions for the variable nodered values
+        //Change_Treshold_value();
+    } else {
+        Serial.println("Connection Failed!");
+        esp_restart();
+        return;
+    }
+
+    // start server
+    server.begin();
+
+    // print ip
+    IPAddress myIP = WiFi.softAPIP();
+    Serial.printf("IP   - %s\n", myIP.toString());
+}
+
+
+
+
+void update_server()
+{
+    if (server_on == true && server_status == false){
+      setup_server();
+      server_status = true;
+    }
+    else{
+        //TODO end server and wifi
+        server_status = false;
+    }
+    //check if the server is connected
+    if (server_status = true)
+    {
+        server.handleClient();
+    }
+}
 
 
 /*
