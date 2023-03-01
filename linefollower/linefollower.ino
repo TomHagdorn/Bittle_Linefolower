@@ -134,13 +134,14 @@ void loop()
     {   
         
 
-        esp_err_t res = camera_capture();
+        //esp_err_t res = camera_capture();
+        bool res = true;
         
-
-        if (res == ESP_OK)
+        if (res = true)
+        // if (res == ESP_OK)
         {   
             //Serial.println(pixel_threshold);
-            update();
+            //update();
             update_server();
             // print image to serial monitor
             //threshold_image(fb,pixel_threshold);
@@ -151,7 +152,7 @@ void loop()
 
 
         //return the frame buffer back to the driver for reuse
-        esp_camera_fb_return(fb);
+        //esp_camera_fb_return(fb);
         
         //free(gradient);
         // free the gradient

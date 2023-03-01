@@ -59,8 +59,6 @@ void setup_server() {
     int connRes = WiFi.waitForConnectResult();
     if (connRes == WL_CONNECTED) {
         //Serial.print("Connected to WiFi network with IP: ");
-        //TODO uncomment this to print the IP address
-        //TODO David
         Serial.println(WiFi.localIP());
         
         //Call functions for the variable nodered values
