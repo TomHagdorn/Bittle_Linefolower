@@ -219,32 +219,34 @@ void update()
         break;
     case AVOID_OBSTACLE:
         //Serial.println("\nAVOID_OBSTACLE");
-        avoid_obstacle();
+        if (avoid_obstacle() == true)
+        {
         currentState = FOLLOW_LINE;
         lastStateChangeTime = millis();
-
+        }
         break;
     case CROSS_FINISH_LINE:
         //Serial.println("\nCROSS_FINISH_LINE");
-        crossFinishLine();
-        if (finish_line_crossed == false)
+        if (crossFinishLine() == true && finish_line_crossed == false)
         {
             finish_line_crossed = true;
             cool_move();
             currentState = FOLLOW_LINE;
             lastStateChangeTime = millis();
         }
-        else
+        else if (crossFinishLine() == true && finish_line_crossed == true)
         {
             currentState = FINISH;
         }
         break;
     case RECOVER_FROM_NO_LINE:
         //Serial.println("\nRECOVER_FROM_NO_LINE");
-        recover();
+        if (recover() == true)
+        {
+            currentState = FOLLOW_LINE;
+            lastStateChangeTime = millis();
+        }   
         // line follower returned true, indicating that the line was found
-        currentState = FOLLOW_LINE;
-        lastStateChangeTime = millis();
         break;
     case FINISH:
         // Robot has finished, do nothing
