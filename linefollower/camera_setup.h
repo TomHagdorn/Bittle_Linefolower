@@ -52,8 +52,7 @@ const uint8_t pwmResolution = 8;           ///< resolution (8 = from 0 to 255)
 
 const int serialSpeed = 115200; ///< Serial data speed to use
 
-// minimum line lenth for line detection
-const int min_line_length = 10;
+
 
 //! Camera setting
 /*!

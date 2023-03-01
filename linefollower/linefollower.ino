@@ -27,6 +27,7 @@
 //My files 
 #include "camera_setup.h"
 #include "control.h"
+#include "light_strip.h"
 #include "node_red.h"
 #include "calibration.h"
 
@@ -52,6 +53,8 @@ int Fin_line_width=1;
 int currentlinewidth = 1;
 int currentfinlinewidth =1;
 int obstacle_detection_dist = 15;
+// minimum line lenth for line detection
+const int min_line_length = 10;
 
 //filter settings
 const int kernelSize = 3; // kernel size for gaussian blur
@@ -108,12 +111,13 @@ void setup()
 
     setupOnBoardFlash();
     setLedBrightness(ledBrightness);
-    // wifi setup
-
+    //Node red setup TODO Needs to be moved to a seperate file in a function
+    Change_Treshold_value();
 
     //captureAndSendImage();
     // Ultrasound sensor setup
-    Change_Treshold_value();
+    strip_setup();
+    
     pinMode(trigPin, OUTPUT); // Sets the trigPin as an Output
     pinMode(echoPin, INPUT); // Sets the echoPin as an Input
 
@@ -128,21 +132,21 @@ void setup()
 /**************************************************************************/
 void loop()
 {    
-    
+    set_led_strip();
     
     if ((unsigned long)(millis() - lastCamera) >=700UL)
     {   
         
 
-        //esp_err_t res = camera_capture();
-        bool res = true;
+        esp_err_t res = camera_capture();
+        // bool res = true;
         
-        if (res = true)
-        // if (res == ESP_OK)
+        // if (res = true)
+        if (res == ESP_OK)
         {   
             //Serial.println(pixel_threshold);
-            //update();
-            update_server();
+            update();
+            //update_server();
             // print image to serial monitor
             //threshold_image(fb,pixel_threshold);
             //capture_still(fb);
@@ -152,7 +156,7 @@ void loop()
 
 
         //return the frame buffer back to the driver for reuse
-        //esp_camera_fb_return(fb);
+        esp_camera_fb_return(fb);
         
         //free(gradient);
         // free the gradient
