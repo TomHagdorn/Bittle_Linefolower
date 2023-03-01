@@ -23,10 +23,6 @@
 
 #include <vector>
 
-// #include <ArduinoJson.h>
-// #include <WiFi.h>
-// #include <WebServer.h>
-// #include <HTTPClient.h>
 
 //My files 
 #include "camera_setup.h"
@@ -115,7 +111,7 @@ void setup()
     // wifi setup
     setup_wifi();
     // configure server
-    setup_server();
+    setup_server(fb);
 
     WiFi.begin(ssid, password);
     int connRes = WiFi.waitForConnectResult();
@@ -157,22 +153,23 @@ void loop()
     {   
         
 
-        //esp_err_t res = camera_capture();
-        server.handleClient(); 
-        // if (res == ESP_OK)
-        // {   
-        //     //Serial.println(pixel_threshold);
-        //     //update();
+        esp_err_t res = camera_capture();
+        
+
+        if (res == ESP_OK)
+        {   
+            //Serial.println(pixel_threshold);
+            //update();
             
-        //     // print image to serial monitor
-        //     threshold_image(fb,pixel_threshold);
-        //     //capture_still(fb);
+            // print image to serial monitor
+            //threshold_image(fb,pixel_threshold);
+            //capture_still(fb);
             
 
-        // }
-        // return the frame buffer back to the driver for reuse
-        
-        //esp_camera_fb_return(fb);
+        }
+        //return the frame buffer back to the driver for reuse
+        server.handleClient(); 
+        esp_camera_fb_return(fb);
         
         //free(gradient);
         // free the gradient

@@ -316,5 +316,5 @@ bool check_for_horizontal_line(const camera_fb_t *fb, int min_line_length)
     //return false;
 }
 
-
+//Prepossessing function for the image using gaussian blur sobel filter and thresholding
 
