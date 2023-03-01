@@ -134,7 +134,7 @@ void loop()
 {    
     cycle_led_strip();
     
-    if ((unsigned long)(millis() - lastCamera) >=700UL)
+    if ((unsigned long)(millis() - lastCamera) >=500UL)
     {   
         
 
@@ -146,7 +146,9 @@ void loop()
         {   
             //Serial.println(pixel_threshold);
             update();
+            update_movement();
             //update_server();
+            
             // print image to serial monitor
             //threshold_image(fb,pixel_threshold);
             //capture_still(fb);
