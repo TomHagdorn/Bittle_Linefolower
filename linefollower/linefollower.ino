@@ -132,7 +132,7 @@ void setup()
 /**************************************************************************/
 void loop()
 {    
-    set_led_strip();
+    cycle_led_strip();
     
     if ((unsigned long)(millis() - lastCamera) >=700UL)
     {   
