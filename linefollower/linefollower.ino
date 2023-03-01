@@ -78,6 +78,7 @@ void setup()
     setupOnBoardFlash();
     setLedBrightness(ledBrightness);
     //Node red setup TODO Needs to be moved to a seperate file in a function
+    
     Change_Treshold_value();
 
     //captureAndSendImage();
@@ -99,17 +100,19 @@ void setup()
 void loop()
 {    
     
-    
+    cycle_led_strip();
     if ((unsigned long)(millis() - lastCamera) >=500UL)
     {   
         
-        cycle_led_strip();
+        
         esp_err_t res = camera_capture();
         // bool res = true;
         
         // if (res = true)
         if (res == ESP_OK)
         {   
+            gaussianBlur(3);
+            //sobel();
             threshold_image();
             update();
             update_movement();
@@ -118,15 +121,16 @@ void loop()
             // print image to serial monitor
             
             //capture_still();
-            
+            // free the sobel image gradient buffer
+            //delete[] gradient;
 
         }
 
 
         //return the frame buffer back to the driver for reuse
         esp_camera_fb_return(fb);
+
         
-        //free(gradient);
         // free the gradient
         lastCamera = millis();
     }

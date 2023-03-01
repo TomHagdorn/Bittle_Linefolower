@@ -5,14 +5,14 @@
 //filter settings
 const int kernelSize = 3; // kernel size for gaussian blur
 
-// poiner to the sobel gradient
-//int *gradient;
+//TODO not enough memory unfortunately figure something out
+//int* gradient = new int[fb->height * fb->width];
 
 
-void gaussianBlur(camera_fb_t *fb, int kernelSize) {
+void gaussianBlur(int kernelSize) {
   float kernel[] = { 1, 2, 1, 2, 4, 2, 1, 2, 1 }; // 3x3 Gaussian kernel
 
-  //TODO doesnt make sense is not an int
+  //TODO test this function
   int radius = kernelSize / 2;   
 
   int height = fb->height;
@@ -41,66 +41,95 @@ void gaussianBlur(camera_fb_t *fb, int kernelSize) {
   }
 }
 
-void sobel(camera_fb_t *fb, int *gradient) {
-  int sobelX[] = { -1, 0, 1, -2, 0, 2, -1, 0, 1 }; // Sobel operator for x direction
-  int sobelY[] = { -1, -2, -1, 0, 0, 0, 1, 2, 1 }; // Sobel operator for y direction
 
-  int radius = 1;
+// void threshold_gradient() {
+//     // get the height and width of the frame
+//     int height = fb->height;
+//     int width = fb->width;
 
-  int height = fb->height;
-  int width = fb->width;
+//     // threshold the entire frame using the gradient magnitude
+//     for (int row = 0; row < height; row++)
+//     {
+//         for (int col = 0; col < width; col++)
+//         {
+//             int index = row * width + col;
 
-  for (int y = radius; y < height - radius; y++) {
-    for (int x = radius; x < width - radius; x++) {
-      int sumX = 0;
-      int sumY = 0;
+//             // compare the magnitude of the gradient at the current index to the threshold
+//             int mag = gradient[index];
+//             // adding this print somehow causes it to break
+//             //Serial.println(mag  +"\t" + threshold);
+//             if (mag < pixel_threshold) {
+//                 // if the magnitude is less than the threshold, set the pixel to white (255)
+//                 fb->buf[index] = 255;
+//             } else {
+//                 // otherwise, set the pixel to black (0)
+//                 fb->buf[index] = 0;
+//             }
+//         }
+//     }
+    
+// }
 
-      for (int ky = -radius; ky <= radius; ky++) {
-        for (int kx = -radius; kx <= radius; kx++) {
-          int px = x + kx;
-          int py = y + ky;
+//TODO fix sobel
+//memory leak or smt 
+/*
+ELF file SHA256: 0000000000000000
 
-          int index = (ky + radius) * (radius * 2 + 1) + (kx + radius);
-          int value = fb->buf[py * width + px];
+Rebooting...
+ets Jul 29 2019 12:21:46
 
-          sumX += sobelX[index] * value;
-          sumY += sobelY[index] * value;
-        }
-      }
+rst:0xc (SW_CPU_RESET),boot:0x13 (SPI_FAST_FLASH_BOOT)
+configsip: 0, SPIWP:0xee
+clk_drv:0x00,q_drv:0x00,d_drv:0x00,cs0_drv:0x00,hd_drv:0x00,wp_drv:0x00
+mode:DIO, clock div:1
+load:0x3fff0030,len:1344
+load:0x40078000,len:13864
+load:0x40080400,len:3608
+entry 0x400805f0
+CORRUPT HEAP: Bad head at 0x3f813498. Expected 0xabba1234 got 0x3f800014
 
-      gradient[y * width + x] = abs(sumX) + abs(sumY); // Compute the gradient magnitude
-    }
-  }
-}
-//TODO kust include the global variable pixel_threshold insted giving the function a threshold
-void threshold_gradient(camera_fb_t *fb, int threshold, int* gradient) {
-    // get the height and width of the frame
-    int height = fb->height;
-    int width = fb->width;
+assert failed: multi_heap_free multi_heap_poisoning.c:253 (head != NULL)
 
-    // threshold the entire frame using the gradient magnitude
-    for (int row = 0; row < height; row++)
-    {
-        for (int col = 0; col < width; col++)
-        {
-            int index = row * width + col;
 
-            // compare the magnitude of the gradient at the current index to the threshold
-            int mag = gradient[index];
-            // adding this print somehow causes it to break
-            //Serial.println(mag  +"\t" + threshold);
-            if (mag < threshold) {
-                // if the magnitude is less than the threshold, set the pixel to white (255)
-                fb->buf[index] = 255;
-            } else {
-                // otherwise, set the pixel to black (0)
-                fb->buf[index] = 0;
-            }
-        }
-    }
-}
+Backtrace:0x40083ef1:0x3ffb25600x4008a639:0x3ffb2580 0x4008fed5:0x3ffb25a0 0x4008fb37:0x3ffb26d0 0x40084231:0x3ffb26f0 0x4008ff05:0x3ffb2710 0x4010246d:0x3ffb2730 0x40102a75:0x3ffb2750 0x400d2ec5:0x3ffb2770 0x400d3948:0x3ffb2800 0x400d9875:0x3ffb2820 
 
-//TODO Implement the newer functions later on. 
+*/
+// void sobel() {
+
+//   int sobelX[] = { -1, 0, 1, -2, 0, 2, -1, 0, 1 }; // Sobel operator for x direction
+//   int sobelY[] = { -1, -2, -1, 0, 0, 0, 1, 2, 1 }; // Sobel operator for y direction
+
+//   int radius = 1;
+
+//   int height = fb->height;
+//   int width = fb->width;
+
+   
+//   for (int y = radius; y < height - radius; y++) {
+//     for (int x = radius; x < width - radius; x++) {
+//       int sumX = 0;
+//       int sumY = 0;
+
+//       for (int ky = -radius; ky <= radius; ky++) {
+//         for (int kx = -radius; kx <= radius; kx++) {
+//           int px = x + kx;
+//           int py = y + ky;
+
+//           int index = (ky + radius) * (radius * 2 + 1) + (kx + radius);
+//           int value = fb->buf[py * width + px];
+
+//           sumX += sobelX[index] * value;
+//           sumY += sobelY[index] * value;
+//         }
+//       }
+
+//       gradient[y * width + x] = abs(sumX) + abs(sumY); // Compute the gradient magnitude
+//     }
+//     delete[] gradient; // Free memory allocated for gradient array
+//   }
+// }
+
+
 void threshold_image()
 {
     // get the height and width of the frame

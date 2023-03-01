@@ -66,8 +66,6 @@ bool line_follower()
 
 
 bool detect_obstacle() { 
-    //TODO fix this function
-    //Serial.println("detecting obstacle");
     if (get_distance() < obstacle_detection_dist && get_distance() != -1) {
         return true;
     }

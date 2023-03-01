@@ -6,7 +6,6 @@
 unsigned long last_colorchange = 0;
 
 Adafruit_NeoPixel strip(LED_COUNT, LED_PIN, NEO_GRB + NEO_KHZ800);
-
 void strip_setup() {
   strip.begin();
   strip.show(); // Initialize all pixels to 'off'
@@ -27,19 +26,19 @@ uint32_t Wheel(byte WheelPos) {
   }
 }
 
-//TODO make a function that sets the color of the led strip to a given color recived by node red
 
 
 
 void cycle_led_strip() {
   // Cycle through colors
-  if (millis() - last_colorchange > 1000000) {
-    for(int c = 0; c < 256; c++) {
-        for(int i = 0; i < strip.numPixels(); i++) {
-        strip.setPixelColor(i, Wheel((i + c) & 255));
-        }
-        strip.show();
-        last_colorchange = millis();
+  for(int c = 0; c < 256; c++) {
+    for(int i = 0; i < strip.numPixels(); i++) {
+      strip.setPixelColor(i, Wheel((i + c) & 255));
+    }
+    if (millis() - last_colorchange >= 10000UL)
+    {
+      strip.show();
+      last_colorchange = millis();
     }
   }
 }
