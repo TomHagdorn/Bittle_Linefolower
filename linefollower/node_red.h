@@ -9,11 +9,11 @@
 #define PWD "123456789"
 
 
-const char* ssid = "Vodafone-BC8D";
-const char* password = "T8hHQQCFQrpLMgGb";
+const char* ssid = "David_Iphone";
+const char* password = "david123";
 
 
-int pixel_threshold = 170; // the variable that you want to update
+ // the variable that you want to update
 bool server_on = true;
 bool server_status = false;
 
@@ -34,6 +34,7 @@ void setup_wifi() {
 void Change_Treshold_value(){
     server.on("/update-tresholdvalue", HTTP_GET, []() {
     String newValue = server.arg("value");
+    Serial.println("hallo");
     pixel_threshold = newValue.toInt();
   });
 }
@@ -61,7 +62,7 @@ void setup_server() {
         //esp_camera_fb_return(fb);
     });
   //TODO Make own wifi setup function
-    setup_wifi();
+    //setup_wifi();
 
     WiFi.begin(ssid, password);
     int connRes = WiFi.waitForConnectResult();
@@ -79,18 +80,12 @@ void setup_server() {
 
 
     // start server
-    server.begin();
+    //server.begin();
     // print ip
     IPAddress myIP = WiFi.softAPIP();
     Serial.printf("IP   - %s\n", myIP.toString());
 }
 
-
-
-
-
-void status_send() {
-  server.send(200, "text/plain", "laufe rechts");
 
 void update_server()
 {
@@ -108,6 +103,35 @@ void update_server()
         server.handleClient();
     }
 }
+
+void handle_status() {
+  
+  if (currentMovementState == STATE_STOP) {
+    server.send(200, "text/plain", "Stop");
+  }
+  if (currentMovementState == STATE_TURN_LEFT) {
+    server.send(200, "text/plain", "TURN_LEFT");
+  }
+  if (currentMovementState == STATE_TURN_RIGHT) {
+    server.send(200, "text/plain", "TURN_RIGHT");
+  } 
+  if (currentMovementState == STATE_MOVE_FORWARD) {
+    server.send(200, "text/plain", "MOVE_FORWARD");
+  } 
+  if (currentMovementState == STATE_MOVE_BACKWARD) {
+    server.send(200, "text/plain", "MOVE_BACKWARDS");
+  }
+  if (currentMovementState == STATE_TURN_BACK_RIGHT) {
+    server.send(200, "text/plain", "TURN_BACK_RIGHT");
+  }
+  if (currentMovementState == STATE_TURN_BACK_LEFT) {
+    server.send(200, "text/plain", "TURN_BACK_LEFT");
+  }
+  else{
+    server.send(200, "text/plain", "KEIN_STATE");
+  }
+}
+
 
 /*
 void status_send_rechts() {
