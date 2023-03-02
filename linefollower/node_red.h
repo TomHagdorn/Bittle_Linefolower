@@ -8,13 +8,27 @@
 #define SSID "esp32_server"
 #define PWD "123456789"
 
+
 const char* ssid = "Vodafone-BC8D";
 const char* password = "T8hHQQCFQrpLMgGb";
 
 
 int pixel_threshold = 170; // the variable that you want to update
+bool server_on = true;
+bool server_status = false;
+
 
 WebServer server(80);
+
+void setup_wifi() {
+    Serial.println("Configuring AP...");
+    if (!WiFi.softAP(SSID, PWD)) Serial.println("AP Config failed.");
+
+    // print ssid and pwd
+    Serial.printf("SSID - %s\n", SSID);
+    Serial.printf("PWD  - %s\n", PWD);
+}
+
 
 
 void Change_Treshold_value(){
@@ -31,6 +45,8 @@ void setup_server() {
         // take picture
         //camera_fb_t * fb = esp_camera_fb_get();
         //threshold_image(fb, pixel_threshold);
+
+
         // convert frame to bmp
         uint8_t * buf = NULL;
         size_t buf_length = 0;
@@ -45,7 +61,23 @@ void setup_server() {
         //esp_camera_fb_return(fb);
     });
 
-;
+    setup_wifi();
+
+    WiFi.begin(ssid, password);
+    int connRes = WiFi.waitForConnectResult();
+    if (connRes == WL_CONNECTED) {
+        //Serial.print("Connected to WiFi network with IP: ");
+        Serial.println(WiFi.localIP());
+        
+        //Call functions for the variable nodered values
+        //Change_Treshold_value();
+    } else {
+        Serial.println("Connection Failed!");
+        esp_restart();
+        return;
+    }
+
+
     // start server
     server.begin();
     // print ip
@@ -53,18 +85,28 @@ void setup_server() {
     Serial.printf("IP   - %s\n", myIP.toString());
 }
 
-void setup_wifi() {
-    Serial.println("Configuring AP...");
-    if (!WiFi.softAP(SSID, PWD)) Serial.println("AP Config failed.");
 
-    // print ssid and pwd
-    Serial.printf("SSID - %s\n", SSID);
-    Serial.printf("PWD  - %s\n", PWD);
-}
+
 
 
 void status_send() {
   server.send(200, "text/plain", "laufe rechts");
+
+void update_server()
+{
+    if (server_on == true && server_status == false){
+      setup_server();
+      server_status = true;
+    }
+    else{
+        //TODO end server and wifi
+        server_status = false;
+    }
+    //check if the server is connected
+    if (server_status = true)
+    {
+        server.handleClient();
+    }
 }
 
 /*

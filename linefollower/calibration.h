@@ -1,4 +1,4 @@
-bool capture_still(const camera_fb_t *fb)
+bool capture_still()
 {
     // Calculate the height of the lowest third of the image
     int third_height = IMAGE_HEIGHT / 3;
