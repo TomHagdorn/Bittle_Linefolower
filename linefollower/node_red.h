@@ -2,12 +2,17 @@
 #include <WiFi.h>
 #include <WebServer.h>
 #include <HTTPClient.h>
+
+
+
 #define SSID "esp32_server"
 #define PWD "123456789"
 
-const char* ssid = "Get off my Lan!";
-const char* password = "SchroedingersChat";
-int pixel_threshold = 1; // the variable that you want to update
+const char* ssid = "Vodafone-BC8D";
+const char* password = "T8hHQQCFQrpLMgGb";
+
+
+int pixel_threshold = 170; // the variable that you want to update
 
 WebServer server(80);
 
@@ -24,26 +29,25 @@ void setup_server() {
     server.on(F("/image"), [&]() {
         // send message on serial for debugging
         // take picture
-        camera_fb_t * frame_buffer = esp_camera_fb_get();
-        threshold_image(frame_buffer, pixel_threshold);
-
+        //camera_fb_t * fb = esp_camera_fb_get();
+        //threshold_image(fb, pixel_threshold);
         // convert frame to bmp
-        uint8_t * bmp_buffer = NULL;
-        size_t bmp_buffer_length = 0;
-        frame2bmp(frame_buffer, &bmp_buffer, &bmp_buffer_length);
+        uint8_t * buf = NULL;
+        size_t buf_length = 0;
+        frame2bmp(fb, &buf, &buf_length);
 
         // send image
-        server.send_P(200, "image/bmp", (const char *)bmp_buffer, bmp_buffer_length);
+        server.send_P(200, "image/bmp", (const char *)buf, buf_length);
 
         // free memory and return buffer
         // note that the picture is actually taken when you return the frame buffer
-        free(bmp_buffer);
-        esp_camera_fb_return(frame_buffer);
+        free(buf);
+        //esp_camera_fb_return(fb);
     });
 
+;
     // start server
     server.begin();
-
     // print ip
     IPAddress myIP = WiFi.softAPIP();
     Serial.printf("IP   - %s\n", myIP.toString());
@@ -59,7 +63,23 @@ void setup_wifi() {
 }
 
 
+void status_send() {
+  server.send(200, "text/plain", "laufe rechts");
+}
 
+/*
+void status_send_rechts() {
+  server.send(200, "text/plain", "rechts");
+}
+void status_send_links() {
+  server.send(200, "text/plain", "links");
+}
+void status_send_balance() {
+  server.send(200, "text/plain", "balance");
+}
+void status_send_vorne() {
+  server.send(200, "text/plain", "vorne");
+}*/
 
 /*
 void Change_recover_time (){
