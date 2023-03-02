@@ -13,7 +13,7 @@ const char* ssid = "David_Iphone";
 const char* password = "david123";
 
 
- // the variable that you want to update
+
 bool server_on = true;
 bool server_status = false;
 

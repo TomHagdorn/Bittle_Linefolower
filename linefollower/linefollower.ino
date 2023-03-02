@@ -94,46 +94,49 @@ void setup()
 /**************************************************************************/
 /*!
   \brief  Loop function
-  Capture image every 10 seconds
+  Captures and processes ca image every 320ms
 */
 /**************************************************************************/
 void loop()
 {    
+
     
     cycle_led_strip();
-    if ((unsigned long)(millis() - lastCamera) >=500UL)
+
+        unsigned long loopTimeStart = millis();
+        
+        
+    esp_err_t res = camera_capture();
+
+    if (res == ESP_OK)
     {   
-        
-        
-        esp_err_t res = camera_capture();
-        // bool res = true;
-        
-        // if (res = true)
-        if (res == ESP_OK)
-        {   
-            gaussianBlur(3);
-            //sobel();
-            threshold_image();
-            update();
-            update_movement();
-            //update_server();
+        gaussianBlur(3);
+        //sobel();
+        threshold_image();
+        update();
+        update_movement();
+        //update_server();
 
-            // print image to serial monitor
-            
-            //capture_still();
-            // free the sobel image gradient buffer
-            //delete[] gradient;
-
-        }
+        // print image to serial monitor
+        
+        //capture_still();
+        // free the sobel image gradient buffer
+        //delete[] gradient;
 
 
         //return the frame buffer back to the driver for reuse
         esp_camera_fb_return(fb);
 
-        
-        // free the gradient
-        lastCamera = millis();
-    }
+    
+    // free the gradient
+    lastCamera = millis();
+    unsigned long loopTimeEnd = millis();
+    //Serial.print("Loop time: ");
+    //Serial.println(loopTimeEnd - loopTimeStart);
+
+    }   
+    // Print the loop time
+
 }
 
 /**************************************************************************/
@@ -223,6 +226,7 @@ void update()
         // line follower returned true, indicating that the line was found
         break;
     case FINISH:
+        //Serial.println("\nFINISH");
         // Robot has finished, do nothing
         break;
     }

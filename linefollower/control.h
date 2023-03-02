@@ -13,11 +13,11 @@ enum MovementState
 
 MovementState currentMovementState = STATE_STOP;
 MovementState prevMovementState = STATE_MOVE_FORWARD;
+static int obst_state = 0;
+static unsigned long obst_stateStartTime = 0;
 
-//define state change time
+// defobst_state change time
 static unsigned long lastStateChangeTime = 0;
-
-
 
 /**************************************************************************/
 /**
@@ -64,57 +64,97 @@ bool line_follower()
     }
 }
 
-
-bool detect_obstacle() { 
-    if (get_distance() < obstacle_detection_dist && get_distance() != -1) {
+bool detect_obstacle()
+{
+    if (get_distance() < obstacle_detection_dist && get_distance() != -1)
+    {
         return true;
     }
     return false;
 }
 
-bool avoid_obstacle() {
-    //stop the robot
-    //TODO add timers to node red variables
-    if (millis() - lastStateChangeTime < 500) {
+bool avoid_obstacle()
+{
+
+    switch (obst_state)
+    {
+    case 0: // Stop for obstacle
+        if (millis() - obst_stateStartTime >= obst_stop_t)
+        {
+            obst_state = 1;
+            obst_stateStartTime = millis();
+        }
         currentMovementState = STATE_STOP;
-    }
-    //turn left
-    else if (millis() - lastStateChangeTime < 1000 && millis() - lastStateChangeTime > 500) {
+        break;
+
+    case 1: // Turn left
+        if (millis() - obst_stateStartTime >= obst_left_t)
+        {
+            obst_state = 2;
+            obst_stateStartTime = millis();
+        }
         currentMovementState = STATE_TURN_LEFT;
-    }
-    //turn right
-    else if (millis() - lastStateChangeTime < 1500 && millis() - lastStateChangeTime > 1000) {
+        break;
+
+    case 2: // Turn right
+        if (millis() - obst_stateStartTime >= obst_right_t)
+        {
+            obst_state = 3;
+            obst_stateStartTime = millis();
+        }
         currentMovementState = STATE_TURN_RIGHT;
-    }
-    //move forward
-    else if (millis() - lastStateChangeTime < 2000 && millis() - lastStateChangeTime > 1500) {
+        break;
+
+    case 3: // Move forward
+        if (millis() - obst_stateStartTime >= obst_straight_t)
+        {
+            obst_state = 4;
+            obst_stateStartTime = millis();
+        }
         currentMovementState = STATE_MOVE_FORWARD;
-    }
-    //turn right
-    else if (millis() - lastStateChangeTime < 2500 && millis() - lastStateChangeTime > 2000) {
+        break;
+
+    case 4: // Turn right
+        if (millis() - obst_stateStartTime >= obst_right_t)
+        {
+            obst_state = 5;
+            obst_stateStartTime = millis();
+        }
         currentMovementState = STATE_TURN_RIGHT;
-    }
-    //turn left
-    else if (millis() - lastStateChangeTime < 3000 && millis() - lastStateChangeTime > 2500) {
+        break;
+
+    case 5: // Turn left
+        if (millis() - obst_stateStartTime >= obst_left_t)
+        {
+            obst_state = 6;
+            obst_stateStartTime = millis();
+        }
         currentMovementState = STATE_TURN_LEFT;
-    }
-    //if line is found
-    else if (millis() - lastStateChangeTime < 3500) {
-        //TODO mabye check if line is found
+        break;
+
+    case 6: // Stop if line is found
+        if (millis() - obst_stateStartTime >= obst_stop_t)
+        {
+            currentMovementState = STATE_STOP;
+            return true;
+        }
         currentMovementState = STATE_STOP;
-        return true;
+        break;
     }
+
     return false;
 }
 
 bool recover()
-{   
-    //Walk backwards for a certain amount of time
-    if (millis() - lastStateChangeTime < 1000) {
+{
+    // Walk backwards for a certain amount of time
+    if (millis() - lastStateChangeTime < 1000)
+    {
         currentMovementState = STATE_MOVE_BACKWARD;
     }
-    else{
-        
+    else
+    {
+
         return true;
     }
     return false;
@@ -123,54 +163,65 @@ bool recover()
 void cool_move()
 {
     // TODO David writes cool move and then we test
-    //write function to turn on the spot
+    // write function to turn on the spot
     return;
 }
 
 bool crossFinishLine()
 {
-    //walk forward for a certain amount of time then stop
-    if (millis() - lastStateChangeTime < 500) {
+    // walk forward for a certain amount of time then stop
+    if (millis() - lastStateChangeTime < 500)
+    {
         currentMovementState = STATE_MOVE_FORWARD;
     }
-    else {
-        
+    else
+    {
+
         return true;
     }
     return false;
 }
 
+void update_movement()
+{
+    if (currentMovementState != prevMovementState)
+    {
+        switch (currentMovementState)
+        {
+        case STATE_STOP:
+            Serial.print("kbalance");
+            lastMovementChangeTime = millis();
+            break;
 
-void update_movement(){
-    if (currentMovementState != prevMovementState) {
-        switch (currentMovementState) {
-            case STATE_STOP:
-                Serial.print("kbalance");
-                break;
+        case STATE_TURN_LEFT:
+            Serial.print("kwkL");
+            lastMovementChangeTime = millis();
+            break;
 
-            case STATE_TURN_LEFT:
-                Serial.print("kwkL");
-                break;
+        case STATE_TURN_RIGHT:
+            Serial.print("kwkR");
+            lastMovementChangeTime = millis();
+            break;
 
-            case STATE_TURN_RIGHT:
-                Serial.print("kwkR");
-                break;
+        case STATE_MOVE_FORWARD:
+            Serial.print("kwkF");
+            lastMovementChangeTime = millis();
+            break;
 
-            case STATE_MOVE_FORWARD:
-                Serial.print("kwkF");
-                break;
+        case STATE_TURN_BACK_RIGHT:
+            Serial.print("kwkR");
+            lastMovementChangeTime = millis();
+            break;
 
-            case STATE_TURN_BACK_RIGHT:
-                Serial.print("kwkR");
-                break;
+        case STATE_TURN_BACK_LEFT:
+            Serial.print("kwkL");
+            lastMovementChangeTime = millis();
+            break;
 
-            case STATE_TURN_BACK_LEFT:
-                Serial.print("kwkL");
-                break;
-
-            case STATE_MOVE_BACKWARD:
-                Serial.print("kwkB");
-                break;
+        case STATE_MOVE_BACKWARD:
+            Serial.print("kwkB");
+            lastMovementChangeTime = millis();
+            break;
         }
         prevMovementState = currentMovementState;
     }
