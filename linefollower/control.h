@@ -1,5 +1,24 @@
 #include "sensor_img_proc.h"
 
+enum MovementState
+{
+    STATE_STOP,
+    STATE_TURN_LEFT,
+    STATE_TURN_RIGHT,
+    STATE_MOVE_FORWARD,
+    STATE_MOVE_BACKWARD,
+    STATE_TURN_BACK_RIGHT,
+    STATE_TURN_BACK_LEFT,
+};
+
+MovementState currentMovementState = STATE_STOP;
+MovementState prevMovementState = STATE_MOVE_FORWARD;
+
+//define state change time
+static unsigned long lastStateChangeTime = 0;
+
+
+
 /**************************************************************************/
 /**
   Line Follower
@@ -8,17 +27,17 @@
   \return true if a line is found, false otherwise
  */
 /**************************************************************************/
-bool line_follower(camera_fb_t *fb)
+bool line_follower()
 {
     // calculate the starting and ending fractions for the 3/4 to 1 portion of the frame
     double start_fraction = 3.0 / 4.0;
     double end_fraction = 1.0;
     // get the middle point for the 3/4 to 1 portion of the frame
-    int middle_point = get_middle_point(fb, start_fraction, end_fraction);
+    int middle_point = get_middle_point(start_fraction, end_fraction);
     if (middle_point == -1)
     {
         // no line was found, so stop the robot
-        Serial.print("kbalance");
+        currentMovementState = STATE_STOP;
         return false;
     }
 
@@ -26,78 +45,78 @@ bool line_follower(camera_fb_t *fb)
     if (middle_point < fb->width * 4 / 11)
     {
         // move the robot to the left
-        Serial.print("kwkL");
+        currentMovementState = STATE_TURN_LEFT;
         return true;
     }
     // if the point of highest density is in one of the 3/7th of the right side of the picture
     else if (middle_point >= fb->width * 8 / 11)
     {
         // move the robot to the right
-        Serial.print("kwkR");
+        currentMovementState = STATE_TURN_RIGHT;
         return true;
     }
     // if the point of highest density is within the 4/7th in the middle
     else
     {
         // move the robot forward
-        Serial.print("kwkF");
+        currentMovementState = STATE_MOVE_FORWARD;
         return true;
     }
 }
 
 
 bool detect_obstacle() { 
-    //TODO fix this function
-    // if (get_distance(trigPin ,echoPin) < obstacle_detection_dist && get_distance(trigPin,echoPin) != -1) {
-    //     return true;
-    // }
+    if (get_distance() < obstacle_detection_dist && get_distance() != -1) {
+        return true;
+    }
     return false;
 }
 
-void avoid_obstacle() {
-    //TODO fix this function
-    // // Stop the robot
-    // Serial.print("kp");
-    // // Turn the robot left for a certain amount of time
-    // unsigned long start_time = millis();
-    // Serial.print("kwkL");
-    // while (millis() - start_time < 500) {
-    //     // Wait
-    
-    // }
-
-    // // Turn the robot right until the line is found or until a timeout occurs
-    // start_time = millis();
-    // Serial.print("kwkR");
-    // int middle_point;
-    // while ((middle_point = get_middle_point(fb, 1.0/2.0, 2.0/3.0)) == -1) {
-    //     // Keep checking the middle point until it's not -1
-    //     if(millis() - start_time >= 5000) {
-    //         Serial.println("Error: Timed out while trying to find line.");
-    //         return;
-    //     }
-    // }
-    // // Once the line is found, turn the robot left for a certain amount of time
-    // start_time = millis();
-    // Serial.print("kwkL");
-    // while (millis() - start_time < 200) {
-    //     // Wait
-    // }
-    // // Stop the robot
-    // Serial.print("kp");
-    // return;
-    return;
+bool avoid_obstacle() {
+    //stop the robot
+    if (millis() - lastStateChangeTime < 500) {
+        currentMovementState = STATE_STOP;
+    }
+    //turn left
+    else if (millis() - lastStateChangeTime < 1000 && millis() - lastStateChangeTime > 500) {
+        currentMovementState = STATE_TURN_LEFT;
+    }
+    //turn right
+    else if (millis() - lastStateChangeTime < 1500 && millis() - lastStateChangeTime > 1000) {
+        currentMovementState = STATE_TURN_RIGHT;
+    }
+    //move forward
+    else if (millis() - lastStateChangeTime < 2000 && millis() - lastStateChangeTime > 1500) {
+        currentMovementState = STATE_MOVE_FORWARD;
+    }
+    //turn right
+    else if (millis() - lastStateChangeTime < 2500 && millis() - lastStateChangeTime > 2000) {
+        currentMovementState = STATE_TURN_RIGHT;
+    }
+    //turn left
+    else if (millis() - lastStateChangeTime < 3000 && millis() - lastStateChangeTime > 2500) {
+        currentMovementState = STATE_TURN_LEFT;
+    }
+    //if line is found
+    else if (millis() - lastStateChangeTime < 3500) {
+        //TODO mabye check if line is found
+        currentMovementState = STATE_STOP;
+        return true;
+    }
+    return false;
 }
 
-void recover()
-{
-    unsigned long start_time = millis();
-    // walk backwards for a certain amount of time
-    Serial.print("kwkB");
-    while(millis() - start_time < 1000) {
+bool recover()
+{   
+    //Walk backwards for a certain amount of time
+    if (millis() - lastStateChangeTime < 1000) {
+        currentMovementState = STATE_MOVE_BACKWARD;
     }
-    Serial.print("kbalance");
-    return;
+    else{
+        
+        return true;
+    }
+    return false;
 }
 
 void cool_move()
@@ -107,14 +126,51 @@ void cool_move()
     return;
 }
 
-void crossFinishLine()
+bool crossFinishLine()
 {
-    // walk backwards for a certain amount of time
-    Serial.print("kwkF");
-    unsigned long start_time = millis();
-    while (millis() - start_time < 400)
-    {
+    //walk forward for a certain amount of time then stop
+    if (millis() - lastStateChangeTime < 500) {
+        currentMovementState = STATE_MOVE_FORWARD;
     }
-    Serial.print("kbalance");
-    return;
+    else {
+        
+        return true;
+    }
+    return false;
+}
+
+
+void update_movement(){
+    if (currentMovementState != prevMovementState) {
+        switch (currentMovementState) {
+            case STATE_STOP:
+                Serial.print("kbalance");
+                break;
+
+            case STATE_TURN_LEFT:
+                Serial.print("kwkL");
+                break;
+
+            case STATE_TURN_RIGHT:
+                Serial.print("kwkR");
+                break;
+
+            case STATE_MOVE_FORWARD:
+                Serial.print("kwkF");
+                break;
+
+            case STATE_TURN_BACK_RIGHT:
+                Serial.print("kwkR");
+                break;
+
+            case STATE_TURN_BACK_LEFT:
+                Serial.print("kwkL");
+                break;
+
+            case STATE_MOVE_BACKWARD:
+                Serial.print("kwkB");
+                break;
+        }
+        prevMovementState = currentMovementState;
+    }
 }

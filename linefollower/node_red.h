@@ -9,7 +9,7 @@ const char* ssid = "Get off my Lan!";
 const char* password = "SchroedingersChat";
 bool server_on = true;
 bool server_status = false;
-int pixel_threshold = 1; // the variable that you want to update
+
 
 WebServer server(80);
 
@@ -38,7 +38,7 @@ void setup_server() {
         // take picture
         camera_fb_t * frame_buffer = esp_camera_fb_get();
         
-        threshold_image(frame_buffer,pixel_threshold);
+        //threshold_image(frame_buffer,pixel_threshold);
         // convert frame to bmp
         uint8_t * bmp_buffer = NULL;
         size_t bmp_buffer_length = 0;

@@ -1,9 +1,14 @@
 #define CAMERA_MODEL_AI_THINKER
 
 
+
 #include "esp_camera.h" ///< Header file for camera obtained from https://github.com/espressif/
 
 #include "driver/ledc.h" ///< To enable onboard Illumination/flash LED pin attached on 4
+
+//Pin definitions for LEDs
+const int led_control = 4;
+
 
 //! Image Format
 /*!
@@ -23,11 +28,11 @@
 */
 
 camera_fb_t *fb;
-const framesize_t FRAME_SIZE_IMAGE = FRAMESIZE_QQVGA; // FRAMESIZE_QQVGA
+const framesize_t FRAME_SIZE_IMAGE = FRAMESIZE_QVGA; // FRAMESIZE_QQVGA
 
 
-#define IMAGE_WIDTH 800  ///< Image size Width
-#define IMAGE_HEIGHT 600 ///< Image size Height
+#define IMAGE_WIDTH 320  ///< Image size Width
+#define IMAGE_HEIGHT 240 ///< Image size Height
 
 //! Camera exposure
 /*!
@@ -50,10 +55,8 @@ const int pwmFrequency = 50000;            ///< PWM settings for ESP32
 const uint8_t ledChannel = LEDC_CHANNEL_0; ///< Camera timer0
 const uint8_t pwmResolution = 8;           ///< resolution (8 = from 0 to 255)
 
-const int serialSpeed = 115200; ///< Serial data speed to use
 
-// minimum line lenth for line detection
-const int min_line_length = 10;
+
 
 //! Camera setting
 /*!
