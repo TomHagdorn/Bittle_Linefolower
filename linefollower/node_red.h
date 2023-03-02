@@ -13,7 +13,7 @@ const char* ssid = "Vodafone-BC8D";
 const char* password = "T8hHQQCFQrpLMgGb";
 
 
-int pixel_threshold = 170; // the variable that you want to update
+//int pixel_threshold = 170; // the variable that you want to update
 bool server_on = true;
 bool server_status = false;
 
@@ -91,7 +91,7 @@ void setup_server() {
 
 void status_send() {
   server.send(200, "text/plain", "laufe rechts");
-
+}
 void update_server()
 {
     if (server_on == true && server_status == false){
