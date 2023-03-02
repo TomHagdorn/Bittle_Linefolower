@@ -172,3 +172,4 @@ void Change_currentfinlinewidth(){
     currentfinlinewidth = newValue.toInt();
   });
 }*/
+

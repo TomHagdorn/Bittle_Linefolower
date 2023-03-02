@@ -18,6 +18,18 @@ int pixel_threshold = 180;
 //TODO Set the default values for the variables for
 //strip.color(0,0,0);
 
+//possible states of the robot
+enum State
+{
+    FOLLOW_LINE,
+    AVOID_OBSTACLE,
+    CROSS_FINISH_LINE,
+    FINISH,
+    RECOVER_FROM_NO_LINE,
+};
+
+
+State currentState = FOLLOW_LINE;
 
 
 
