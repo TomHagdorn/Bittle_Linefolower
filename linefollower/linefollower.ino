@@ -49,6 +49,8 @@ State currentState = FOLLOW_LINE;
 bool finish_line_crossed = false;
 // define the wifi server
 
+unsigned long lastServerUpdate = 0;
+
 
 /**************************************************************************/
 /*!
@@ -79,6 +81,7 @@ void setup()
     setLedBrightness(ledBrightness);
     //Node red setup TODO Needs to be moved to a seperate file in a function
     server.on("/status", handle_status);
+    server
     setup_wifi();
     server.begin();
     Change_Treshold_value();
@@ -105,7 +108,7 @@ void loop()
     
     cycle_led_strip();
 
-        unsigned long loopTimeStart = millis();
+    
         
         
     esp_err_t res = camera_capture();
@@ -117,7 +120,13 @@ void loop()
         threshold_image();
         update();
         update_movement();
-        update_server();
+        //update server every 600ms to save resources
+        if (millis() - lastServerUpdate >= 600)
+        {
+            update_server();
+            lastServerUpdate = millis();
+        }
+        
 
         // print image to serial monitor
         
