@@ -9,8 +9,8 @@
 #define PWD "123456789"
 
 
-const char* ssid = "David_Iphone";
-const char* password = "david123";
+const char* ssid = "TomHagdorn";
+const char* password = "26071997";
 
 
 

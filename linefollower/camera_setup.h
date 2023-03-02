@@ -176,7 +176,7 @@ bool initialiseCamera()
     config.xclk_freq_hz = 20000000;
     config.pixel_format = PIXFORMAT;
     config.frame_size = FRAME_SIZE_IMAGE;
-    config.jpeg_quality = 63; //TODO Was 10 changed to test
+    config.jpeg_quality = 10;
     config.fb_count = 1;
 
     // Check the esp32cam board has a PSRAM chip installed (extra memory used for storing captured images)
