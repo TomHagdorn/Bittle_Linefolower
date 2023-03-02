@@ -14,7 +14,7 @@ int line_width=10;
 int Fin_line_width=20;
 int min_line_length = 200;
 //define obstacle detection distance
-int obstacle_detection_dist = 15;
+int obstacle_detection_dist = 10;
 int pixel_threshold = 180;
 
 

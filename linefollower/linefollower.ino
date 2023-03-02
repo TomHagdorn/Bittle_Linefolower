@@ -81,7 +81,6 @@ void setup()
     setLedBrightness(ledBrightness);
     //Node red setup TODO Needs to be moved to a seperate file in a function
     server.on("/status", handle_status);
-    server
     setup_wifi();
     server.begin();
     Change_Treshold_value();
