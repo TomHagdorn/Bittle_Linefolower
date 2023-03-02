@@ -174,3 +174,5 @@ void Change_currentfinlinewidth(){
 }*/
 
 //TODO add states to node red
+//TODO add movement states to node red
+//TODO add new node redvariables to node red

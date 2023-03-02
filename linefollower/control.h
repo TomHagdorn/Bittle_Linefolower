@@ -74,6 +74,7 @@ bool detect_obstacle() {
 
 bool avoid_obstacle() {
     //stop the robot
+    //TODO add timers to node red variables
     if (millis() - lastStateChangeTime < 500) {
         currentMovementState = STATE_STOP;
     }
