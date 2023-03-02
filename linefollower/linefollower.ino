@@ -78,7 +78,9 @@ void setup()
     setupOnBoardFlash();
     setLedBrightness(ledBrightness);
     //Node red setup TODO Needs to be moved to a seperate file in a function
-    
+    server.on("/status", handle_status);
+    setup_wifi();
+    server.begin();
     Change_Treshold_value();
 
     //captureAndSendImage();
@@ -115,7 +117,7 @@ void loop()
         threshold_image();
         update();
         update_movement();
-        //update_server();
+        update_server();
 
         // print image to serial monitor
         
