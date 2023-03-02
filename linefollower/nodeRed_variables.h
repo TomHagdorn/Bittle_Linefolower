@@ -28,4 +28,3 @@ int pixel_threshold = 180;
 
 
 
-
