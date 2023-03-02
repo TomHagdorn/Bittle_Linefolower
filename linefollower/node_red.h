@@ -60,7 +60,7 @@ void setup_server() {
         free(buf);
         //esp_camera_fb_return(fb);
     });
-
+  //TODO Make own wifi setup function
     setup_wifi();
 
     WiFi.begin(ssid, password);
@@ -173,3 +173,4 @@ void Change_currentfinlinewidth(){
   });
 }*/
 
+//TODO add states to node red
