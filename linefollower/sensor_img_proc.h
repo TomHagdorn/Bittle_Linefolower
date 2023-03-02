@@ -202,7 +202,7 @@ int get_distance()
     // Prints the distance on the Serial Monitor
     // Serial.print("Distance: ");
     // Serial.println(distance);
-    return distance;
+    return 220;
 }
 
 /**************************************************************************/

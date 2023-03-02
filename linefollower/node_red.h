@@ -5,7 +5,7 @@
 
 
 
-#define SSID "esp32_server"
+#define SSID "esp32_server_2"
 #define PWD "123456789"
 
 
@@ -21,12 +21,14 @@ bool server_status = false;
 WebServer server(80);
 
 void setup_wifi() {
+  
     Serial.println("Configuring AP...");
-    if (!WiFi.softAP(SSID, PWD)) Serial.println("AP Config failed.");
-
+    if (!WiFi.softAP(SSID, PWD) && server_status == true){
+        Serial.println("AP Config failed.");
+    }
     // print ssid and pwd
     Serial.printf("SSID - %s\n", SSID);
-    Serial.printf("PWD  - %s\n", PWD);
+    Serial.printf("PWD  - %s\n", PWD);  
 }
 
 
@@ -34,7 +36,6 @@ void setup_wifi() {
 void Change_Treshold_value(){
     server.on("/update-tresholdvalue", HTTP_GET, []() {
     String newValue = server.arg("value");
-    Serial.println("hallo");
     pixel_threshold = newValue.toInt();
   });
 }
@@ -42,11 +43,6 @@ void Change_Treshold_value(){
 void setup_server() {
     // server will do the following every time [esp32-ip]/image is requested:
     server.on(F("/image"), [&]() {
-        // send message on serial for debugging
-        // take picture
-        //camera_fb_t * fb = esp_camera_fb_get();
-        //threshold_image(fb, pixel_threshold);
-
 
         // convert frame to bmp
         uint8_t * buf = NULL;
@@ -87,14 +83,17 @@ void setup_server() {
 }
 
 
+
 void update_server()
+
 {
     if (server_on == true && server_status == false){
       setup_server();
       server_status = true;
     }
-    else{
-        //TODO end server and wifi
+    if (server_on == false){
+        //TODO end server
+        WiFi.softAPdisconnect(true);
         server_status = false;
     }
     //check if the server is connected
@@ -103,6 +102,19 @@ void update_server()
         server.handleClient();
     }
 }
+
+
+void server_set_on(){
+    server_on = true;
+    server.send(200, "text/plain", "Server ist an");
+}
+
+void server_set_off(){
+    server_on = false;
+    server.send(200, "text/plain", "Server ist aus");
+}
+
+
 
 void handle_status() {
   
@@ -133,19 +145,8 @@ void handle_status() {
 }
 
 
-/*
-void status_send_rechts() {
-  server.send(200, "text/plain", "rechts");
-}
-void status_send_links() {
-  server.send(200, "text/plain", "links");
-}
-void status_send_balance() {
-  server.send(200, "text/plain", "balance");
-}
-void status_send_vorne() {
-  server.send(200, "text/plain", "vorne");
-}*/
+
+
 
 /*
 void Change_recover_time (){

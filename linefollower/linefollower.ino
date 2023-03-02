@@ -75,10 +75,14 @@ void setup()
         // Serial.println("Error!");
     }
 
-    setupOnBoardFlash();
-    setLedBrightness(ledBrightness);
+    //setupOnBoardFlash();
+    //setLedBrightness(ledBrightness);
     //Node red setup TODO Needs to be moved to a seperate file in a function
-    
+    server.on("/Start_server", server_set_on); // Wifi functions to start or stop the update()
+    server.on("/Stop_server", server_set_off);
+    server.on("/status", handle_status);
+    setup_wifi();
+    server.begin();
     Change_Treshold_value();
 
     //captureAndSendImage();
@@ -116,7 +120,7 @@ void loop()
             threshold_image();
             update();
             update_movement();
-            //update_server();
+            update_server();
 
             // print image to serial monitor
             
