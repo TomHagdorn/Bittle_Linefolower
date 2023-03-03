@@ -102,8 +102,47 @@ $ npm install node-red-node-serialport
 2. Install the Arduino Extension for Visual Studio Code
 3. Install OpenCV
 4. Clone this repository
-5. Open the folder in Visual Studio Code
-6. To be continued...
+5. Open the folder in Arduino IDE
+6. Install the ESP32-CAM Board in the Arduino IDE
+7. Install the following libraries in the Arduino IDE
+    - [ArduinoJson](https://arduinojson.org/)
+    - [WiFi](...)   
+    - [HTTPClient](...)
+    - [WebServer](...)
+    - [ESPCamera](...)
+8. Connect the ESP32-CAM to the computer
+9. Select the correct port in the Arduino IDE
+10. Select the correct board in the Arduino IDE
+    - Board: "AI Thinker ESP32-CAM"
+    - Upload Speed: "115200"
+    - CPU Frequency: "240MHz (WiFi/BT)"
+11. Upload the code to the ESP32-CAM
+12. Conect the 3D printed parts to the Bittle
+    - Connect the Ultrasonic Sensor Holder to the Camera Holder
+    - Connect the Camera Holder to the Bittle
+    -Clip the LED-Strip to the Bittle front rail
+12. Conect the ESP32-CAM to the Bittle 
+    (Caution to not connect the pins wrong to not damage the Bittle or overwirte the firmware)
+    - Connect the GND pin of the ESP32-CAM to the GND pin of the Bittle
+    - Connect the TX pin of the ESP32-CAM to the RX pin of the Bittle
+    - Connect the RX pin of the ESP32-CAM to the TX pin of the Bittle
+    - Connect the 5V pin of the ESP32-CAM to the 5V pin of the Bittle
+13. Conect the LED-Strip to the ESP32-CAM
+    - Connect the GND pin of the ESP32-CAM to the GND pin of the LED-Strip
+    - Connect the 5V pin of the ESP32-CAM to the 5V pin of the LED-Strip
+    - Connect the D14 pin of the ESP32-CAM to the D pin of the LED-Strip
+15. Connect the Ultrasonic Sensor to the ESP32-CAM
+    - Connect the GND pin of the ESP32-CAM to the GND pin of the Ultrasonic Sensor
+    - Connect the 5V pin of the ESP32-CAM to the 5V pin of the Ultrasonic Sensor
+    - Connect the D12 pin of the ESP32-CAM to the Trig pin of the Ultrasonic Sensor
+    - Connect the D13 pin of the ESP32-CAM to the Echo pin of the Ultrasonic Sensor
+
+
+
+
+
+
+
 
 
 ## [Tutorial](<https://i40.fh-aachen.de//courses/dta/activities/bittle/workspace_setup.html#node-red>)
@@ -135,10 +174,6 @@ CAM-Holder.stl
     The holder is clipped where the Bittle's head would be.
 
 
-Skelleton.stl
-
-    Skelleton cover for the back of the Bittle. It is printed in PLA+ and is for weight reduction of 0.5g.
-    This is not necessary, but it looks cool.
 
 standWithCalibration.stl
 

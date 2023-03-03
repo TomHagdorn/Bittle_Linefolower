@@ -270,6 +270,18 @@ bool check_for_horizontal_line()
     //return false;
 }
 
+bool any_line_found()
+{
+    if (check_for_horizontal_line() or get_middle_point() != -1)
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+}
+
 
 
 // void threshold_gradient() {
@@ -300,7 +312,7 @@ bool check_for_horizontal_line()
     
 // }
 
-//TODO fix sobel
+//not fixable it just alocates more memorz than it can handle
 //memory leak or smt 
 /*
 ELF file SHA256: 0000000000000000
