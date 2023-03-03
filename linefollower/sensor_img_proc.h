@@ -104,7 +104,7 @@ int get_middle_point()
     int start_row = fb->height * start_fraction;
     int end_row = fb->height * end_fraction;
     // check if the start and end rows are valid
-    if ((end_row > fb->height) || (start_row <= 0) || (start_row > end_row))
+    if ((end_row > fb->height) || (start_row < 0) || (start_row > end_row))
     {
         // invalid start and end rows, so return -1
         Serial.println("Invalid start and end rows");

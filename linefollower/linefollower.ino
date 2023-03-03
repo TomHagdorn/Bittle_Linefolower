@@ -82,11 +82,11 @@ void setup()
     //setLedBrightness(ledBrightness);
     // Wifi functions to start or stop the update()
     //server.on("/Stop_server", server_set_off);
-    server.on("/status", handle_status);
-    setup_wifi();
-    send_image();
+    // server.on("/status", handle_status);
+    // setup_wifi();
+    // send_image();
 
-    Change_Treshold_value();
+    // Change_Treshold_value();
 
 
     //captureAndSendImage();
@@ -131,7 +131,7 @@ void loop()
             //update server every 600ms to save resources
             if (millis() - lastServerUpdate >= 900)
             {
-                server.handleClient();
+                //server.handleClient();
             }
             
             // print image to serial monitor
