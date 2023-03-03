@@ -27,10 +27,11 @@ const int serialSpeed = 115200; ///< Serial data speed to use
 //My files 
 #include "nodeRed_variables.h"
 #include "camera_setup.h"
+#include "calibration.h"
 #include "control.h"
 #include "light_strip.h"
 #include "node_red.h"
-#include "calibration.h"
+
 
 
 //possible states of the robot
@@ -128,10 +129,10 @@ void loop()
 
 
             //update server every 600ms to save resources
-            // if (millis() - lastServerUpdate >= 900)
-            // {
+            if (millis() - lastServerUpdate >= 900)
+            {
                 server.handleClient();
-            // }
+            }
             
             // print image to serial monitor
             //capture_still();
