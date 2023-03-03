@@ -1,12 +1,6 @@
-#include <ArduinoJson.h>
 #include <WiFi.h>
 #include <WebServer.h>
 #include <HTTPClient.h>
-
-
-
-#define SSID "esp32_server_2"
-#define PWD "123456789"
 
 
 const char* ssid = "David_Iphone";
@@ -22,16 +16,26 @@ WebServer server(80);
 
 void setup_wifi() {
   
-    Serial.println("Configuring AP...");
-    if (!WiFi.softAP(SSID, PWD) && server_status == true){
-        Serial.println("AP Config failed.");
+    WiFi.begin(ssid, password);
+    int connRes = WiFi.waitForConnectResult();
+    if (connRes == WL_CONNECTED) {
+        //Serial.print("Connected to WiFi network with IP: ");
+        Serial.println(WiFi.localIP());
+        //server.begin();
+        
+
+    } else {
+        Serial.println("Connection Failed!");
+        esp_restart();
+        return;
     }
-    // print ssid and pwd
-    Serial.printf("SSID - %s\n", SSID);
-    Serial.printf("PWD  - %s\n", PWD);  
-}
 
+    IPAddress myIP = WiFi.softAPIP();
+    Serial.printf("IP   - %s\n", myIP.toString());
+    Serial.println("Connecting to WiFi...");
+    }
 
+    
 
 void Change_Treshold_value(){
     server.on("/update-tresholdvalue", HTTP_GET, []() {
@@ -40,51 +44,27 @@ void Change_Treshold_value(){
   });
 }
 
-void setup_server() {
+void send_image() {
     // server will do the following every time [esp32-ip]/image is requested:
     server.on(F("/image"), [&]() {
-
         // convert frame to bmp
         uint8_t * buf = NULL;
         size_t buf_length = 0;
         frame2bmp(fb, &buf, &buf_length);
-
         // send image
         server.send_P(200, "image/bmp", (const char *)buf, buf_length);
-
         // free memory and return buffer
         // note that the picture is actually taken when you return the frame buffer
         free(buf);
         //esp_camera_fb_return(fb);
     });
   //TODO Make own wifi setup function
-    //setup_wifi();
-
-    WiFi.begin(ssid, password);
-    int connRes = WiFi.waitForConnectResult();
-    if (connRes == WL_CONNECTED) {
-        //Serial.print("Connected to WiFi network with IP: ");
-        Serial.println(WiFi.localIP());
-        
-        //Call functions for the variable nodered values
-        //Change_Treshold_value();
-    } else {
-        Serial.println("Connection Failed!");
-        esp_restart();
-        return;
-    }
-
-
-    // start server
-    //server.begin();
-    // print ip
-    IPAddress myIP = WiFi.softAPIP();
-    Serial.printf("IP   - %s\n", myIP.toString());
+  
 }
 
 
 
-void update_server()
+/*void update_server()
 
 {
     if (server_on == true && server_status == false){
@@ -97,23 +77,14 @@ void update_server()
         server_status = false;
     }
     //check if the server is connected
-    if (server_status = true)
+    if (server_status = true && server_on == true)
     {
         server.handleClient();
     }
 }
 
 
-void server_set_on(){
-    server_on = true;
-    server.send(200, "text/plain", "Server ist an");
-}
-
-void server_set_off(){
-    server_on = false;
-    server.send(200, "text/plain", "Server ist aus");
-}
-
+*/
 
 
 void handle_status() {

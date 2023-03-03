@@ -78,10 +78,11 @@ void setup()
     //setupOnBoardFlash();
     //setLedBrightness(ledBrightness);
     //Node red setup TODO Needs to be moved to a seperate file in a function
-    server.on("/Start_server", server_set_on); // Wifi functions to start or stop the update()
-    server.on("/Stop_server", server_set_off);
-    server.on("/status", handle_status);
+     // Wifi functions to start or stop the update()
+    //server.on("/Stop_server", server_set_off);
+    //server.on("/status", handle_status);
     setup_wifi();
+    send_image();
     server.begin();
     Change_Treshold_value();
 
@@ -115,12 +116,13 @@ void loop()
         // if (res = true)
         if (res == ESP_OK)
         {   
-            gaussianBlur(3);
+            //gaussianBlur(3);
             //sobel();
             threshold_image();
             update();
             update_movement();
-            update_server();
+            server.handleClient();
+            //update_server();
 
             // print image to serial monitor
             
