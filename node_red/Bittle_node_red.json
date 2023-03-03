@@ -23,12 +23,103 @@
         "env": []
     },
     {
-        "id": "547ef249eda22158",
+        "id": "fb81dc8b2600dc96",
         "type": "tab",
-        "label": "Kamera",
+        "label": "Status_anzeige",
         "disabled": false,
         "info": "",
         "env": []
+    },
+    {
+        "id": "afe2bcd9a89f69ee",
+        "type": "tab",
+        "label": "Start/Stop Wifi AP",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "23160170.77800e",
+        "type": "subflow",
+        "name": "top",
+        "info": "",
+        "category": "",
+        "in": [
+            {
+                "x": 100,
+                "y": 100,
+                "wires": [
+                    {
+                        "id": "98a41609.d8efc8"
+                    }
+                ]
+            }
+        ],
+        "out": [
+            {
+                "x": 620,
+                "y": 100,
+                "wires": [
+                    {
+                        "id": "bc97fbbe.cb9318",
+                        "port": 1
+                    }
+                ]
+            },
+            {
+                "x": 620,
+                "y": 160,
+                "wires": [
+                    {
+                        "id": "bc97fbbe.cb9318",
+                        "port": 2
+                    }
+                ]
+            }
+        ],
+        "env": [],
+        "color": "#DDAA99",
+        "status": {
+            "x": 620,
+            "y": 40,
+            "wires": [
+                {
+                    "id": "bc97fbbe.cb9318",
+                    "port": 0
+                }
+            ]
+        }
+    },
+    {
+        "id": "32d61e0f.0490b2",
+        "type": "subflow",
+        "name": "stderr",
+        "info": "",
+        "category": "",
+        "in": [
+            {
+                "x": 60,
+                "y": 80,
+                "wires": [
+                    {
+                        "id": "211d46bf.a79c7a"
+                    }
+                ]
+            }
+        ],
+        "out": [],
+        "env": [],
+        "color": "#DDAA99",
+        "status": {
+            "x": 320,
+            "y": 120,
+            "wires": [
+                {
+                    "id": "211d46bf.a79c7a",
+                    "port": 1
+                }
+            ]
+        }
     },
     {
         "id": "a9b0ce21eebf1c35",
@@ -130,11 +221,11 @@
     {
         "id": "60b9c858.a9ecdc",
         "type": "ui_group",
-        "name": "Start and Stop the Bittle",
+        "name": "Start/Stop Bittle",
         "tab": "564a631a.2f096c",
         "order": 2,
         "disp": true,
-        "width": 10,
+        "width": "3",
         "collapse": false,
         "className": ""
     },
@@ -203,9 +294,9 @@
         "type": "ui_group",
         "name": "Value eingabe",
         "tab": "564a631a.2f096c",
-        "order": 3,
+        "order": 4,
         "disp": true,
-        "width": "12",
+        "width": 8,
         "collapse": false,
         "className": ""
     },
@@ -216,20 +307,177 @@
         "tab": "564a631a.2f096c",
         "order": 1,
         "disp": true,
-        "width": 5,
+        "width": 3,
         "collapse": false,
         "className": ""
     },
     {
         "id": "59cd35de9892c937",
         "type": "ui_group",
+        "d": true,
         "name": "Live-übertragung",
-        "tab": "564a631a.2f096c",
+        "tab": "",
         "order": 4,
+        "disp": true,
+        "width": "16",
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "a63b29d.f4c81d8",
+        "type": "ui_group",
+        "name": "Form",
+        "tab": "",
+        "order": 1,
+        "disp": true,
+        "width": "15",
+        "collapse": false
+    },
+    {
+        "id": "a102cf1a.5e5e5",
+        "type": "ui_group",
+        "name": "Video Stream",
+        "tab": "",
+        "order": 1,
+        "disp": true,
+        "width": "12",
+        "collapse": false
+    },
+    {
+        "id": "80c7b77c.12d088",
+        "type": "ui_group",
+        "name": "Video Stream",
+        "tab": "",
+        "order": 3,
+        "disp": true,
+        "width": "12",
+        "collapse": false
+    },
+    {
+        "id": "9f75dd89.bf7f78",
+        "type": "ui_group",
+        "name": "Kamera",
+        "tab": "",
+        "order": 1,
+        "disp": true,
+        "width": "24",
+        "collapse": false
+    },
+    {
+        "id": "60018d09cc0e953a",
+        "type": "ui_tab",
+        "name": "Server",
+        "icon": "dashboard",
+        "order": 2,
+        "disabled": false,
+        "hidden": false
+    },
+    {
+        "id": "7ef72d236a7aa62c",
+        "type": "ui_group",
+        "name": "Server_Start",
+        "tab": "60018d09cc0e953a",
+        "order": 1,
         "disp": true,
         "width": 7,
         "collapse": false,
         "className": ""
+    },
+    {
+        "id": "e4f2412d.1b609",
+        "type": "exec",
+        "z": "23160170.77800e",
+        "command": "top -b -d 5 -p",
+        "addpay": true,
+        "append": "",
+        "useSpawn": "true",
+        "timer": "",
+        "oldrc": false,
+        "name": "",
+        "x": 329,
+        "y": 101,
+        "wires": [
+            [
+                "bc97fbbe.cb9318"
+            ],
+            [],
+            []
+        ]
+    },
+    {
+        "id": "bc97fbbe.cb9318",
+        "type": "function",
+        "z": "23160170.77800e",
+        "name": "",
+        "func": "const { payload } = msg;\n\nif (typeof payload === 'string') {\n    \n    //node.warn(payload);\n    \n    const lines = payload.toString().trim().split(/[\\n]+/);\n    \n    if (lines.length >= 2) {\n        \n        const labels = lines[lines.length - 2].trim().split(/[\\s]+/);\n\n        const values = lines[lines.length - 1].trim().split(/[\\s]+/);\n        \n        const data = {};\n        \n        for (let i = 0; i < labels.length; ++i) {\n            data[labels[i]] = values[i] || '0.0';\n        }\n        \n        const cpu = data['%CPU'];\n        \n        const mem = data['%MEM'];\n        \n        const text = `%CPU ${cpu}, %MEM ${mem}`;\n        \n        return node.send([{ payload: { fill: 'green', shape: 'dot', text } }, { payload: cpu }, { payload: mem } ]);\n\n    }\n\n}\n\nnode.send({ payload: {} });",
+        "outputs": 3,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "x": 495,
+        "y": 100,
+        "wires": [
+            [],
+            [],
+            []
+        ],
+        "l": false,
+        "info": "# minimize top's output in batch mode\n\nrun top in interactive mode (dont use -b)\n\nopen column configuration menu (f) and toggle values\n\nquit (q) menu\n\nconfigure display using (l, t, m) to remove extra\n\nsave configuration (shift + w)\n\nquit (q) top\n\nrun top in batch mode (top -b) to see the changes"
+    },
+    {
+        "id": "98a41609.d8efc8",
+        "type": "function",
+        "z": "23160170.77800e",
+        "name": "",
+        "func": "const { payload = {} } = msg;\n\nconst { status, pid } = payload;\n\nconst timeout = context.get('timeout');\n\nclearTimeout(timeout);\n\nif (status === 'spawn') {\n    \n    const timeout = setTimeout(() => node.send({ payload: pid }), 100);\n    \n    context.set('timeout', timeout);\n    \n} else if (status === 'close') {\n    \n    node.send({ payload: 'kill', kill: 'SIGTERM' });\n    \n}",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "// Code added here will be run once\n// whenever the node is deployed.\n\ncontext.set('timeout', undefined);",
+        "finalize": "// Code added here will be run when the\n// node is being stopped or re-deployed.\n\nconst timeout = context.get('timeout');\n\nclearTimeout(timeout);\n\ncontext.set('timeout', undefined);",
+        "x": 203,
+        "y": 101,
+        "wires": [
+            [
+                "e4f2412d.1b609"
+            ]
+        ],
+        "l": false
+    },
+    {
+        "id": "211d46bf.a79c7a",
+        "type": "function",
+        "z": "32d61e0f.0490b2",
+        "name": "stderr",
+        "func": "const stderr = msg.payload.toString().split('\\n');\n\nnode.send([{ stderr }, { payload: {fill: 'red', text: `${new Date().toString()}` } } ]);",
+        "outputs": 2,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "x": 190,
+        "y": 73,
+        "wires": [
+            [
+                "c6e5408.f19c4c"
+            ],
+            []
+        ]
+    },
+    {
+        "id": "c6e5408.f19c4c",
+        "type": "debug",
+        "z": "32d61e0f.0490b2",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "stderr",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 370,
+        "y": 60,
+        "wires": []
     },
     {
         "id": "5eabf9c9.9a8ff8",
@@ -275,7 +523,7 @@
         "method": "GET",
         "ret": "txt",
         "paytoqs": "query",
-        "url": "http://192.168.0.156/update-tresholdvalue",
+        "url": "http://172.20.10.7/update-tresholdvalue",
         "tls": "",
         "persist": false,
         "proxy": "",
@@ -300,7 +548,7 @@
         "tooltip": "",
         "group": "5bd151deb14bfdab",
         "order": 1,
-        "width": 12,
+        "width": 8,
         "height": 4,
         "passthru": true,
         "mode": "text",
@@ -386,7 +634,7 @@
         "tooltip": "",
         "group": "5bd151deb14bfdab",
         "order": 2,
-        "width": 6,
+        "width": 4,
         "height": 4,
         "passthru": true,
         "mode": "text",
@@ -472,7 +720,7 @@
         "tooltip": "",
         "group": "5bd151deb14bfdab",
         "order": 4,
-        "width": 6,
+        "width": 4,
         "height": 4,
         "passthru": true,
         "mode": "text",
@@ -558,7 +806,7 @@
         "tooltip": "",
         "group": "5bd151deb14bfdab",
         "order": 3,
-        "width": 6,
+        "width": 4,
         "height": 4,
         "passthru": true,
         "mode": "text",
@@ -644,7 +892,7 @@
         "tooltip": "",
         "group": "5bd151deb14bfdab",
         "order": 5,
-        "width": 6,
+        "width": 4,
         "height": 4,
         "passthru": true,
         "mode": "text",
@@ -730,7 +978,7 @@
         "tooltip": "",
         "group": "5bd151deb14bfdab",
         "order": 6,
-        "width": 6,
+        "width": 4,
         "height": 4,
         "passthru": true,
         "mode": "text",
@@ -816,7 +1064,7 @@
         "tooltip": "",
         "group": "5bd151deb14bfdab",
         "order": 7,
-        "width": 6,
+        "width": 4,
         "height": 4,
         "passthru": true,
         "mode": "text",
@@ -902,7 +1150,7 @@
         "tooltip": "",
         "group": "5bd151deb14bfdab",
         "order": 8,
-        "width": 6,
+        "width": 4,
         "height": 4,
         "passthru": true,
         "mode": "text",
@@ -988,7 +1236,7 @@
         "tooltip": "",
         "group": "5bd151deb14bfdab",
         "order": 9,
-        "width": 6,
+        "width": 4,
         "height": 4,
         "passthru": true,
         "mode": "text",
@@ -1012,8 +1260,8 @@
         "name": "",
         "group": "8478555ca06fa3e9",
         "order": 1,
-        "width": 5,
-        "height": 4,
+        "width": 3,
+        "height": 3,
         "passthru": false,
         "label": "Start",
         "tooltip": "",
@@ -1094,8 +1342,8 @@
         "name": "",
         "group": "8478555ca06fa3e9",
         "order": 2,
-        "width": 5,
-        "height": 5,
+        "width": 3,
+        "height": 4,
         "gtype": "donut",
         "title": "Countdown",
         "label": "Sekunden",
@@ -1121,8 +1369,8 @@
         "name": "",
         "group": "8478555ca06fa3e9",
         "order": 3,
-        "width": 5,
-        "height": 4,
+        "width": 3,
+        "height": 3,
         "passthru": false,
         "label": "Stop",
         "tooltip": "",
@@ -1173,8 +1421,8 @@
         "name": "",
         "group": "60b9c858.a9ecdc",
         "order": 1,
-        "width": 5,
-        "height": 4,
+        "width": 3,
+        "height": 3,
         "passthru": false,
         "label": "Start",
         "tooltip": "",
@@ -1240,9 +1488,9 @@
         "z": "f90472f2bdbcca1d",
         "name": "",
         "group": "60b9c858.a9ecdc",
-        "order": 2,
-        "width": 5,
-        "height": 4,
+        "order": 3,
+        "width": 3,
+        "height": 3,
         "passthru": false,
         "label": "Stop",
         "tooltip": "",
@@ -1279,25 +1527,159 @@
         "wires": []
     },
     {
-        "id": "012fb8c8ea399bf0",
-        "type": "ui_template",
-        "z": "547ef249eda22158",
-        "group": "59cd35de9892c937",
-        "name": "ESP32_Cam",
-        "order": 1,
-        "width": 7,
-        "height": 6,
-        "format": "<div>\n\n    <img src=\"http://95.233.45.146:81/stream\"\n     width=\"800\" height=\"600\">\n\n</div>",
-        "storeOutMessages": true,
-        "fwdInMessages": true,
-        "resendOnRefresh": true,
-        "templateScope": "local",
-        "className": "",
-        "x": 510,
-        "y": 200,
+        "id": "3ab3e273.a8b15a",
+        "type": "http request",
+        "z": "fb81dc8b2600dc96",
+        "name": "Get Status",
+        "method": "GET",
+        "ret": "txt",
+        "paytoqs": "ignore",
+        "url": "http://172.20.10.7/status",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 430,
+        "y": 160,
         "wires": [
-            []
+            [
+                "77b0f31b.75f33",
+                "ec5ac557e6a22813"
+            ]
+        ]
+    },
+    {
+        "id": "77b0f31b.75f33",
+        "type": "ui_text",
+        "z": "fb81dc8b2600dc96",
+        "group": "60b9c858.a9ecdc",
+        "order": 2,
+        "width": 3,
+        "height": 4,
+        "name": "",
+        "label": "State",
+        "format": "{{payload}}",
+        "layout": "col-center",
+        "className": "",
+        "x": 670,
+        "y": 80,
+        "wires": []
+    },
+    {
+        "id": "ec5ac557e6a22813",
+        "type": "debug",
+        "z": "fb81dc8b2600dc96",
+        "name": "debug 4",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 680,
+        "y": 220,
+        "wires": []
+    },
+    {
+        "id": "52f5654b92a14604",
+        "type": "inject",
+        "z": "fb81dc8b2600dc96",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
         ],
-        "icon": "font-awesome/fa-video-camera"
+        "repeat": "3",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 210,
+        "y": 160,
+        "wires": [
+            [
+                "3ab3e273.a8b15a"
+            ]
+        ]
+    },
+    {
+        "id": "f24e193eeab643d5",
+        "type": "http request",
+        "z": "afe2bcd9a89f69ee",
+        "name": "",
+        "method": "GET",
+        "ret": "txt",
+        "paytoqs": "ignore",
+        "url": "http://172.20.10.7/Stop_server",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 505.08331298828125,
+        "y": 360.0833435058594,
+        "wires": [
+            [
+                "4abed5f7224c282e"
+            ]
+        ]
+    },
+    {
+        "id": "d0a0f6521b40b7ae",
+        "type": "ui_button",
+        "z": "afe2bcd9a89f69ee",
+        "name": "",
+        "group": "7ef72d236a7aa62c",
+        "order": 2,
+        "width": 0,
+        "height": 0,
+        "passthru": false,
+        "label": "Tötet den Server",
+        "tooltip": "",
+        "color": "Black",
+        "bgcolor": "Red",
+        "className": "",
+        "icon": "",
+        "payload": "H",
+        "payloadType": "str",
+        "topic": "topic",
+        "topicType": "str",
+        "x": 205.08331298828125,
+        "y": 360.0833435058594,
+        "wires": [
+            [
+                "f24e193eeab643d5"
+            ]
+        ]
+    },
+    {
+        "id": "4abed5f7224c282e",
+        "type": "debug",
+        "z": "afe2bcd9a89f69ee",
+        "name": "debug 6",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 835.0833129882812,
+        "y": 360.0833435058594,
+        "wires": []
     }
 ]

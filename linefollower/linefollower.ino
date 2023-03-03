@@ -77,13 +77,16 @@ void setup()
         // Serial.println("Error!");
     }
 
-    setupOnBoardFlash();
-    setLedBrightness(ledBrightness);
-    //Node red setup TODO Needs to be moved to a seperate file in a function
-    // server.on("/status", handle_status);
-    // setup_wifi();
-    // server.begin();
-    // Change_Treshold_value();
+    //setupOnBoardFlash();
+    //setLedBrightness(ledBrightness);
+    // Wifi functions to start or stop the update()
+    //server.on("/Stop_server", server_set_off);
+    server.on("/status", handle_status);
+    setup_wifi();
+    send_image();
+
+    Change_Treshold_value();
+
 
     //captureAndSendImage();
     // Ultrasound sensor setup
@@ -122,25 +125,18 @@ void loop()
             threshold_image();
             update();
             update_movement();
+
+
             //update server every 600ms to save resources
             // if (millis() - lastServerUpdate >= 900)
             // {
-            //     //Supdate_server();
-            //     lastServerUpdate = millis();
+                server.handleClient();
             // }
             
-
             // print image to serial monitor
-            
             //capture_still();
             // free the sobel image gradient buffer
             //delete[] gradient;
-
-
-
-
-        
-            // free the gradient
             lastCamera = millis();
         }
         //unsigned long loopTimeEnd = millis();
