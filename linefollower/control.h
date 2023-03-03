@@ -32,29 +32,27 @@ static unsigned long lastStateChangeTime = 0;
 bool line_follower()
 {
     // calculate the starting and ending fractions for the 3/4 to 1 portion of the frame
-    double start_fraction = 3.0 / 4.0;
-    double end_fraction = 1.0;
     // get the middle point for the 3/4 to 1 portion of the frame
-    int middle_point = get_middle_point(start_fraction, end_fraction);
+    int middle_point = get_middle_point();
     if (middle_point == -1)
     {
         // no line was found, so stop the robot
-        currentMovementState = STATE_STOP;
+        currentMovementState = STATE_MOVE_BACKWARD;
         return false;
     }
 
     // if the point of highest density is in one of the 3/7th of the left side of the picture
-    if (middle_point < fb->width * 4 / 11)
+    if (middle_point < fb->width * 1 / 4)
     {
         // move the robot to the left
-        currentMovementState = STATE_TURN_LEFT;
+        currentMovementState = STATE_TURN_LEFT_AXIS;
         return true;
     }
     // if the point of highest density is in one of the 3/7th of the right side of the picture
-    else if (middle_point >= fb->width * 8 / 11)
+    else if (middle_point >= fb->width * 3 / 4)
     {
         // move the robot to the right
-        currentMovementState = STATE_TURN_RIGHT;
+        currentMovementState = STATE_TURN_RIGHT_AXIS;
         return true;
     }
     // if the point of highest density is within the 4/7th in the middle
@@ -68,10 +66,10 @@ bool line_follower()
 
 bool detect_obstacle()
 {
-    if (get_distance() < obstacle_detection_dist && get_distance() != -1)
-    {
-        return true;
-    }
+    //if (get_distance() < obstacle_detection_dist)
+    // {
+    //     return true;
+    // }
     return false;
 }
 
@@ -152,17 +150,37 @@ bool avoid_obstacle()
 
 bool recover()
 {
-    // Walk backwards for a certain amount of time
-    if (millis() - lastStateChangeTime < 1000)
-    {
-        currentMovementState = STATE_MOVE_BACKWARD;
-    }
-    else
-    {
+    // // Rotate to find line again
+    // if (millis() - lastStateChangeTime < recover_time)
+    // {
+    //     if (millis() - lastStateChangeTime < recover_time / 4 && get_middle_point() == -1)
+    //     {
+    //         currentMovementState = STATE_TURN_RIGHT_AXIS;
+    //     }
+    //     else if (millis() - lastStateChangeTime < recover_time * 2 / 4 && get_middle_point() == -1)
+    //     {
+    //         currentMovementState = STATE_TURN_LEFT_AXIS;
+    //     }
+    //     else if (millis() - lastStateChangeTime < recover_time * 3 / 4 && get_middle_point() == -1)
+    //     {
+    //         currentMovementState = STATE_TURN_RIGHT_AXIS;
+    //     }
+    //     else if (millis() - lastStateChangeTime < recover_time * 4 / 4 && get_middle_point() == -1)
+    //     {
+    //         currentMovementState = STATE_TURN_LEFT_AXIS;
+    //     }
+    //     else if (get_middle_point() != -1)
+    //     {
+    //         return true;
+    //     }
+    //     else
+    //     {
+    //         return false;
+    //         Serialprintln("Recovery failed");
+    //     }
 
+    // }      
         return true;
-    }
-    return false;
 }
 
 void cool_move()
@@ -175,13 +193,12 @@ void cool_move()
 bool crossFinishLine()
 {
     // walk forward for a certain amount of time then stop
-    if (millis() - lastStateChangeTime < 500)
+    if (millis() - lastStateChangeTime < 1000)
     {
         currentMovementState = STATE_MOVE_FORWARD;
     }
     else
     {
-
         return true;
     }
     return false;
@@ -229,12 +246,12 @@ void update_movement()
             break;
         
         case STATE_TURN_RIGHT_AXIS:
-            Serial.print("kwkRA");
+            Serial.print("kvtR");
             lastMovementChangeTime = millis();
             break;
         
         case STATE_TURN_LEFT_AXIS:
-            Serial.print("kwkLA");
+            Serial.print("kvtL");
             lastMovementChangeTime = millis();
             break;
         }

@@ -80,10 +80,10 @@ void setup()
     setupOnBoardFlash();
     setLedBrightness(ledBrightness);
     //Node red setup TODO Needs to be moved to a seperate file in a function
-    server.on("/status", handle_status);
-    setup_wifi();
-    server.begin();
-    Change_Treshold_value();
+    // server.on("/status", handle_status);
+    // setup_wifi();
+    // server.begin();
+    // Change_Treshold_value();
 
     //captureAndSendImage();
     // Ultrasound sensor setup
@@ -110,39 +110,44 @@ void loop()
     
         
         
-    esp_err_t res = camera_capture();
+    
+    if (millis() - lastCamera > 500)
+    {
+      esp_err_t res = camera_capture();
+    
+        if (res == ESP_OK)
+        {   
+            gaussianBlur(3);
+            //sobel();
+            threshold_image();
+            update();
+            update_movement();
+            //update server every 600ms to save resources
+            // if (millis() - lastServerUpdate >= 900)
+            // {
+            //     //Supdate_server();
+            //     lastServerUpdate = millis();
+            // }
+            
 
-    if (res == ESP_OK)
-    {   
-        gaussianBlur(3);
-        //sobel();
-        threshold_image();
-        update();
-        update_movement();
-        //update server every 600ms to save resources
-        if (millis() - lastServerUpdate >= 600)
-        {
-            update_server();
-            lastServerUpdate = millis();
+            // print image to serial monitor
+            
+            //capture_still();
+            // free the sobel image gradient buffer
+            //delete[] gradient;
+
+
+
+
+        
+            // free the gradient
+            lastCamera = millis();
         }
-        
-
-        // print image to serial monitor
-        
-        //capture_still();
-        // free the sobel image gradient buffer
-        //delete[] gradient;
-
-
+        //unsigned long loopTimeEnd = millis();
+        //Serial.print("Loop time: ");
+        //Serial.println(loopTimeEnd - loopTimeStart);
         //return the frame buffer back to the driver for reuse
         esp_camera_fb_return(fb);
-
-    
-    // free the gradient
-    lastCamera = millis();
-    unsigned long loopTimeEnd = millis();
-    //Serial.print("Loop time: ");
-    //Serial.println(loopTimeEnd - loopTimeStart);
 
     }   
     // Print the loop time
@@ -175,7 +180,7 @@ void update()
     switch (currentState)
     {
     case FOLLOW_LINE:
-        //Serial.println("\nFOLLOW_LINE");
+        
         if (line_follower())
         {
             lastStateChangeTime = millis();
@@ -184,59 +189,64 @@ void update()
             }
             if (check_for_horizontal_line() && (millis() - startTime >= 60000))
             {
+                //Serial.println("\nCROSS_FINISH_LINE");
                 currentState = CROSS_FINISH_LINE;
                 lastStateChangeTime = millis();
             }
         
         else if (detect_obstacle() == true)
         {
+            //Serial.println("\nAVOID_OBSTACLE");
             currentState = AVOID_OBSTACLE;
             lastStateChangeTime = millis();
         }
         else
         {
-            if (millis() - lastStateChangeTime >= 4000)
+            if (millis() - lastStateChangeTime >= 10000)
             {
                 // line follower returned false, indicating that the line was not found
                 // and at least 3 seconds have passed since the last state change
+                //Serial.println("\nRECOVER_FROM_NO_LINE");
                 currentState = RECOVER_FROM_NO_LINE;
                 lastStateChangeTime = millis();
             }
         }
         break;
     case AVOID_OBSTACLE:
-        //Serial.println("\nAVOID_OBSTACLE");
+        
         if (avoid_obstacle() == true)
         {
+        //Serial.println("\nFOLLOW_LINE");
         currentState = FOLLOW_LINE;
         lastStateChangeTime = millis();
+
         }
         break;
     case CROSS_FINISH_LINE:
-        //Serial.println("\nCROSS_FINISH_LINE");
         if (crossFinishLine() == true && finish_line_crossed == false)
         {
             finish_line_crossed = true;
             cool_move();
+            //Serial.println("\nFOLLOW_LINE");
             currentState = FOLLOW_LINE;
             lastStateChangeTime = millis();
         }
-        else if (crossFinishLine() == true && finish_line_crossed == true)
+        else 
         {
             currentState = FINISH;
         }
         break;
     case RECOVER_FROM_NO_LINE:
-        //Serial.println("\nRECOVER_FROM_NO_LINE");
         if (recover() == true)
         {
+            //Serial.println("\nFOLLOW_LINE");
             currentState = FOLLOW_LINE;
             lastStateChangeTime = millis();
         }   
         // line follower returned true, indicating that the line was found
         break;
     case FINISH:
-        //Serial.println("\nFINISH");
+        Serial.print("kbalance");
         // Robot has finished, do nothing
         break;
     }
