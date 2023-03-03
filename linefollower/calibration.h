@@ -20,3 +20,25 @@ bool capture_still()
     // Return true to indicate that the still was successfully captured
     return true;
 }
+
+
+int get_middlepoint_test() {
+  HardwareSerial Serial2(2);
+  Serial2.begin(115200);
+
+  while (true) {
+    if (Serial2.available()) {
+      char received_char = Serial2.read();
+
+      if (received_char == 'l') {
+        return 0;
+      } else if (received_char == 'r') {
+        return 320;
+      } else if (received_char == 'm') {
+        return 180;
+      } else if (received_char == 'n') {
+        return -1;
+      }
+    }
+  }
+}
