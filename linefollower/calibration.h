@@ -23,19 +23,17 @@ bool capture_still()
 
 
 int get_middlepoint_test() {
-  HardwareSerial Serial2(2);
-    if (Serial2.available()) {
-      char received_char = Serial2.read();
-
-      if (received_char == 'l') {
-        return 0;
-      } else if (received_char == 'r') {
-        return 320;
-      } else if (received_char == 'm') {
-        return 180;
-      } else if (received_char == 'n') {
-        return -1;
-      }
+  if (Serial.available() > 0) { // check if there is data available on the Serial Monitor
+    String received_message = Serial.readString(); // read the complete message
+    if (received_message == "l") {
+      return 0;
+    } else if (received_message == "r") {
+      return 320;
+    } else if (received_message == "m") {
+      return 180;
+    } else if (received_message == "n") {
+      return -1;
     }
-    return -1;
- }
+  }
+  return -1;
+}
