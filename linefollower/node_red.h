@@ -30,6 +30,7 @@ void setup_wifi() {
         return;
     }
 
+    server.begin();
     IPAddress myIP = WiFi.softAPIP();
     Serial.printf("IP   - %s\n", myIP.toString());
     Serial.println("Connecting to WiFi...");
