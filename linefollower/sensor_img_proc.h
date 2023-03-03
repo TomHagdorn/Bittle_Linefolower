@@ -82,8 +82,10 @@ void threshold_image()
  * @return The middle point of the white pixels in the specified region of the frame buffer, or -1 if no valid
  *         white pixels were found.
  */
-int get_middle_point(double start_fraction, double end_fraction)
+int get_middle_point()
 {   
+    double start_fraction = 0;
+    double end_fraction = 1.0;
     // initialize the starting and ending x-coordinates to zero
     int start_x = 0;
     int end_x = 0;
@@ -102,7 +104,7 @@ int get_middle_point(double start_fraction, double end_fraction)
     int start_row = fb->height * start_fraction;
     int end_row = fb->height * end_fraction;
     // check if the start and end rows are valid
-    if ((end_row > fb->height) || (start_row < 0) || (start_row > end_row))
+    if ((end_row > fb->height) || (start_row =< 0) || (start_row > end_row))
     {
         // invalid start and end rows, so return -1
         Serial.println("Invalid start and end rows");
@@ -200,9 +202,9 @@ int get_distance()
     // Calculating the distance
     int distance = duration * 0.034 / 2;
     // Prints the distance on the Serial Monitor
-    // Serial.print("Distance: ");
-    // Serial.println(distance);
-    return 220;
+    //SSerial.print("Distance: ");
+    //Serial.println(distance);
+    return distance;
 }
 
 /**************************************************************************/
@@ -270,6 +272,18 @@ bool check_for_horizontal_line()
     //return false;
 }
 
+bool any_line_found()
+{
+    if (check_for_horizontal_line() or get_middle_point() != -1)
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+}
+
 
 
 // void threshold_gradient() {
@@ -300,7 +314,7 @@ bool check_for_horizontal_line()
     
 // }
 
-//TODO fix sobel
+//not fixable it just alocates more memorz than it can handle
 //memory leak or smt 
 /*
 ELF file SHA256: 0000000000000000

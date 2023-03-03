@@ -3,15 +3,14 @@
 #include <HTTPClient.h>
 
 
-const char* ssid = "David_Iphone";
-const char* password = "david123";
 
+const char* ssid = "TomHagdorn";
+const char* password = "26071997";
 
- // the variable that you want to update
 bool server_on = true;
 bool server_status = false;
 
-
+//TODO Set server to lower power consumption by running it less frequent.
 WebServer server(80);
 
 void setup_wifi() {

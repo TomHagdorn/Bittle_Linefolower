@@ -9,15 +9,17 @@ enum MovementState
     STATE_MOVE_BACKWARD,
     STATE_TURN_BACK_RIGHT,
     STATE_TURN_BACK_LEFT,
+    STATE_TURN_RIGHT_AXIS,
+    STATE_TURN_LEFT_AXIS,
 };
 
 MovementState currentMovementState = STATE_STOP;
 MovementState prevMovementState = STATE_MOVE_FORWARD;
+static int obst_state = 0;
+static unsigned long obst_stateStartTime = 0;
 
-//define state change time
+// defobst_state change time
 static unsigned long lastStateChangeTime = 0;
-
-
 
 /**************************************************************************/
 /**
@@ -30,29 +32,27 @@ static unsigned long lastStateChangeTime = 0;
 bool line_follower()
 {
     // calculate the starting and ending fractions for the 3/4 to 1 portion of the frame
-    double start_fraction = 3.0 / 4.0;
-    double end_fraction = 1.0;
     // get the middle point for the 3/4 to 1 portion of the frame
-    int middle_point = get_middle_point(start_fraction, end_fraction);
+    int middle_point = get_middle_point();
     if (middle_point == -1)
     {
         // no line was found, so stop the robot
-        currentMovementState = STATE_STOP;
+        currentMovementState = STATE_MOVE_BACKWARD;
         return false;
     }
 
     // if the point of highest density is in one of the 3/7th of the left side of the picture
-    if (middle_point < fb->width * 4 / 11)
+    if (middle_point < fb->width * 1 / 4)
     {
         // move the robot to the left
-        currentMovementState = STATE_TURN_LEFT;
+        currentMovementState = STATE_TURN_LEFT_AXIS;
         return true;
     }
     // if the point of highest density is in one of the 3/7th of the right side of the picture
-    else if (middle_point >= fb->width * 8 / 11)
+    else if (middle_point >= fb->width * 3 / 4)
     {
         // move the robot to the right
-        currentMovementState = STATE_TURN_RIGHT;
+        currentMovementState = STATE_TURN_RIGHT_AXIS;
         return true;
     }
     // if the point of highest density is within the 4/7th in the middle
@@ -64,113 +64,196 @@ bool line_follower()
     }
 }
 
-
-bool detect_obstacle() { 
-    if (get_distance() < obstacle_detection_dist && get_distance() != -1) {
-        return true;
-    }
+bool detect_obstacle()
+{
+    //if (get_distance() < obstacle_detection_dist)
+    // {
+    //     return true;
+    // }
     return false;
 }
 
-bool avoid_obstacle() {
-    //stop the robot
-    //TODO add timers to node red variables
-    if (millis() - lastStateChangeTime < 500) {
+bool avoid_obstacle()
+{
+
+    switch (obst_state)
+    {
+    case 0: // Stop for obstacle
+        if (millis() - obst_stateStartTime >= obst_stop_t)
+        {
+            obst_state = 1;
+            obst_stateStartTime = millis();
+        }
         currentMovementState = STATE_STOP;
-    }
-    //turn left
-    else if (millis() - lastStateChangeTime < 1000 && millis() - lastStateChangeTime > 500) {
-        currentMovementState = STATE_TURN_LEFT;
-    }
-    //turn right
-    else if (millis() - lastStateChangeTime < 1500 && millis() - lastStateChangeTime > 1000) {
-        currentMovementState = STATE_TURN_RIGHT;
-    }
-    //move forward
-    else if (millis() - lastStateChangeTime < 2000 && millis() - lastStateChangeTime > 1500) {
+        break;
+
+    case 1: // Turn left
+        if (get_distance() > obstacle_detection_dist + 5)
+        {
+            obst_state = 2;
+            obst_stateStartTime = millis();
+        }
+        currentMovementState = STATE_TURN_LEFT_AXIS;
+        break;
+
+    case 2: // Walk forward
+        if (millis() - obst_stateStartTime >= obst_right_t)
+        {
+            obst_state = 3;
+            obst_stateStartTime = millis();
+        }
         currentMovementState = STATE_MOVE_FORWARD;
-    }
-    //turn right
-    else if (millis() - lastStateChangeTime < 2500 && millis() - lastStateChangeTime > 2000) {
-        currentMovementState = STATE_TURN_RIGHT;
-    }
-    //turn left
-    else if (millis() - lastStateChangeTime < 3000 && millis() - lastStateChangeTime > 2500) {
+        break;
+
+    case 3: // TURN RIGHT
+        if (get_distance() > obstacle_detection_dist + 10)
+        {
+            obst_state = 4;
+            obst_stateStartTime = millis();
+        }
+        currentMovementState = STATE_TURN_RIGHT_AXIS;
+        break;
+
+    case 4: // Turn left
+        if (get_distance() > obstacle_detection_dist + 7)
+        {
+            obst_state = 5;
+            obst_stateStartTime = millis();
+        }
+        currentMovementState = STATE_TURN_RIGHT_AXIS;
+        break;
+
+    case 5: // Walk forward
+        if (any_line_found() == true)
+        {
+            obst_state = 6;
+            obst_stateStartTime = millis();
+        }
         currentMovementState = STATE_TURN_LEFT;
+        break;
+
+    case 6: // Turn left
+        if (get_middle_point() == -1)
+        {
+            obst_state = 7;
+            obst_stateStartTime = millis();
+            return true;
+        }
+        currentMovementState = STATE_TURN_LEFT;
+        break;
     }
-    //if line is found
-    else if (millis() - lastStateChangeTime < 3500) {
-        //TODO mabye check if line is found
-        currentMovementState = STATE_STOP;
-        return true;
-    }
+    
+
     return false;
+    
 }
 
 bool recover()
-{   
-    //Walk backwards for a certain amount of time
-    if (millis() - lastStateChangeTime < 1000) {
-        currentMovementState = STATE_MOVE_BACKWARD;
-    }
-    else{
-        
+{
+    // // Rotate to find line again
+    // if (millis() - lastStateChangeTime < recover_time)
+    // {
+    //     if (millis() - lastStateChangeTime < recover_time / 4 && get_middle_point() == -1)
+    //     {
+    //         currentMovementState = STATE_TURN_RIGHT_AXIS;
+    //     }
+    //     else if (millis() - lastStateChangeTime < recover_time * 2 / 4 && get_middle_point() == -1)
+    //     {
+    //         currentMovementState = STATE_TURN_LEFT_AXIS;
+    //     }
+    //     else if (millis() - lastStateChangeTime < recover_time * 3 / 4 && get_middle_point() == -1)
+    //     {
+    //         currentMovementState = STATE_TURN_RIGHT_AXIS;
+    //     }
+    //     else if (millis() - lastStateChangeTime < recover_time * 4 / 4 && get_middle_point() == -1)
+    //     {
+    //         currentMovementState = STATE_TURN_LEFT_AXIS;
+    //     }
+    //     else if (get_middle_point() != -1)
+    //     {
+    //         return true;
+    //     }
+    //     else
+    //     {
+    //         return false;
+    //         Serialprintln("Recovery failed");
+    //     }
+
+    // }      
         return true;
-    }
-    return false;
 }
 
 void cool_move()
 {
     // TODO David writes cool move and then we test
-    //write function to turn on the spot
+    // write function to turn on the spot
     return;
 }
 
 bool crossFinishLine()
 {
-    //walk forward for a certain amount of time then stop
-    if (millis() - lastStateChangeTime < 500) {
+    // walk forward for a certain amount of time then stop
+    if (millis() - lastStateChangeTime < 1000)
+    {
         currentMovementState = STATE_MOVE_FORWARD;
     }
-    else {
-        
+    else
+    {
         return true;
     }
     return false;
 }
 
+void update_movement()
+{
+    if (currentMovementState != prevMovementState)
+    {
+        switch (currentMovementState)
+        {
+        case STATE_STOP:
+            Serial.print("kbalance");
+            lastMovementChangeTime = millis();
+            break;
 
-void update_movement(){
-    if (currentMovementState != prevMovementState) {
-        switch (currentMovementState) {
-            case STATE_STOP:
-                Serial.print("kbalance");
-                break;
+        case STATE_TURN_LEFT:
+            Serial.print("kwkL");
+            lastMovementChangeTime = millis();
+            break;
 
-            case STATE_TURN_LEFT:
-                Serial.print("kwkL");
-                break;
+        case STATE_TURN_RIGHT:
+            Serial.print("kwkR");
+            lastMovementChangeTime = millis();
+            break;
 
-            case STATE_TURN_RIGHT:
-                Serial.print("kwkR");
-                break;
+        case STATE_MOVE_FORWARD:
+            Serial.print("kwkF");
+            lastMovementChangeTime = millis();
+            break;
 
-            case STATE_MOVE_FORWARD:
-                Serial.print("kwkF");
-                break;
+        case STATE_TURN_BACK_RIGHT:
+            Serial.print("kwkR");
+            lastMovementChangeTime = millis();
+            break;
 
-            case STATE_TURN_BACK_RIGHT:
-                Serial.print("kwkR");
-                break;
+        case STATE_TURN_BACK_LEFT:
+            Serial.print("kwkL");
+            lastMovementChangeTime = millis();
+            break;
 
-            case STATE_TURN_BACK_LEFT:
-                Serial.print("kwkL");
-                break;
-
-            case STATE_MOVE_BACKWARD:
-                Serial.print("kwkB");
-                break;
+        case STATE_MOVE_BACKWARD:
+            Serial.print("kwkB");
+            lastMovementChangeTime = millis();
+            break;
+        
+        case STATE_TURN_RIGHT_AXIS:
+            Serial.print("kvtR");
+            lastMovementChangeTime = millis();
+            break;
+        
+        case STATE_TURN_LEFT_AXIS:
+            Serial.print("kvtL");
+            lastMovementChangeTime = millis();
+            break;
         }
         prevMovementState = currentMovementState;
     }

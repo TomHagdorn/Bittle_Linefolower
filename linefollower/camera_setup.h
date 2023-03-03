@@ -28,11 +28,11 @@ const int led_control = 4;
 */
 
 camera_fb_t *fb;
-const framesize_t FRAME_SIZE_IMAGE = FRAMESIZE_QVGA; // FRAMESIZE_QQVGA
+const framesize_t FRAME_SIZE_IMAGE = FRAMESIZE_QQVGA; // FRAMESIZE_QQVGA
 
 
-#define IMAGE_WIDTH 320  ///< Image size Width
-#define IMAGE_HEIGHT 240 ///< Image size Height
+#define IMAGE_WIDTH 160  ///< Image size Width
+#define IMAGE_HEIGHT 120 ///< Image size Height
 
 //! Camera exposure
 /*!
