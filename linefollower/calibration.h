@@ -24,9 +24,6 @@ bool capture_still()
 
 int get_middlepoint_test() {
   HardwareSerial Serial2(2);
-  Serial2.begin(115200);
-
-  while (true) {
     if (Serial2.available()) {
       char received_char = Serial2.read();
 
@@ -40,5 +37,5 @@ int get_middlepoint_test() {
         return -1;
       }
     }
-  }
-}
+    return -1;
+ }

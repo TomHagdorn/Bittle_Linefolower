@@ -33,7 +33,8 @@ bool line_follower()
 {
     // calculate the starting and ending fractions for the 3/4 to 1 portion of the frame
     // get the middle point for the 3/4 to 1 portion of the frame
-    int middle_point = get_middle_point();
+    //int middle_point = get_middle_point();
+    int middle_point = get_middlepoint_test();
     if (middle_point == -1)
     {
         // no line was found, so stop the robot
