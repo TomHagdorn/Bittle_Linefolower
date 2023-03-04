@@ -3,13 +3,14 @@
 #include <HTTPClient.h>
 
 
-const char* ssid = "David_Iphone";
+const char* ssid = "Alpha_Lan";
 const char* password = "david123";
 
 
  // the variable that you want to update
-bool server_on = true;
+bool server_on = false;
 bool server_status = false;
+
 
 
 WebServer server(80);
@@ -31,9 +32,6 @@ void setup_wifi() {
     }
 
     server.begin();
-    IPAddress myIP = WiFi.softAPIP();
-    Serial.printf("IP   - %s\n", myIP.toString());
-    Serial.println("Connecting to WiFi...");
     }
 
     
@@ -45,10 +43,14 @@ void Change_Treshold_value(){
   });
 }
 
+
 void send_image() {
+
+  if(server_on = true){
     // server will do the following every time [esp32-ip]/image is requested:
     server.on(F("/image"), [&]() {
         // convert frame to bmp
+        Serial.println("sende Bild!!!");
         uint8_t * buf = NULL;
         size_t buf_length = 0;
         frame2bmp(fb, &buf, &buf_length);
@@ -59,8 +61,18 @@ void send_image() {
         free(buf);
         //esp_camera_fb_return(fb);
     });
+    }
+    }
   //TODO Make own wifi setup function
-  
+
+
+void image_stop(){
+  server_on = false;
+  server.send(200, "text/plain", "Stop");
+}
+void image_start(){
+  server_on = true;
+  server.send(200,"text/plain","Start");
 }
 
 
@@ -69,23 +81,21 @@ void send_image() {
 
 {
     if (server_on == true && server_status == false){
-      setup_server();
+      send_image();
       server_status = true;
     }
     if (server_on == false){
         //TODO end server
-        WiFi.softAPdisconnect(true);
         server_status = false;
     }
-    //check if the server is connected
-    if (server_status = true && server_on == true)
-    {
-        server.handleClient();
+    if (server_on = false && server_status == true){
+      server.handleClient();
     }
+    //check if the server is connected
 }
-
-
 */
+
+
 
 
 void handle_status() {

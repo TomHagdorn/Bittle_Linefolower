@@ -79,11 +79,17 @@ void setup()
     //setLedBrightness(ledBrightness);
     //Node red setup TODO Needs to be moved to a seperate file in a function
      // Wifi functions to start or stop the update()
-    //server.on("/Stop_server", server_set_off);
+    server.on("/Stop_Image", image_stop);
+    server.on("/Start_Image",image_start);
     server.on("/status", handle_status);
     setup_wifi();
+    /*
+    if (server_on == true)
+    {
+      send_image();
+    }*/
     send_image();
-
+    
     Change_Treshold_value();
 
     //captureAndSendImage();
@@ -119,11 +125,12 @@ void loop()
             gaussianBlur(3);
             //sobel();
             threshold_image();
+
             update();
             update_movement();
-            server.handleClient();
+            //Serial.println(server_on);
             //update_server();
-
+            server.handleClient();
             // print image to serial monitor
             
             //capture_still();
