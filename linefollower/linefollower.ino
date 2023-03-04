@@ -83,15 +83,9 @@ void setup()
     server.on("/Start_Image",image_start);
     server.on("/status", handle_status);
     setup_wifi();
-    /*
-    if (server_on == true)
-    {
-      send_image();
-    }*/
     send_image();
-    
-    Change_Treshold_value();
-
+    //update all ned_node values
+    Update_node_red_values();
     //captureAndSendImage();
     // Ultrasound sensor setup
     strip_setup();
@@ -125,9 +119,8 @@ void loop()
             gaussianBlur(3);
             //sobel();
             threshold_image();
-
-            update();
-            update_movement();
+            //update();
+            //update_movement();
             //Serial.println(server_on);
             //update_server();
             server.handleClient();

@@ -15,6 +15,9 @@ int min_line_length = 200;
 int obstacle_detection_dist = 15;
 int pixel_threshold = 180;
 
+int gain = 1;
+int exposure = 0;
+
 //TODO Set the default values for the variables for
 //strip.color(0,0,0);
 

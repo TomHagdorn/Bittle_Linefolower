@@ -43,6 +43,27 @@ void Change_Treshold_value(){
   });
 }
 
+void Change_gain(){
+    server.on("/update-gain", HTTP_GET, []() {
+    String newValue = server.arg("value");
+    gain = newValue.toInt();
+  });
+}
+
+void Change_exposure(){
+    server.on("/update-exposure", HTTP_GET, []() {
+    String newValue = server.arg("value");
+    exposure = newValue.toInt();
+  });
+}
+
+
+void Update_node_red_values(){
+  Change_Treshold_value();
+  Change_gain();
+  Change_exposure();
+
+}
 
 void send_image() {
 
