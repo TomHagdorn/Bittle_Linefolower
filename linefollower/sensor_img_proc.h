@@ -2,8 +2,7 @@
 #define trigPin     12
 #define echoPin     13
 
-//filter settings
-const int kernelSize = 3; // kernel size for gaussian blur
+
 
 //TODO not enough memory unfortunately figure something out
 //int* gradient = new int[fb->height * fb->width];

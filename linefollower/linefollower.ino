@@ -78,18 +78,18 @@ void setup()
         // Serial.println("Error!");
     }
 
-    //setupOnBoardFlash();
-    //setLedBrightness(ledBrightness);
+    setupOnBoardFlash();
+    setLedBrightness(ledBrightness);
     // Wifi functions to start or stop the update()
-    //server.on("/Stop_server", server_set_off);
-    // server.on("/status", handle_status);
-    // setup_wifi();
-    // send_image();
+    //.on("/Stop_server", server_set_off);
+    server.on("/status", handle_status);
+    setup_wifi();
+    send_image();
 
-    // Change_Treshold_value();
+    Change_Treshold_value();
 
 
-    //captureAndSendImage();
+    
     // Ultrasound sensor setup
     strip_setup();
     
@@ -121,9 +121,9 @@ void loop()
     
         if (res == ESP_OK)
         {   
-            gaussianBlur(3);
+            gaussianBlur(kernelSize);
             //sobel();
-            threshold_image();
+            //threshold_image();
             update();
             update_movement();
 
@@ -131,7 +131,7 @@ void loop()
             //update server every 600ms to save resources
             if (millis() - lastServerUpdate >= 900)
             {
-                //server.handleClient();
+                server.handleClient();
             }
             
             // print image to serial monitor

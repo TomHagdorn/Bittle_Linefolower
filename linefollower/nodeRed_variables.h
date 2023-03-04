@@ -18,6 +18,19 @@ int obstacle_detection_dist = 0;
 int pixel_threshold = 220;
 
 
+
+int cameraImageExposure = 2; ///< Camera exposure (0 - 1200)
+//! Image gain
+/*!
+    Range: (0 - 30)
+    If gain and exposure both set to zero then auto adjust is enabled
+*/
+int cameraImageGain = 18;
+
+
+//filter settings
+const int kernelSize = 3; // kernel size for gaussian blur
+
 //TODO Set the default values for the variables for
 //strip.color(0,0,0);
 
