@@ -1,3 +1,10 @@
+// const char* ssid = "TomHagdorn";
+// const char* password = "26071997";
+
+const char* ssid = "Get off my Lan!";
+const char* password = "SchroedingersChat";
+
+
 unsigned long stateTime = 0;
 unsigned long lastMovementChangeTime = 0;
 
@@ -15,8 +22,22 @@ int Fin_line_width=200;
 int min_line_length = 100;
 //define obstacle detection distance
 int obstacle_detection_dist = 0;
-int pixel_threshold = 220;
+int pixel_threshold = 30;
 
+
+
+int cameraImageExposure = 100; ///< Camera exposure (0 - 1200) 2 for bright line
+//! Image gain
+/*!
+    Range: (0 - 30)
+    If gain and exposure both set to zero then auto adjust is enabled
+*/
+int cameraImageGain = 4;  //18 for bright line
+
+
+
+//filter settings
+const int kernelSize = 3; // kernel size for gaussian blur
 
 //TODO Set the default values for the variables for
 //strip.color(0,0,0);

@@ -4,8 +4,7 @@
 
 
 
-const char* ssid = "TomHagdorn";
-const char* password = "26071997";
+
 
 bool server_on = true;
 bool server_status = false;
@@ -43,6 +42,20 @@ void Change_Treshold_value(){
     pixel_threshold = newValue.toInt();
   });
 }
+
+// void Change_IMG_Gain_value(){
+//     server.on("/update-img-gain", HTTP_GET, []() {
+//     String newValue = server.arg("value");
+//    cameraImageGain = newValue.toInt();
+//   });
+// }
+
+// void Change_IMG_Exposur_value(){
+//     server.on("/update-img-exposure", HTTP_GET, []() {
+//     String newValue = server.arg("value");
+//    cameraImageExposure = newValue.toInt();
+//   });
+// }
 
 void send_image() {
     // server will do the following every time [esp32-ip]/image is requested:

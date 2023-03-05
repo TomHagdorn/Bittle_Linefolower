@@ -33,6 +33,7 @@ bool line_follower()
 {
     // calculate the starting and ending fractions for the 3/4 to 1 portion of the frame
     // get the middle point for the 3/4 to 1 portion of the frame
+    //int middle_point = get_middle_point();
     int middle_point = get_middle_point();
     if (middle_point == -1)
     {
@@ -66,10 +67,11 @@ bool line_follower()
 
 bool detect_obstacle()
 {
-    //if (get_distance() < obstacle_detection_dist)
-    // {
-    //     return true;
-    // }
+    //if (get_distance_test() < obstacle_detection_dist)
+    if (get_distance() < obstacle_detection_dist)
+    {
+        return true;
+    }
     return false;
 }
 

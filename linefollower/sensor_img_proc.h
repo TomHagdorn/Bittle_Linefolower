@@ -2,8 +2,7 @@
 #define trigPin     12
 #define echoPin     13
 
-//filter settings
-const int kernelSize = 3; // kernel size for gaussian blur
+
 
 //TODO not enough memory unfortunately figure something out
 //int* gradient = new int[fb->height * fb->width];
@@ -61,7 +60,7 @@ void threshold_image()
 
             // threshold the pixel at the current index
             // if the pixel is less than 210, set it to 255 (white)
-            fb->buf[index] = (fb->buf[index] > pixel_threshold) ? 255 : 0;
+            fb->buf[index] = (fb->buf[index] < pixel_threshold) ? 255 : 0;
         }
     }
 }
@@ -104,7 +103,7 @@ int get_middle_point()
     int start_row = fb->height * start_fraction;
     int end_row = fb->height * end_fraction;
     // check if the start and end rows are valid
-    if ((end_row > fb->height) || (start_row <= 0) || (start_row > end_row))
+    if ((end_row > fb->height) || (start_row < 0) || (start_row > end_row))
     {
         // invalid start and end rows, so return -1
         Serial.println("Invalid start and end rows");

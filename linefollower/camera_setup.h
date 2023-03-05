@@ -40,14 +40,14 @@ const framesize_t FRAME_SIZE_IMAGE = FRAMESIZE_QQVGA; // FRAMESIZE_QQVGA
     If gain and exposure both set to zero then auto adjust is enabled
 */
 
-int cameraImageExposure = 0;
+
 
 //! Image gain
 /*!
     Range: (0 - 30)
     If gain and exposure both set to zero then auto adjust is enabled
 */
-int cameraImageGain = 0;
+
 
 const uint8_t ledPin = 4;                  ///< onboard Illumination/flash LED pin (4)
 int ledBrightness = 8;                     ///< Initial brightness (0 - 255)
