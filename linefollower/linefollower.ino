@@ -48,6 +48,7 @@ bool finish_line_crossed = false;
 
 unsigned long lastServerUpdate = 0;
 static unsigned long startTime = millis();
+static unsigned long finishTime = 0;
 
 /**************************************************************************/
 /*!
@@ -77,13 +78,13 @@ void setup()
     setLedBrightness(ledBrightness);
     // Wifi functions to start or stop the update()
     //.on("/Stop_server", server_set_off);
-     server.on("/status", handle_status);
-     setup_wifi();
-     send_image();
+    //  server.on("/status", handle_status);
+    //  setup_wifi();
+    //  send_image();
 
-    Change_Treshold_value();
-    Change_IMG_Gain_value();
-    Change_IMG_Exposur_value();
+    // Change_Treshold_value();
+    // Change_IMG_Gain_value();
+    // Change_IMG_Exposur_value();
 
     // Ultrasound sensor setup
     strip_setup();
@@ -104,7 +105,7 @@ void loop()
 
     if (millis() - lastCamera > 300)
     {
-        unsigned long loopTimeStart = millis();
+        // unsigned long loopTimeStart = millis();
         esp_err_t res = camera_capture();
 
         if (res == ESP_OK)
@@ -117,8 +118,8 @@ void loop()
             //  Serial.println(thresholdTime - loopTimeStart);
             update();
             unsigned long updateTime = millis();
-            Serial.print("Update time: ");
-            Serial.println(updateTime - thresholdTime);
+            // Serial.print("Update time: ");
+            // Serial.println(updateTime - thresholdTime);
             update_movement();
             // unsigned long movementTime = millis();
             //  Serial.print("Movement time: ");
@@ -126,10 +127,11 @@ void loop()
 
             // update server every 600ms to save resources
             //TODO Fix this
-            // if (millis() - lastServerUpdate >= 900)
-            // {
-            //     //server.handleClient();
-            // }
+            if (millis() - lastServerUpdate >= 900)
+            {
+                // server.handleClient();
+                // lastServerUpdate = millis();
+            }
 
             // print image to serial monitor
             // capture_still();
@@ -137,9 +139,9 @@ void loop()
             // delete[] gradient;
             lastCamera = millis();
         }
-        unsigned long loopTimeEnd = millis();
-        Serial.print("Loop time: ");
-        Serial.println(loopTimeEnd - loopTimeStart);
+        // unsigned long loopTimeEnd = millis();
+        // Serial.print("Loop time: ");
+        // Serial.println(loopTimeEnd - loopTimeStart);
         // return the frame buffer back to the driver for reuse
         esp_camera_fb_return(fb);
     }
@@ -184,7 +186,7 @@ void update()
                 lastStateChangeTime = millis();
                 // line follower returned true, indicating that the line was found
 
-                if (check_for_horizontal_line() && (millis() - startTime >= 60000))
+                if (check_for_horizontal_line() && (millis() - finishTime >= 30000))
                 {
                     Serial.println("\nCROSS_FINISH_LINE");
                     currentState = CROSS_FINISH_LINE;
@@ -229,11 +231,13 @@ void update()
             finish_line_crossed = true;
             cool_move();
             Serial.println("\nFOLLOW_LINE");
+            finishTime = millis();
             currentState = FOLLOW_LINE;
             lastStateChangeTime = millis();
         }
-        else
-        {
+        else if (finish_line_crossed == true)
+        {   
+            Serial.println("\nFINISH");
             currentState = FINISH;
         }
         break;
@@ -250,6 +254,7 @@ void update()
         {
             // If recover attempts exceed 3, switch back to FOLLOW_LINE
             Serial.println("\nFOLLOW_LINE (max recover attempts reached)");
+            
             currentState = FOLLOW_LINE;
             lastStateChangeTime = millis();
             recoverAttempts = 0; // reset recover attempts counter
@@ -260,8 +265,11 @@ void update()
         }
         break;
     case FINISH:
-        Serial.print("kbalance");
-        // Robot has finished, do nothing
+        if (lastStateChangeTime > 1000)
+        {
+            // if this is the first time in the FINISH state, set the last state change time
+            currentMovementState = STATE_SLEEP;
+        }
         break;
     }
 }

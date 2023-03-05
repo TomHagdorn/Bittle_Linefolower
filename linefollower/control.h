@@ -11,6 +11,7 @@ enum MovementState
     STATE_TURN_BACK_LEFT,
     STATE_TURN_RIGHT_AXIS,
     STATE_TURN_LEFT_AXIS,
+    STATE_SLEEP
 };
 
 MovementState currentMovementState = STATE_STOP;
@@ -77,19 +78,9 @@ bool detect_obstacle()
 
 bool avoid_obstacle()
 {
-
     switch (obst_state)
     {
-    case 0: // Stop for obstacle
-        if (millis() - obst_stateStartTime >= obst_stop_t)
-        {
-            obst_state = 1;
-            obst_stateStartTime = millis();
-        }
-        currentMovementState = STATE_STOP;
-        break;
-
-    case 1: // Turn left
+    case 0: // Turn left
         if (get_distance() > obstacle_detection_dist + 5)
         {
             obst_state = 2;
@@ -98,8 +89,8 @@ bool avoid_obstacle()
         currentMovementState = STATE_TURN_LEFT_AXIS;
         break;
 
-    case 2: // Walk forward
-        if (millis() - obst_stateStartTime >= obst_right_t)
+    case 1: // Walk forward
+        if (millis() - obst_stateStartTime >= 1000)
         {
             obst_state = 3;
             obst_stateStartTime = millis();
@@ -107,10 +98,19 @@ bool avoid_obstacle()
         currentMovementState = STATE_MOVE_FORWARD;
         break;
 
-    case 3: // TURN RIGHT
-        if (get_distance() > obstacle_detection_dist + 10)
+    case 2: // TURN RIGHT
+        if (get_distance() < obstacle_detection_dist + 5)
         {
             obst_state = 4;
+            obst_stateStartTime = millis();
+        }
+        currentMovementState = STATE_TURN_RIGHT_AXIS;
+        break;
+
+    case 3: // Turn right
+        if (get_distance() < obstacle_detection_dist + 7)
+        {
+            obst_state = 5;
             obst_stateStartTime = millis();
         }
         currentMovementState = STATE_TURN_RIGHT_AXIS;
@@ -119,26 +119,25 @@ bool avoid_obstacle()
     case 4: // Turn left
         if (get_distance() > obstacle_detection_dist + 7)
         {
-            obst_state = 5;
-            obst_stateStartTime = millis();
-        }
-        currentMovementState = STATE_TURN_RIGHT_AXIS;
-        break;
-
-    case 5: // Walk forward
-        if (any_line_found() == true)
-        {
             obst_state = 6;
             obst_stateStartTime = millis();
         }
         currentMovementState = STATE_TURN_LEFT;
         break;
-
-    case 6: // Turn left
-        if (get_middle_point() == -1)
+    case 5: // Turn left
+        if (any_line_found() == true)
         {
             obst_state = 7;
             obst_stateStartTime = millis();
+        }
+        currentMovementState = STATE_MOVE_FORWARD;
+        break;
+    case 6: // Turn left
+        if (get_middle_point() != -1)
+        {
+            obst_state = 7;
+            obst_stateStartTime = millis();
+            obst_state = 0;
             return true;
         }
         currentMovementState = STATE_TURN_LEFT;
@@ -187,21 +186,22 @@ bool recover()
 
 void cool_move()
 {
-    // TODO David writes cool move and then we test
-    // write function to turn on the spot
+
     return;
 }
 
 bool crossFinishLine()
 {
     // walk forward for a certain amount of time then stop
-    if (millis() - lastStateChangeTime < 1000)
+    currentMovementState = STATE_MOVE_FORWARD;
+    if (millis() - lastStateChangeTime > 1000)
     {
-        currentMovementState = STATE_MOVE_FORWARD;
-    }
-    else
-    {
-        return true;
+        currentMovementState = STATE_TURN_LEFT_AXIS;
+        if (any_line_found() == true)
+        {   
+            currentMovementState = STATE_MOVE_FORWARD;
+            return true;
+        }
     }
     return false;
 }
@@ -254,6 +254,10 @@ void update_movement()
         
         case STATE_TURN_LEFT_AXIS:
             Serial.print("kvtL");
+            lastMovementChangeTime = millis();
+            break;
+        case STATE_SLEEP:
+            Serial.print("ksleep");
             lastMovementChangeTime = millis();
             break;
         }
