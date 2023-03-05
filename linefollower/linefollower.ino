@@ -104,31 +104,32 @@ void loop()
 
     if (millis() - lastCamera > 300)
     {
-        //unsigned long loopTimeStart = millis();
+        unsigned long loopTimeStart = millis();
         esp_err_t res = camera_capture();
 
         if (res == ESP_OK)
         {
-            //gaussianBlur(kernelSize);
+            gaussianBlur(kernelSize);
             // sobel();
-            //threshold_image();
-            // unsigned long thresholdTime = millis();
+            threshold_image();
+            unsigned long thresholdTime = millis();
             //  Serial.print("Threshold time: ");
             //  Serial.println(thresholdTime - loopTimeStart);
             update();
-            // unsigned long updateTime = millis();
-            //  Serial.print("Update time: ");
-            //  Serial.println(updateTime - thresholdTime);
+            unsigned long updateTime = millis();
+            Serial.print("Update time: ");
+            Serial.println(updateTime - thresholdTime);
             update_movement();
             // unsigned long movementTime = millis();
             //  Serial.print("Movement time: ");
             //  Serial.println(movementTime - updateTime);
 
             // update server every 600ms to save resources
-            if (millis() - lastServerUpdate >= 900)
-            {
-                server.handleClient();
-            }
+            //TODO Fix this
+            // if (millis() - lastServerUpdate >= 900)
+            // {
+            //     //server.handleClient();
+            // }
 
             // print image to serial monitor
             // capture_still();
@@ -136,9 +137,9 @@ void loop()
             // delete[] gradient;
             lastCamera = millis();
         }
-        //unsigned long loopTimeEnd = millis();
-        //Serial.print("Loop time: ");
-        //Serial.println(loopTimeEnd - loopTimeStart);
+        unsigned long loopTimeEnd = millis();
+        Serial.print("Loop time: ");
+        Serial.println(loopTimeEnd - loopTimeStart);
         // return the frame buffer back to the driver for reuse
         esp_camera_fb_return(fb);
     }
