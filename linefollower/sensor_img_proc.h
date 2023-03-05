@@ -60,7 +60,7 @@ void threshold_image()
 
             // threshold the pixel at the current index
             // if the pixel is less than 210, set it to 255 (white)
-            fb->buf[index] = (fb->buf[index] > pixel_threshold) ? 255 : 0;
+            fb->buf[index] = (fb->buf[index] < pixel_threshold) ? 255 : 0;
         }
     }
 }

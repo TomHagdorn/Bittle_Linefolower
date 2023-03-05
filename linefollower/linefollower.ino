@@ -17,14 +17,13 @@
 #error Wrong board selected
 #endif
 
-
 #include "soc/soc.h"          //! Used to disable brownout detection
 #include "soc/rtc_cntl_reg.h" //! Used to disable brownout detection
 
 #include <vector>
 
 const int serialSpeed = 115200; ///< Serial data speed to use
-//My files 
+// My files
 #include "nodeRed_variables.h"
 #include "camera_setup.h"
 #include "calibration.h"
@@ -32,9 +31,7 @@ const int serialSpeed = 115200; ///< Serial data speed to use
 #include "light_strip.h"
 #include "node_red.h"
 
-
-
-//possible states of the robot
+// possible states of the robot
 enum State
 {
     FOLLOW_LINE,
@@ -44,14 +41,13 @@ enum State
     RECOVER_FROM_NO_LINE,
 };
 
-
 State currentState = FOLLOW_LINE;
 // bool to decide if the finish line has been crossed already
 bool finish_line_crossed = false;
 // define the wifi server
 
 unsigned long lastServerUpdate = 0;
-
+static unsigned long startTime = millis();
 
 /**************************************************************************/
 /*!
@@ -64,7 +60,6 @@ unsigned long lastServerUpdate = 0;
 void setup()
 {
     Serial.begin(serialSpeed); ///< Initialize serial communication
-
 
     WRITE_PERI_REG(RTC_CNTL_BROWN_OUT_REG, 0); ///< Disable 'brownout detector'
 
@@ -82,22 +77,17 @@ void setup()
     setLedBrightness(ledBrightness);
     // Wifi functions to start or stop the update()
     //.on("/Stop_server", server_set_off);
-    server.on("/status", handle_status);
-    setup_wifi();
-    send_image();
+     server.on("/status", handle_status);
+     setup_wifi();
+     send_image();
 
     Change_Treshold_value();
 
-
-    
     // Ultrasound sensor setup
     strip_setup();
-    
+
     pinMode(trigPin, OUTPUT); // Sets the trigPin as an Output
-    pinMode(echoPin, INPUT); // Sets the echoPin as an Input
-
-    
-
+    pinMode(echoPin, INPUT);  // Sets the echoPin as an Input
 }
 /**************************************************************************/
 /*!
@@ -106,49 +96,51 @@ void setup()
 */
 /**************************************************************************/
 void loop()
-{    
+{
 
-    
     cycle_led_strip();
 
-    
-        
-        
-    
-    if (millis() - lastCamera > 500)
+    if (millis() - lastCamera > 300)
     {
-      esp_err_t res = camera_capture();
-    
+        //unsigned long loopTimeStart = millis();
+        esp_err_t res = camera_capture();
+
         if (res == ESP_OK)
-        {   
+        {
             gaussianBlur(kernelSize);
-            //sobel();
-            //threshold_image();
+            // sobel();
+            threshold_image();
+            // unsigned long thresholdTime = millis();
+            //  Serial.print("Threshold time: ");
+            //  Serial.println(thresholdTime - loopTimeStart);
             update();
+            // unsigned long updateTime = millis();
+            //  Serial.print("Update time: ");
+            //  Serial.println(updateTime - thresholdTime);
             update_movement();
+            // unsigned long movementTime = millis();
+            //  Serial.print("Movement time: ");
+            //  Serial.println(movementTime - updateTime);
 
-
-            //update server every 600ms to save resources
+            // update server every 600ms to save resources
             if (millis() - lastServerUpdate >= 900)
             {
                 server.handleClient();
             }
-            
+
             // print image to serial monitor
-            //capture_still();
+            // capture_still();
             // free the sobel image gradient buffer
-            //delete[] gradient;
+            // delete[] gradient;
             lastCamera = millis();
         }
         //unsigned long loopTimeEnd = millis();
         //Serial.print("Loop time: ");
         //Serial.println(loopTimeEnd - loopTimeStart);
-        //return the frame buffer back to the driver for reuse
+        // return the frame buffer back to the driver for reuse
         esp_camera_fb_return(fb);
-
-    }   
-    // Print the loop time
-
+    }
+    // Print the loop timeg
 }
 
 /**************************************************************************/
@@ -172,75 +164,97 @@ void loop()
 /**************************************************************************/
 void update()
 {
-    static unsigned long startTime = millis();
 
     switch (currentState)
     {
     case FOLLOW_LINE:
-        
-        if (line_follower())
+        if (detect_obstacle() == true)
         {
-            lastStateChangeTime = millis();
-            // line follower returned true, indicating that the line was found
-
-            }
-            if (check_for_horizontal_line() && (millis() - startTime >= 60000))
-            {
-                //Serial.println("\nCROSS_FINISH_LINE");
-                currentState = CROSS_FINISH_LINE;
-                lastStateChangeTime = millis();
-            }
-        
-        else if (detect_obstacle() == true)
-        {
-            //Serial.println("\nAVOID_OBSTACLE");
+            Serial.println("\nAVOID_OBSTACLE");
             currentState = AVOID_OBSTACLE;
             lastStateChangeTime = millis();
         }
         else
         {
-            if (millis() - lastStateChangeTime >= 10000)
+            if (line_follower())
             {
-                // line follower returned false, indicating that the line was not found
-                // and at least 3 seconds have passed since the last state change
-                //Serial.println("\nRECOVER_FROM_NO_LINE");
-                currentState = RECOVER_FROM_NO_LINE;
                 lastStateChangeTime = millis();
+                // line follower returned true, indicating that the line was found
+
+                if (check_for_horizontal_line() && (millis() - startTime >= 60000))
+                {
+                    Serial.println("\nCROSS_FINISH_LINE");
+                    currentState = CROSS_FINISH_LINE;
+                    lastStateChangeTime = millis();
+                }
             }
+
+            // else
+            // {
+            //     if (millis() - lastStateChangeTime >= 10000)
+            //     {
+            //         // line follower returned false, indicating that the line was not found
+            //         // and at least 3 seconds have passed since the last state change
+            //         Serial.println("\nRECOVER_FROM_NO_LINE");
+            //         currentState = RECOVER_FROM_NO_LINE;
+            //         lastStateChangeTime = millis();
+            //     }
+            //     break;
+            // }
+            break;
         }
         break;
     case AVOID_OBSTACLE:
-        
         if (avoid_obstacle() == true)
         {
-        //Serial.println("\nFOLLOW_LINE");
-        currentState = FOLLOW_LINE;
-        lastStateChangeTime = millis();
-
+            Serial.println("\nFOLLOW_LINE");
+            currentState = FOLLOW_LINE;
+            lastStateChangeTime = millis();
         }
+        else if (millis() - lastStateChangeTime >= 100000)
+        {
+            // If 10 seconds have passed since last state change, switch back to FOLLOW_LINE
+            Serial.println("\nFOLLOW_LINE (timeout)");
+            currentState = FOLLOW_LINE;
+            lastStateChangeTime = millis();
+        }
+        break;
         break;
     case CROSS_FINISH_LINE:
         if (crossFinishLine() == true && finish_line_crossed == false)
         {
             finish_line_crossed = true;
             cool_move();
-            //Serial.println("\nFOLLOW_LINE");
+            Serial.println("\nFOLLOW_LINE");
             currentState = FOLLOW_LINE;
             lastStateChangeTime = millis();
         }
-        else 
+        else
         {
             currentState = FINISH;
         }
         break;
     case RECOVER_FROM_NO_LINE:
+        static int recoverAttempts = 0;
         if (recover() == true)
         {
-            //Serial.println("\nFOLLOW_LINE");
+            Serial.println("\nFOLLOW_LINE");
             currentState = FOLLOW_LINE;
             lastStateChangeTime = millis();
-        }   
-        // line follower returned true, indicating that the line was found
+            recoverAttempts = 0; // reset recover attempts counter
+        }
+        else if (recoverAttempts >= 3)
+        {
+            // If recover attempts exceed 3, switch back to FOLLOW_LINE
+            Serial.println("\nFOLLOW_LINE (max recover attempts reached)");
+            currentState = FOLLOW_LINE;
+            lastStateChangeTime = millis();
+            recoverAttempts = 0; // reset recover attempts counter
+        }
+        else
+        {
+            recoverAttempts++;
+        }
         break;
     case FINISH:
         Serial.print("kbalance");
@@ -248,4 +262,3 @@ void update()
         break;
     }
 }
-

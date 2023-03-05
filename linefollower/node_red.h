@@ -4,8 +4,7 @@
 
 
 
-const char* ssid = "TomHagdorn";
-const char* password = "26071997";
+
 
 bool server_on = true;
 bool server_status = false;
