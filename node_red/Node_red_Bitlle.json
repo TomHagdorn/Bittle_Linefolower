@@ -33,7 +33,7 @@
     {
         "id": "afe2bcd9a89f69ee",
         "type": "tab",
-        "label": "Start/Stop Wifi AP",
+        "label": "Start/Stop Bild",
         "disabled": false,
         "info": "",
         "env": []
@@ -523,7 +523,7 @@
         "method": "GET",
         "ret": "txt",
         "paytoqs": "query",
-        "url": "http://172.20.10.7/update-tresholdvalue",
+        "url": "http://192.168.0.43/update-tresholdvalue",
         "tls": "",
         "persist": false,
         "proxy": "",
@@ -1254,6 +1254,178 @@
         ]
     },
     {
+        "id": "0fe4f217a23c8bd1",
+        "type": "function",
+        "z": "e11b66b88e7c1c1a",
+        "name": "Extract the new value",
+        "func": "var newValue = msg.payload; \nmsg.payload = { value: newValue }; \nreturn msg",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 400,
+        "y": 740,
+        "wires": [
+            [
+                "e1479089469fe18c"
+            ]
+        ]
+    },
+    {
+        "id": "8070bb18a3a25671",
+        "type": "debug",
+        "z": "e11b66b88e7c1c1a",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 830,
+        "y": 740,
+        "wires": []
+    },
+    {
+        "id": "e1479089469fe18c",
+        "type": "http request",
+        "z": "e11b66b88e7c1c1a",
+        "name": "",
+        "method": "GET",
+        "ret": "txt",
+        "paytoqs": "query",
+        "url": "http://192.168.0.43/update-gain",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 630,
+        "y": 740,
+        "wires": [
+            [
+                "8070bb18a3a25671"
+            ]
+        ]
+    },
+    {
+        "id": "f1f4f5fdc04eb2c5",
+        "type": "ui_text_input",
+        "z": "e11b66b88e7c1c1a",
+        "name": "",
+        "label": "gain_value",
+        "tooltip": "",
+        "group": "5bd151deb14bfdab",
+        "order": 1,
+        "width": 8,
+        "height": 4,
+        "passthru": true,
+        "mode": "text",
+        "delay": 300,
+        "topic": "topic",
+        "sendOnBlur": true,
+        "className": "",
+        "topicType": "msg",
+        "x": 110,
+        "y": 740,
+        "wires": [
+            [
+                "0fe4f217a23c8bd1"
+            ]
+        ]
+    },
+    {
+        "id": "65199a450d0afa6b",
+        "type": "function",
+        "z": "e11b66b88e7c1c1a",
+        "name": "Extract the new value",
+        "func": "var newValue = msg.payload; \nmsg.payload = { value: newValue }; \nreturn msg",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 400,
+        "y": 820,
+        "wires": [
+            [
+                "e75b0139eda5759f"
+            ]
+        ]
+    },
+    {
+        "id": "8322d9407834b317",
+        "type": "debug",
+        "z": "e11b66b88e7c1c1a",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 830,
+        "y": 820,
+        "wires": []
+    },
+    {
+        "id": "e75b0139eda5759f",
+        "type": "http request",
+        "z": "e11b66b88e7c1c1a",
+        "name": "",
+        "method": "GET",
+        "ret": "txt",
+        "paytoqs": "query",
+        "url": "http://192.168.0.43/update-exposure",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 630,
+        "y": 820,
+        "wires": [
+            [
+                "8322d9407834b317"
+            ]
+        ]
+    },
+    {
+        "id": "052f1e400dbf2b03",
+        "type": "ui_text_input",
+        "z": "e11b66b88e7c1c1a",
+        "name": "",
+        "label": "exposure_value",
+        "tooltip": "",
+        "group": "5bd151deb14bfdab",
+        "order": 1,
+        "width": 8,
+        "height": 4,
+        "passthru": true,
+        "mode": "text",
+        "delay": 300,
+        "topic": "topic",
+        "sendOnBlur": true,
+        "className": "",
+        "topicType": "msg",
+        "x": 120,
+        "y": 820,
+        "wires": [
+            [
+                "65199a450d0afa6b"
+            ]
+        ]
+    },
+    {
         "id": "4ca0c1cf9c2d2102",
         "type": "ui_button",
         "z": "694fb32518b8351e",
@@ -1534,7 +1706,7 @@
         "method": "GET",
         "ret": "txt",
         "paytoqs": "ignore",
-        "url": "http://172.20.10.7/status",
+        "url": "http://192.168.0.43/status",
         "tls": "",
         "persist": false,
         "proxy": "",
@@ -1599,7 +1771,7 @@
                 "vt": "str"
             }
         ],
-        "repeat": "3",
+        "repeat": "2",
         "crontab": "",
         "once": false,
         "onceDelay": 0.1,
@@ -1622,7 +1794,7 @@
         "method": "GET",
         "ret": "txt",
         "paytoqs": "ignore",
-        "url": "http://172.20.10.7/Stop_server",
+        "url": "http://192.168.0.43/Start_image",
         "tls": "",
         "persist": false,
         "proxy": "",
@@ -1648,17 +1820,17 @@
         "width": 0,
         "height": 0,
         "passthru": false,
-        "label": "Tötet den Server",
+        "label": "Bild an",
         "tooltip": "",
         "color": "Black",
-        "bgcolor": "Red",
+        "bgcolor": "Green",
         "className": "",
         "icon": "",
         "payload": "H",
         "payloadType": "str",
         "topic": "topic",
         "topicType": "str",
-        "x": 205.08331298828125,
+        "x": 165.08331298828125,
         "y": 360.0833435058594,
         "wires": [
             [
@@ -1681,5 +1853,55 @@
         "x": 835.0833129882812,
         "y": 360.0833435058594,
         "wires": []
+    },
+    {
+        "id": "b454df88539887d4",
+        "type": "http request",
+        "z": "afe2bcd9a89f69ee",
+        "name": "",
+        "method": "GET",
+        "ret": "txt",
+        "paytoqs": "ignore",
+        "url": "http://172.20.10.7/Stop_Image",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 510,
+        "y": 540,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "0b34abce9c0ddb90",
+        "type": "ui_button",
+        "z": "afe2bcd9a89f69ee",
+        "name": "",
+        "group": "7ef72d236a7aa62c",
+        "order": 2,
+        "width": 0,
+        "height": 0,
+        "passthru": false,
+        "label": "Bild aus",
+        "tooltip": "",
+        "color": "Black",
+        "bgcolor": "Red",
+        "className": "",
+        "icon": "",
+        "payload": "H",
+        "payloadType": "str",
+        "topic": "topic",
+        "topicType": "str",
+        "x": 180,
+        "y": 540,
+        "wires": [
+            [
+                "b454df88539887d4"
+            ]
+        ]
     }
 ]

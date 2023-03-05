@@ -79,13 +79,13 @@ void setup()
     //setLedBrightness(ledBrightness);
     //Node red setup TODO Needs to be moved to a seperate file in a function
      // Wifi functions to start or stop the update()
-    server.on("/Stop_Image", image_stop);
-    server.on("/Start_Image",image_start);
-    server.on("/status", handle_status);
-    setup_wifi();
-    send_image();
+
+    //server.on("/Start_Image",image_start);
+    //server.on("/status", handle_status);
+    //setup_wifi();
+    //send_image();
     //update all ned_node values
-    Update_node_red_values();
+    //Update_node_red_values();
     //captureAndSendImage();
     // Ultrasound sensor setup
     strip_setup();
@@ -119,11 +119,11 @@ void loop()
             gaussianBlur(3);
             //sobel();
             threshold_image();
-            //update();
-            //update_movement();
+            update();
+            update_movement();
             //Serial.println(server_on);
             //update_server();
-            server.handleClient();
+            //server.handleClient();
             // print image to serial monitor
             
             //capture_still();

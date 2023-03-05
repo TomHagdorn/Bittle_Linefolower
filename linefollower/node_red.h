@@ -3,7 +3,7 @@
 #include <HTTPClient.h>
 
 
-const char* ssid = "Alpha_Lan";
+const char* ssid = "David_Iphone";
 const char* password = "david123";
 
 
@@ -35,43 +35,14 @@ void setup_wifi() {
     }
 
     
+/*****************************************************************************************************/
 
-void Change_Treshold_value(){
-    server.on("/update-tresholdvalue", HTTP_GET, []() {
-    String newValue = server.arg("value");
-    pixel_threshold = newValue.toInt();
-  });
-}
-
-void Change_gain(){
-    server.on("/update-gain", HTTP_GET, []() {
-    String newValue = server.arg("value");
-    gain = newValue.toInt();
-  });
-}
-
-void Change_exposure(){
-    server.on("/update-exposure", HTTP_GET, []() {
-    String newValue = server.arg("value");
-    exposure = newValue.toInt();
-  });
-}
-
-
-void Update_node_red_values(){
-  Change_Treshold_value();
-  Change_gain();
-  Change_exposure();
-
-}
 
 void send_image() {
-
-  if(server_on = true){
+    Serial.println("sende Bild!!!");
     // server will do the following every time [esp32-ip]/image is requested:
     server.on(F("/image"), [&]() {
         // convert frame to bmp
-        Serial.println("sende Bild!!!");
         uint8_t * buf = NULL;
         size_t buf_length = 0;
         frame2bmp(fb, &buf, &buf_length);
@@ -83,41 +54,13 @@ void send_image() {
         //esp_camera_fb_return(fb);
     });
     }
-    }
   //TODO Make own wifi setup function
 
 
-void image_stop(){
-  server_on = false;
-  server.send(200, "text/plain", "Stop");
-}
-void image_start(){
-  server_on = true;
-  server.send(200,"text/plain","Start");
-}
 
 
 
-/*void update_server()
-
-{
-    if (server_on == true && server_status == false){
-      send_image();
-      server_status = true;
-    }
-    if (server_on == false){
-        //TODO end server
-        server_status = false;
-    }
-    if (server_on = false && server_status == true){
-      server.handleClient();
-    }
-    //check if the server is connected
-}
-*/
-
-
-
+/****************************************************************************************************/
 
 void handle_status() {
   
@@ -150,7 +93,33 @@ void handle_status() {
 
 
 
+void Change_Treshold_value(){
+    server.on("/update-tresholdvalue", HTTP_GET, []() {
+    String newValue = server.arg("value");
+    pixel_threshold = newValue.toInt();
+  });
+}
 
+void Change_gain(){
+    server.on("/update-gain", HTTP_GET, []() {
+    String newValue = server.arg("value");
+    gain = newValue.toInt();
+  });
+}
+
+void Change_exposure(){
+    server.on("/update-exposure", HTTP_GET, []() {
+    String newValue = server.arg("value");
+    exposure = newValue.toInt();
+  });
+}
+
+void Update_node_red_values(){
+  Change_Treshold_value();
+  Change_gain();
+  Change_exposure();
+
+}
 /*
 void Change_recover_time (){
     server.on("/update-recovertime ", HTTP_GET, []() {
