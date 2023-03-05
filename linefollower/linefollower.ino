@@ -215,12 +215,14 @@ void update()
             Serial.println("\nFOLLOW_LINE");
             currentState = FOLLOW_LINE;
             lastStateChangeTime = millis();
+            finishTime = millis();
         }
         else if (millis() - lastStateChangeTime >= 100000)
         {
             // If 10 seconds have passed since last state change, switch back to FOLLOW_LINE
             Serial.println("\nFOLLOW_LINE (timeout)");
-            currentState = FOLLOW_LINE;
+            currentMovementState = STATE_SLEEP;
+            //currentState = FOLLOW_LINE;
             lastStateChangeTime = millis();
         }
         break;
@@ -229,7 +231,6 @@ void update()
         if (crossFinishLine() == true && finish_line_crossed == false)
         {
             finish_line_crossed = true;
-            cool_move();
             Serial.println("\nFOLLOW_LINE");
             finishTime = millis();
             currentState = FOLLOW_LINE;

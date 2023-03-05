@@ -11,7 +11,8 @@ enum MovementState
     STATE_TURN_BACK_LEFT,
     STATE_TURN_RIGHT_AXIS,
     STATE_TURN_LEFT_AXIS,
-    STATE_SLEEP
+    STATE_SLEEP,
+    STATE_HI
 };
 
 MovementState currentMovementState = STATE_STOP;
@@ -186,7 +187,7 @@ bool recover()
 
 void cool_move()
 {
-
+    
     return;
 }
 
@@ -194,13 +195,18 @@ bool crossFinishLine()
 {
     // walk forward for a certain amount of time then stop
     currentMovementState = STATE_MOVE_FORWARD;
-    if (millis() - lastStateChangeTime > 1000)
+    if (millis() - lastStateChangeTime > 3000)
     {
-        currentMovementState = STATE_TURN_LEFT_AXIS;
-        if (any_line_found() == true)
-        {   
+        currentMovementState = STATE_HI;
+
+        if (millis() - lastStateChangeTime > 5000)
+        {
+            currentMovementState = STATE_TURN_LEFT_AXIS;
+            if (any_line_found() == true)
+            {   
             currentMovementState = STATE_MOVE_FORWARD;
             return true;
+            }
         }
     }
     return false;
@@ -258,6 +264,10 @@ void update_movement()
             break;
         case STATE_SLEEP:
             Serial.print("ksleep");
+            lastMovementChangeTime = millis();
+            break;
+        case STATE_HI:
+            Serial.print("khi");
             lastMovementChangeTime = millis();
             break;
         }
