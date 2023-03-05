@@ -26,13 +26,13 @@ int pixel_threshold = 30;
 
 
 
-int cameraImageExposure = 100; ///< Camera exposure (0 - 1200) 2 for bright line
+int cameraImageExposure = 2; ///< Camera exposure (0 - 1200) 2 for bright line
 //! Image gain
 /*!
     Range: (0 - 30)
     If gain and exposure both set to zero then auto adjust is enabled
 */
-int cameraImageGain = 4;  //18 for bright line
+int cameraImageGain = 18;  //18 for bright line
 
 
 

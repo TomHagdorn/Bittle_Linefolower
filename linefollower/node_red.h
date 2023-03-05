@@ -2,7 +2,10 @@
 #include <WebServer.h>
 #include <HTTPClient.h>
 
-
+// Set your Static IP address
+// IPAddress local_IP(192, 168, 1, 184);
+// // Set your Gateway IP address
+// IPAddress gateway(192, 168, 1, 1);
 
 
 
@@ -43,19 +46,19 @@ void Change_Treshold_value(){
   });
 }
 
-// void Change_IMG_Gain_value(){
-//     server.on("/update-img-gain", HTTP_GET, []() {
-//     String newValue = server.arg("value");
-//    cameraImageGain = newValue.toInt();
-//   });
-// }
+void Change_IMG_Gain_value(){
+    server.on("/update-gain", HTTP_GET, []() {
+    String newValue = server.arg("value");
+   cameraImageGain = newValue.toInt();
+  });
+}
 
-// void Change_IMG_Exposur_value(){
-//     server.on("/update-img-exposure", HTTP_GET, []() {
-//     String newValue = server.arg("value");
-//    cameraImageExposure = newValue.toInt();
-//   });
-// }
+void Change_IMG_Exposur_value(){
+    server.on("/update-exposure", HTTP_GET, []() {
+    String newValue = server.arg("value");
+   cameraImageExposure = newValue.toInt();
+  });
+}
 
 void send_image() {
     // server will do the following every time [esp32-ip]/image is requested:

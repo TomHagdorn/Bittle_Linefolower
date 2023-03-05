@@ -82,6 +82,8 @@ void setup()
      send_image();
 
     Change_Treshold_value();
+    Change_IMG_Gain_value();
+    Change_IMG_Exposur_value();
 
     // Ultrasound sensor setup
     strip_setup();
@@ -107,9 +109,9 @@ void loop()
 
         if (res == ESP_OK)
         {
-            gaussianBlur(kernelSize);
+            //gaussianBlur(kernelSize);
             // sobel();
-            threshold_image();
+            //threshold_image();
             // unsigned long thresholdTime = millis();
             //  Serial.print("Threshold time: ");
             //  Serial.println(thresholdTime - loopTimeStart);
