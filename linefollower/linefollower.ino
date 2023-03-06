@@ -103,7 +103,7 @@ void setup()
 void loop()
 {
 
-    cycle_led_strip();
+    //cycle_led_strip();
 
     if (millis() - lastCamera > 320)
     {
@@ -270,7 +270,7 @@ void update()
         }
         break;
     case FINISH:
-        if (lastStateChangeTime > 1000)
+        if (lastStateChangeTime > 500)
         {
             // if this is the first time in the FINISH state, set the last state change time
             currentMovementState = STATE_SLEEP;

@@ -8,7 +8,12 @@ unsigned long last_colorchange = 0;
 Adafruit_NeoPixel strip(LED_COUNT, LED_PIN, NEO_GRB + NEO_KHZ800);
 void strip_setup() {
   strip.begin();
-  strip.show(); // Initialize all pixels to 'off'
+  
+  for (int i = 0; i < 5; i++) {
+    strip.setPixelColor(i, 255, 255, 255); // set each LED to white
+  }
+  
+  strip.show(); // display the updated colors
 }
 
 

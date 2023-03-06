@@ -115,7 +115,7 @@ bool avoid_obstacle()
         if (get_distance() > obstacle_detection_dist + obstacle_tolerance )
         {   
             counter = counter + 1;
-            if (counter == 2)
+            if (counter >= 2)
             {
                 obst_state = 4;
                 obst_stateStartTime = millis();
@@ -200,11 +200,12 @@ bool crossFinishLine()
 
         if (millis() - lastStateChangeTime > 5000)
         {
-            finishTime = millis();
-            currentMovementState = STATE_TURN_LEFT_AXIS;
-            if (check_for_horizontal_line() == true || get_middle_point() != -1)
+            
+            currentMovementState = STATE_TURN_LEFT_AXIS;//TODO oder timer!
+            if (check_for_horizontal_line() == true | get_middle_point() != -1)
             {
                 currentMovementState = STATE_MOVE_FORWARD;
+                finishTime = millis();
                 return true;
             }
 

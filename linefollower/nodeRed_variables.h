@@ -18,16 +18,16 @@ int obst_left_t =1000;
 int obst_straight_t=1000;
 int obst_right_t =1000;
 int line_width=30;
-int min_line_length = 55;
+int min_line_length = 90;
 //define obstacle detection distance
-int obstacle_detection_dist = 8;
-int obstacle_tolerance = 3;
+int obstacle_detection_dist = 9;
+int obstacle_tolerance = 4;
 int pixel_threshold = 37;
 unsigned long obstacle_forward_time = 1500;
 
 
 
-int cameraImageExposure = 36; ///< Camera exposure (0 - 1200) 2 for bright line
+int cameraImageExposure = 6; ///< Camera exposure (0 - 1200) 2 for bright line
 //! Image gain
 /*!
     Range: (0 - 30)
