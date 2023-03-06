@@ -11,6 +11,7 @@
 
 bool server_on = true;
 bool server_status = false;
+bool bstart = false;
 
 //TODO Set server to lower power consumption by running it less frequent.
 WebServer server(80);
@@ -94,6 +95,18 @@ void send_image() {
   
 }
 
+void HandleClienttrue(){
+    bstart = true;
+    server.send(200, "text/plan", "OK");
+}
+
+void HandleClientfalse(){
+    bstart = false;
+    server.send(200, "text/plan", "OK");
+}
+
+
+
 
 
 /*void update_server()
@@ -148,7 +161,11 @@ void handle_status() {
 }
 
 
-
+void Update_node_red_values(){
+  Change_Treshold_value();
+  Change_IMG_Gain_value();
+  Change_IMG_Exposur_value();
+}
 
 
 /*

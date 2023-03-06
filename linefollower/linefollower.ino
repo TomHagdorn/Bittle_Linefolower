@@ -23,6 +23,7 @@
 #include <vector>
 
 const int serialSpeed = 115200; ///< Serial data speed to use
+#define PIN_S2TX 4 // Bittle TX on IO13
 // My files
 #include "nodeRed_variables.h"
 #include "camera_setup.h"
@@ -61,7 +62,7 @@ unsigned long obstacleTime = 7000;
 void setup()
 {
     Serial.begin(serialSpeed); ///< Initialize serial communication
-
+    BittleSerial.begin(serialSpeed, SERIAL_8N1, PIN_S2TX);
     WRITE_PERI_REG(RTC_CNTL_BROWN_OUT_REG, 0); ///< Disable 'brownout detector'
 
     // Serial.print(("\nInitialising camera: "));
@@ -76,23 +77,29 @@ void setup()
 
     setupOnBoardFlash();
     setLedBrightness(ledBrightness);
+    setup_wifi();
     // Wifi functions to start or stop the update()
     //.on("/Stop_server", server_set_off);
-     server.on("/status", handle_status);
-     setup_wifi();
-     send_image();
-
-    Change_Treshold_value();
-    Change_IMG_Gain_value();
-    Change_IMG_Exposur_value();
-    Change_Obstacle_Distance();
-    Change_Obstacle_Tollerance();
+    server.on("/Start", HandleClienttrue); // Wifi functions to start or stop the update()
+    server.on("/Stop", HandleClientfalse);
+    server.on("/status", handle_status);
+     
+    //send_image();
+    Update_node_red_values();
+    // Change_Treshold_value();
+    // Change_IMG_Gain_value();
+    // Change_IMG_Exposur_value();
+    // Change_Obstacle_Distance();
+    // Change_Obstacle_Tollerance();
+    
 
     // Ultrasound sensor setup
     strip_setup();
 
     pinMode(trigPin, OUTPUT); // Sets the trigPin as an Output
     pinMode(echoPin, INPUT);  // Sets the echoPin as an Input
+
+    
 }
 /**************************************************************************/
 /*!
@@ -118,11 +125,15 @@ void loop()
             unsigned long thresholdTime = millis();
             //  Serial.print("Threshold time: ");
             //  Serial.println(thresholdTime - loopTimeStart);
+            if (bstart == true)
+            {
             update();
+             BittleSerial.print("kwkF");
             unsigned long updateTime = millis();
             // Serial.print("Update time: ");
             // Serial.println(updateTime - thresholdTime);
             update_movement();
+            }
             // unsigned long movementTime = millis();
             //  Serial.print("Movement time: ");
             //  Serial.println(movementTime - updateTime);

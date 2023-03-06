@@ -1,4 +1,5 @@
 #include "sensor_img_proc.h"
+#include "HardwareSerial.h"
 
 enum MovementState
 {
@@ -24,6 +25,8 @@ static unsigned long obst_stateStartTime = 0;
 static unsigned long lastStateChangeTime = 0;
 static unsigned long finishTime = 0;
  int counter = 0;
+
+ HardwareSerial BittleSerial(2);
 
 /**************************************************************************/
 /**
@@ -220,55 +223,55 @@ void update_movement()
         switch (currentMovementState)
         {
         case STATE_STOP:
-            Serial.print("kbalance");
+             BittleSerial.print("kbalance");
             lastMovementChangeTime = millis();
             break;
 
         case STATE_TURN_LEFT:
-            Serial.print("kwkL");
+             BittleSerial.print("kwkL");
             lastMovementChangeTime = millis();
             break;
 
         case STATE_TURN_RIGHT:
-            Serial.print("kwkR");
+             BittleSerial.print("kwkR");
             lastMovementChangeTime = millis();
             break;
 
         case STATE_MOVE_FORWARD:
-            Serial.print("kwkF");
+            BittleSerial.print("kwkF");
             lastMovementChangeTime = millis();
             break;
 
         case STATE_TURN_BACK_RIGHT:
-            Serial.print("kwkR");
+             BittleSerial.print("kwkR");
             lastMovementChangeTime = millis();
             break;
 
         case STATE_TURN_BACK_LEFT:
-            Serial.print("kwkL");
+             BittleSerial.print("kwkL");
             lastMovementChangeTime = millis();
             break;
 
         case STATE_MOVE_BACKWARD:
-            Serial.print("kwkB");
+             BittleSerial.print("kwkB");
             lastMovementChangeTime = millis();
             break;
         
         case STATE_TURN_RIGHT_AXIS:
-            Serial.print("kvtR");
+             BittleSerial.print("kvtR");
             lastMovementChangeTime = millis();
             break;
         
         case STATE_TURN_LEFT_AXIS:
-            Serial.print("kvtL");
+             BittleSerial.print("kvtL");
             lastMovementChangeTime = millis();
             break;
         case STATE_SLEEP:
-            Serial.print("ksleep");
+             BittleSerial.print("ksleep");
             lastMovementChangeTime = millis();
             break;
         case STATE_HI:
-            Serial.print("khi");
+             BittleSerial.print("khi");
             lastMovementChangeTime = millis();
             break;
         }
