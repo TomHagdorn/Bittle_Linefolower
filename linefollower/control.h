@@ -202,10 +202,10 @@ bool crossFinishLine()
         if (millis() - lastStateChangeTime > 5000)
         {
             currentMovementState = STATE_TURN_LEFT_AXIS;
-            if (any_line_found() == true)
+            if (check_for_horizontal_line() == true)
             {   
-            currentMovementState = STATE_MOVE_FORWARD;
-            return true;
+                currentMovementState = STATE_MOVE_FORWARD;
+                return true;
             }
         }
     }

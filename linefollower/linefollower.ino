@@ -78,13 +78,13 @@ void setup()
     setLedBrightness(ledBrightness);
     // Wifi functions to start or stop the update()
     //.on("/Stop_server", server_set_off);
-    //  server.on("/status", handle_status);
-    //  setup_wifi();
-    //  send_image();
+     server.on("/status", handle_status);
+     setup_wifi();
+     send_image();
 
-    // Change_Treshold_value();
-    // Change_IMG_Gain_value();
-    // Change_IMG_Exposur_value();
+    Change_Treshold_value();
+    Change_IMG_Gain_value();
+    Change_IMG_Exposur_value();
 
     // Ultrasound sensor setup
     strip_setup();
@@ -129,8 +129,8 @@ void loop()
             //TODO Fix this
             if (millis() - lastServerUpdate >= 900)
             {
-                // server.handleClient();
-                // lastServerUpdate = millis();
+                server.handleClient();
+                lastServerUpdate = millis();
             }
 
             // print image to serial monitor

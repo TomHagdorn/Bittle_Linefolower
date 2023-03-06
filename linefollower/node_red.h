@@ -50,6 +50,7 @@ void Change_IMG_Gain_value(){
     server.on("/update-gain", HTTP_GET, []() {
     String newValue = server.arg("value");
    cameraImageGain = newValue.toInt();
+   initialiseCamera();
   });
 }
 
@@ -57,6 +58,7 @@ void Change_IMG_Exposur_value(){
     server.on("/update-exposure", HTTP_GET, []() {
     String newValue = server.arg("value");
    cameraImageExposure = newValue.toInt();
+   initialiseCamera();
   });
 }
 
