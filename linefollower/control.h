@@ -194,8 +194,8 @@ bool crossFinishLine()
 {
     // walk forward for a certain amount of time then stop
     currentMovementState = STATE_MOVE_FORWARD;
-    if (millis() - lastStateChangeTime > 2000)
-    {
+    // if (millis() - lastStateChangeTime > 2000)
+    // {
         currentMovementState = STATE_HI;
 
         if (millis() - lastStateChangeTime > 5000)
@@ -209,7 +209,7 @@ bool crossFinishLine()
                 return true;
             }
 
-        }
+        // }
     }
     return false;
 }

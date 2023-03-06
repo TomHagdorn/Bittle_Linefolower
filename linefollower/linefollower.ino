@@ -177,7 +177,7 @@ void update()
     case FOLLOW_LINE:
         if (detect_obstacle() == true && (millis() - obstacleTime >= 5000))
         {
-            Serial.println("\nAVOID_OBSTACLE");
+            //Serial.println("\nAVOID_OBSTACLE");
             currentState = AVOID_OBSTACLE;
             lastStateChangeTime = millis();
         }
@@ -186,7 +186,7 @@ void update()
 
             if (check_for_horizontal_line() && (millis() - finishTime >= 3000))
             {
-                Serial.println("\nCROSS_FINISH_LINE");
+                //Serial.println("\nCROSS_FINISH_LINE");
                 currentState = CROSS_FINISH_LINE;
                 lastStateChangeTime = millis();
             }
@@ -215,7 +215,7 @@ void update()
     case AVOID_OBSTACLE:
         if (avoid_obstacle() == true)
         {
-            Serial.println("\nFOLLOW_LINE");
+            //Serial.println("\nFOLLOW_LINE");
             currentState = FOLLOW_LINE;
             lastStateChangeTime = millis();
             finishTime = millis();
@@ -224,7 +224,7 @@ void update()
         else if (millis() - lastStateChangeTime >= 100000)
         {
             // If 10 seconds have passed since last state change, switch back to FOLLOW_LINE
-            Serial.println("\nFOLLOW_LINE (timeout)");
+            //Serial.println("\nFOLLOW_LINE (timeout)");
             currentMovementState = STATE_SLEEP;
             // currentState = FOLLOW_LINE;
             lastStateChangeTime = millis();
@@ -235,14 +235,14 @@ void update()
         if (crossFinishLine() == true && finish_line_crossed == false)
         {
             finish_line_crossed = true;
-            Serial.println("\nFOLLOW_LINE");
+            //Serial.println("\nFOLLOW_LINE");
             finishTime = millis();
             currentState = FOLLOW_LINE;
             lastStateChangeTime = millis();
         }
         else if (finish_line_crossed == true)
         {
-            Serial.println("\nFINISH");
+            //Serial.println("\nFINISH");
             currentState = FINISH;
         }
         break;
@@ -250,7 +250,7 @@ void update()
         static int recoverAttempts = 0;
         if (recover() == true)
         {
-            Serial.println("\nFOLLOW_LINE");
+            //Serial.println("\nFOLLOW_LINE");
             currentState = FOLLOW_LINE;
             lastStateChangeTime = millis();
             recoverAttempts = 0; // reset recover attempts counter
@@ -270,7 +270,7 @@ void update()
         }
         break;
     case FINISH:
-        if (lastStateChangeTime > 500)
+        if (lastStateChangeTime > 1500)
         {
             // if this is the first time in the FINISH state, set the last state change time
             currentMovementState = STATE_SLEEP;

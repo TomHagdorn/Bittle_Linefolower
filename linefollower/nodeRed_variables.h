@@ -22,7 +22,7 @@ int min_line_length = 90;
 //define obstacle detection distance
 int obstacle_detection_dist = 9;
 int obstacle_tolerance = 4;
-int pixel_threshold = 37;
+int pixel_threshold = 220;
 unsigned long obstacle_forward_time = 1500;
 
 
@@ -33,7 +33,7 @@ int cameraImageExposure = 6; ///< Camera exposure (0 - 1200) 2 for bright line
     Range: (0 - 30)
     If gain and exposure both set to zero then auto adjust is enabled
 */
-int cameraImageGain = 0;  //18 for bright line
+int cameraImageGain = 18;  //18 for bright line
 
 
 
