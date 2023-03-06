@@ -1,8 +1,8 @@
 // const char* ssid = "TomHagdorn";
 // const char* password = "26071997";
 
-const char* ssid = "Alpha_Lan";
-const char* password = "david123";
+const char* ssid = "TomHagdorn";
+const char* password = "26071997";
 
 
 unsigned long stateTime = 0;

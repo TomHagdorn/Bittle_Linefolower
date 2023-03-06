@@ -32,8 +32,8 @@ const int serialSpeed = 115200; ///< Serial data speed to use
 #include "control.h"
 #include "light_strip.h"
 #include "node_red.h"
-#define PIN_S2RX 12 // Bittle RX on IO12
-#define PIN_S2TX 13 // Bittle TX on IO13
+//#define PIN_S2RX 4 // Bittle RX on IO12
+#define PIN_S2TX 4 // Bittle TX on IO13
 
 // possible states of the robot
 enum State
@@ -68,7 +68,7 @@ void setup()
     Serial.begin(BAUDRATE);
 
     // start secondary serial connection
-    BittleSerial.begin(BAUDRATE, SERIAL_8N1, PIN_S2RX, PIN_S2TX);
+    BittleSerial.begin(BAUDRATE, SERIAL_8N1, PIN_S2TX);
     Serial.begin(serialSpeed); ///< Initialize serial communication
 
     WRITE_PERI_REG(RTC_CNTL_BROWN_OUT_REG, 0); ///< Disable 'brownout detector'
