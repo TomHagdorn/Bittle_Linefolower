@@ -8,10 +8,6 @@
 // IPAddress gateway(192, 168, 1, 1);
 
 
-
-bool server_on = true;
-bool server_status = false;
-
 //TODO Set server to lower power consumption by running it less frequent.
 WebServer server(80);
 
@@ -32,33 +28,11 @@ void setup_wifi() {
     }
 
     server.begin();
-    IPAddress myIP = WiFi.softAPIP();
-    Serial.printf("IP   - %s\n", myIP.toString());
-    Serial.println("Connecting to WiFi...");
     }
 
     
 
-void Change_Treshold_value(){
-    server.on("/update-tresholdvalue", HTTP_GET, []() {
-    String newValue = server.arg("value");
-    pixel_threshold = newValue.toInt();
-  });
-}
 
-void Change_IMG_Gain_value(){
-    server.on("/update-gain", HTTP_GET, []() {
-    String newValue = server.arg("value");
-   cameraImageGain = newValue.toInt();
-  });
-}
-
-void Change_IMG_Exposur_value(){
-    server.on("/update-exposure", HTTP_GET, []() {
-    String newValue = server.arg("value");
-   cameraImageExposure = newValue.toInt();
-  });
-}
 
 void send_image() {
     // server will do the following every time [esp32-ip]/image is requested:
@@ -132,7 +106,38 @@ void handle_status() {
 }
 
 
+void HandleClienttrue(){
+    bstart = true;
+    server.send(200, "text/plan", "OK");
+}
 
+void HandleClientfalse(){
+    bstart = false;
+    server.send(200, "text/plan", "OK");
+}
+
+
+
+void Change_Treshold_value(){
+    server.on("/update-tresholdvalue", HTTP_GET, []() {
+    String newValue = server.arg("value");
+    pixel_threshold = newValue.toInt();
+  });
+}
+
+void Change_IMG_Gain_value(){
+    server.on("/update-gain", HTTP_GET, []() {
+    String newValue = server.arg("value");
+   cameraImageGain = newValue.toInt();
+  });
+}
+
+void Change_IMG_Exposur_value(){
+    server.on("/update-exposure", HTTP_GET, []() {
+    String newValue = server.arg("value");
+   cameraImageExposure = newValue.toInt();
+  });
+}
 
 
 /*
@@ -184,6 +189,13 @@ void Change_currentfinlinewidth(){
     currentfinlinewidth = newValue.toInt();
   });
 }*/
+
+void Update_node_red_values(){
+  Change_Treshold_value();
+  Change_IMG_Gain_value();
+  Change_IMG_Exposur_value();
+}
+
 
 //TODO add states to node red
 //TODO add movement states to node red

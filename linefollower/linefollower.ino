@@ -24,12 +24,16 @@
 
 const int serialSpeed = 115200; ///< Serial data speed to use
 // My files
+
+# define BAUDRATE 115200
 #include "nodeRed_variables.h"
 #include "camera_setup.h"
 #include "calibration.h"
 #include "control.h"
 #include "light_strip.h"
 #include "node_red.h"
+#define PIN_S2RX 12 // Bittle RX on IO12
+#define PIN_S2TX 13 // Bittle TX on IO13
 
 // possible states of the robot
 enum State
@@ -59,6 +63,12 @@ static unsigned long startTime = millis();
 /**************************************************************************/
 void setup()
 {
+
+        // start primary serial connection
+    Serial.begin(BAUDRATE);
+
+    // start secondary serial connection
+    BittleSerial.begin(BAUDRATE, SERIAL_8N1, PIN_S2RX, PIN_S2TX);
     Serial.begin(serialSpeed); ///< Initialize serial communication
 
     WRITE_PERI_REG(RTC_CNTL_BROWN_OUT_REG, 0); ///< Disable 'brownout detector'
@@ -72,19 +82,18 @@ void setup()
     {
         // Serial.println("Error!");
     }
-
+    setup_wifi();
     setupOnBoardFlash();
     setLedBrightness(ledBrightness);
+    server.on("/Start", HandleClienttrue); // Wifi functions to start or stop the update()
+    server.on("/Stop", HandleClientfalse);
     // Wifi functions to start or stop the update()
     //.on("/Stop_server", server_set_off);
-     server.on("/status", handle_status);
-     setup_wifi();
-     send_image();
-
-    Change_Treshold_value();
-    Change_IMG_Gain_value();
-    Change_IMG_Exposur_value();
-
+    server.on("/status", handle_status);
+    
+    send_image();
+    //update all ned_node values
+    Update_node_red_values();
     // Ultrasound sensor setup
     strip_setup();
 
@@ -102,24 +111,31 @@ void loop()
 
     cycle_led_strip();
 
-    if (millis() - lastCamera > 300)
+    if ((millis() - lastCamera > 300))
     {
         //unsigned long loopTimeStart = millis();
         esp_err_t res = camera_capture();
 
-        if (res == ESP_OK)
+        if (res == ESP_OK )
         {
             //gaussianBlur(kernelSize);
             // sobel();
-            //threshold_image();
+            threshold_image();
             // unsigned long thresholdTime = millis();
             //  Serial.print("Threshold time: ");
             //  Serial.println(thresholdTime - loopTimeStart);
-            update();
+            if (bstart == true){
+              update();
+              update_movement();
+            }
+            //update();
             // unsigned long updateTime = millis();
             //  Serial.print("Update time: ");
             //  Serial.println(updateTime - thresholdTime);
-            update_movement();
+            //update_movement();
+            //Serial.println(bstart);
+
+
             // unsigned long movementTime = millis();
             //  Serial.print("Movement time: ");
             //  Serial.println(movementTime - updateTime);

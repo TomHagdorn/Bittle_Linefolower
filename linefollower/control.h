@@ -1,5 +1,8 @@
 #include "sensor_img_proc.h"
+#include <HardwareSerial.h>
 
+
+HardwareSerial BittleSerial(2);
 enum MovementState
 {
     STATE_STOP,
@@ -213,47 +216,47 @@ void update_movement()
         switch (currentMovementState)
         {
         case STATE_STOP:
-            Serial.print("kbalance");
+            BittleSerial.println("kbalance");
             lastMovementChangeTime = millis();
             break;
 
         case STATE_TURN_LEFT:
-            Serial.print("kwkL");
+            BittleSerial.println("kwkL");
             lastMovementChangeTime = millis();
             break;
 
         case STATE_TURN_RIGHT:
-            Serial.print("kwkR");
+            BittleSerial.println("kwkR");
             lastMovementChangeTime = millis();
             break;
 
         case STATE_MOVE_FORWARD:
-            Serial.print("kwkF");
+            BittleSerial.println("kwkF");
             lastMovementChangeTime = millis();
             break;
 
         case STATE_TURN_BACK_RIGHT:
-            Serial.print("kwkR");
+            BittleSerial.println("kwkR");
             lastMovementChangeTime = millis();
             break;
 
         case STATE_TURN_BACK_LEFT:
-            Serial.print("kwkL");
+            BittleSerial.println("kwkL");
             lastMovementChangeTime = millis();
             break;
 
         case STATE_MOVE_BACKWARD:
-            Serial.print("kwkB");
+            BittleSerial.println("kwkB");
             lastMovementChangeTime = millis();
             break;
         
         case STATE_TURN_RIGHT_AXIS:
-            Serial.print("kvtR");
+            BittleSerial.println("kvtR");
             lastMovementChangeTime = millis();
             break;
         
         case STATE_TURN_LEFT_AXIS:
-            Serial.print("kvtL");
+            BittleSerial.println("kvtL");
             lastMovementChangeTime = millis();
             break;
         }

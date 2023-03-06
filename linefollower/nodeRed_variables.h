@@ -1,8 +1,8 @@
 // const char* ssid = "TomHagdorn";
 // const char* password = "26071997";
 
-const char* ssid = "Get off my Lan!";
-const char* password = "SchroedingersChat";
+const char* ssid = "Alpha_Lan";
+const char* password = "david123";
 
 
 unsigned long stateTime = 0;
@@ -12,6 +12,7 @@ uint32_t lastCamera = 0; ///< To store time value for repeated capture
 
 // variables updated by nodered
 //int pixel_threshold = 125;
+bool bstart = false;
 int recover_time  = 5000;
 int obst_stop_t = 700;
 int obst_left_t =1000;
