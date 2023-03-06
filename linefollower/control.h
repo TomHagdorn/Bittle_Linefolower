@@ -24,6 +24,7 @@ static unsigned long obst_stateStartTime = 0;
 static unsigned long lastStateChangeTime = 0;
 static unsigned long finishTime = 0;
  int counter = 0;
+ int counter2 = 0;
 
 /**************************************************************************/
 /**
@@ -102,7 +103,7 @@ bool avoid_obstacle()
         break;
 
     case 2: // TURN RIGHT
-        if (get_distance() < obstacle_detection_dist + obstacle_tolerance )
+        if (get_distance() < obstacle_detection_dist + 4 )
         {
             obst_state = 3;
             obst_stateStartTime = millis();
@@ -202,11 +203,15 @@ bool crossFinishLine()
         {
             
             currentMovementState = STATE_TURN_LEFT_AXIS;//TODO oder timer!
-            if (check_for_horizontal_line() == true | get_middle_point() != -1)
+            counter2 = counter2 + 1;
+            if (counter2 >= 2)
             {
-                currentMovementState = STATE_MOVE_FORWARD;
-                finishTime = millis();
-                return true;
+                if (check_for_horizontal_line() == true | get_middle_point() != -1)
+                {
+                    currentMovementState = STATE_MOVE_FORWARD;
+                    finishTime = millis();
+                    return true;
+                }
             }
 
         // }
