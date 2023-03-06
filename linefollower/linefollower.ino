@@ -85,6 +85,8 @@ void setup()
     Change_Treshold_value();
     Change_IMG_Gain_value();
     Change_IMG_Exposur_value();
+    Change_Obstacle_Distance();
+    Change_Obstacle_Tollerance();
 
     // Ultrasound sensor setup
     strip_setup();

@@ -22,11 +22,12 @@ int Fin_line_width=200;
 int min_line_length = 100;
 //define obstacle detection distance
 int obstacle_detection_dist = 7;
-int pixel_threshold = 35;
+int obstacle_tolerance = 3;
+int pixel_threshold = 37;
 
 
 
-int cameraImageExposure = 6; ///< Camera exposure (0 - 1200) 2 for bright line
+int cameraImageExposure = 36; ///< Camera exposure (0 - 1200) 2 for bright line
 //! Image gain
 /*!
     Range: (0 - 30)

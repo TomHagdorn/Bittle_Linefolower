@@ -62,6 +62,20 @@ void Change_IMG_Exposur_value(){
   });
 }
 
+void Change_Obstacle_Distance(){
+    server.on("/update-obstacle-distance", HTTP_GET, []() {
+    String newValue = server.arg("value");
+   obstacle_detection_dist = newValue.toInt();
+  });
+}
+
+void Change_Obstacle_Tollerance(){
+    server.on("/update-obstacle-tollerance", HTTP_GET, []() {
+    String newValue = server.arg("value");
+   obstacle_tolerance = newValue.toInt();
+  });
+}
+
 void send_image() {
     // server will do the following every time [esp32-ip]/image is requested:
     server.on(F("/image"), [&]() {

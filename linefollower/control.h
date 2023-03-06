@@ -82,61 +82,53 @@ bool avoid_obstacle()
     switch (obst_state)
     {
     case 0: // Turn left
-        if (get_distance() > obstacle_detection_dist + 5)
+        if (get_distance() > obstacle_detection_dist + obstacle_tolerance )
         {
-            obst_state = 2;
+            obst_state = 1;
             obst_stateStartTime = millis();
         }
         currentMovementState = STATE_TURN_LEFT_AXIS;
         break;
 
     case 1: // Walk forward
-        if (millis() - obst_stateStartTime >= 1000)
+        if (millis() - obst_stateStartTime >= 3000)
         {
-            obst_state = 3;
+            obst_state = 2;
             obst_stateStartTime = millis();
         }
         currentMovementState = STATE_MOVE_FORWARD;
         break;
 
     case 2: // TURN RIGHT
-        if (get_distance() < obstacle_detection_dist + 5)
+        if (get_distance() < obstacle_detection_dist  )
+        {
+            obst_state = 3;
+            obst_stateStartTime = millis();
+        }
+        currentMovementState = STATE_TURN_RIGHT_AXIS;
+        break;
+
+
+    case 3: // Turn left
+        if (get_distance() > obstacle_detection_dist )
         {
             obst_state = 4;
             obst_stateStartTime = millis();
         }
-        currentMovementState = STATE_TURN_RIGHT_AXIS;
+        currentMovementState = STATE_TURN_LEFT;
         break;
-
-    case 3: // Turn right
-        if (get_distance() < obstacle_detection_dist + 7)
+    case 4: // Turn left
+        if (any_line_found() == true)
         {
             obst_state = 5;
             obst_stateStartTime = millis();
         }
-        currentMovementState = STATE_TURN_RIGHT_AXIS;
-        break;
-
-    case 4: // Turn left
-        if (get_distance() > obstacle_detection_dist + 7)
-        {
-            obst_state = 6;
-            obst_stateStartTime = millis();
-        }
-        currentMovementState = STATE_TURN_LEFT;
-        break;
-    case 5: // Turn left
-        if (any_line_found() == true)
-        {
-            obst_state = 7;
-            obst_stateStartTime = millis();
-        }
         currentMovementState = STATE_MOVE_FORWARD;
         break;
-    case 6: // Turn left
+    case 5: // Turn left
         if (get_middle_point() != -1)
         {
-            obst_state = 7;
+            
             obst_stateStartTime = millis();
             obst_state = 0;
             return true;
