@@ -193,12 +193,12 @@ void cool_move()
 bool crossFinishLine()
 {
     // walk forward for a certain amount of time then stop
-    currentMovementState = STATE_MOVE_FORWARD;
-    if (millis() - lastStateChangeTime > 2000)
-    {
+    //currentMovementState = STATE_MOVE_FORWARD;
+    // if (millis() - lastStateChangeTime > 2000)
+    // {
         currentMovementState = STATE_HI;
 
-        if (millis() - lastStateChangeTime > 5000)
+        if (millis() - lastStateChangeTime > 3000)
         {
             
             currentMovementState = STATE_TURN_LEFT_AXIS;//TODO oder timer!
@@ -208,8 +208,7 @@ bool crossFinishLine()
                 finishTime = millis();
                 return true;
             }
-
-        }
+        // }
     }
     return false;
 }

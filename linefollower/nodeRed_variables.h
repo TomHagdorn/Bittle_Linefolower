@@ -1,8 +1,8 @@
-// const char* ssid = "TomHagdorn";
-// const char* password = "26071997";
+const char* ssid = "TomHagdorn";
+const char* password = "26071997";
 
-const char* ssid = "Get off my Lan!";
-const char* password = "SchroedingersChat";
+// const char* ssid = "Get off my Lan!";
+// const char* password = "SchroedingersChat";
 
 
 unsigned long stateTime = 0;
@@ -20,7 +20,7 @@ int obst_right_t =1000;
 int line_width=30;
 int min_line_length = 90;
 //define obstacle detection distance
-int obstacle_detection_dist = 9;
+int obstacle_detection_dist = 12;
 int obstacle_tolerance = 4;
 int pixel_threshold = 37;
 unsigned long obstacle_forward_time = 1500;

@@ -78,15 +78,15 @@ void setup()
     setLedBrightness(ledBrightness);
     // Wifi functions to start or stop the update()
     //.on("/Stop_server", server_set_off);
-    //  server.on("/status", handle_status);
-    //  setup_wifi();
-    //  send_image();
+     server.on("/status", handle_status);
+     setup_wifi();
+     send_image();
 
-    // Change_Treshold_value();
-    // Change_IMG_Gain_value();
-    // Change_IMG_Exposur_value();
-    // Change_Obstacle_Distance();
-    // Change_Obstacle_Tollerance();
+    Change_Treshold_value();
+    Change_IMG_Gain_value();
+    Change_IMG_Exposur_value();
+    Change_Obstacle_Distance();
+    Change_Obstacle_Tollerance();
 
     // Ultrasound sensor setup
     strip_setup();
@@ -129,10 +129,10 @@ void loop()
 
             // update server every 600ms to save resources
             // TODO Fix this
-            if (millis() - lastServerUpdate >= 900)
+            if (millis() - lastServerUpdate >= 2000)
             {
-                // server.handleClient();
-                // lastServerUpdate = millis();
+                server.handleClient();
+                lastServerUpdate = millis();
             }
 
             // print image to serial monitor
@@ -270,7 +270,7 @@ void update()
         }
         break;
     case FINISH:
-        if (lastStateChangeTime > 500)
+        if (lastStateChangeTime > 1500)
         {
             // if this is the first time in the FINISH state, set the last state change time
             currentMovementState = STATE_SLEEP;
