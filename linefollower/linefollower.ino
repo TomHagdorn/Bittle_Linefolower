@@ -47,8 +47,8 @@ bool finish_line_crossed = false;
 // define the wifi server
 
 unsigned long lastServerUpdate = 0;
-static unsigned long startTime = millis();
-static unsigned long finishTime = 0;
+unsigned long startTime = 0;
+unsigned long obstacleTime = 7000;
 
 /**************************************************************************/
 /*!
@@ -78,15 +78,15 @@ void setup()
     setLedBrightness(ledBrightness);
     // Wifi functions to start or stop the update()
     //.on("/Stop_server", server_set_off);
-     server.on("/status", handle_status);
-     setup_wifi();
-     send_image();
+    //  server.on("/status", handle_status);
+    //  setup_wifi();
+    //  send_image();
 
-    Change_Treshold_value();
-    Change_IMG_Gain_value();
-    Change_IMG_Exposur_value();
-    Change_Obstacle_Distance();
-    Change_Obstacle_Tollerance();
+    // Change_Treshold_value();
+    // Change_IMG_Gain_value();
+    // Change_IMG_Exposur_value();
+    // Change_Obstacle_Distance();
+    // Change_Obstacle_Tollerance();
 
     // Ultrasound sensor setup
     strip_setup();
@@ -105,7 +105,7 @@ void loop()
 
     cycle_led_strip();
 
-    if (millis() - lastCamera > 300)
+    if (millis() - lastCamera > 320)
     {
         // unsigned long loopTimeStart = millis();
         esp_err_t res = camera_capture();
@@ -128,11 +128,11 @@ void loop()
             //  Serial.println(movementTime - updateTime);
 
             // update server every 600ms to save resources
-            //TODO Fix this
+            // TODO Fix this
             if (millis() - lastServerUpdate >= 900)
             {
-                server.handleClient();
-                lastServerUpdate = millis();
+                // server.handleClient();
+                // lastServerUpdate = millis();
             }
 
             // print image to serial monitor
@@ -175,7 +175,7 @@ void update()
     switch (currentState)
     {
     case FOLLOW_LINE:
-        if (detect_obstacle() == true)
+        if (detect_obstacle() == true && (millis() - obstacleTime >= 5000))
         {
             Serial.println("\nAVOID_OBSTACLE");
             currentState = AVOID_OBSTACLE;
@@ -183,18 +183,19 @@ void update()
         }
         else
         {
-            if (line_follower())
+
+            if (check_for_horizontal_line() && (millis() - finishTime >= 3000))
+            {
+                Serial.println("\nCROSS_FINISH_LINE");
+                currentState = CROSS_FINISH_LINE;
+                lastStateChangeTime = millis();
+            }
+            else if (line_follower())
             {
                 lastStateChangeTime = millis();
                 // line follower returned true, indicating that the line was found
-
-                if (check_for_horizontal_line() && (millis() - finishTime >= 30000))
-                {
-                    Serial.println("\nCROSS_FINISH_LINE");
-                    currentState = CROSS_FINISH_LINE;
-                    lastStateChangeTime = millis();
-                }
             }
+            
 
             // else
             // {
@@ -218,13 +219,14 @@ void update()
             currentState = FOLLOW_LINE;
             lastStateChangeTime = millis();
             finishTime = millis();
+            obstacleTime = millis();
         }
         else if (millis() - lastStateChangeTime >= 100000)
         {
             // If 10 seconds have passed since last state change, switch back to FOLLOW_LINE
             Serial.println("\nFOLLOW_LINE (timeout)");
             currentMovementState = STATE_SLEEP;
-            //currentState = FOLLOW_LINE;
+            // currentState = FOLLOW_LINE;
             lastStateChangeTime = millis();
         }
         break;
@@ -239,7 +241,7 @@ void update()
             lastStateChangeTime = millis();
         }
         else if (finish_line_crossed == true)
-        {   
+        {
             Serial.println("\nFINISH");
             currentState = FINISH;
         }
@@ -257,7 +259,7 @@ void update()
         {
             // If recover attempts exceed 3, switch back to FOLLOW_LINE
             Serial.println("\nFOLLOW_LINE (max recover attempts reached)");
-            
+
             currentState = FOLLOW_LINE;
             lastStateChangeTime = millis();
             recoverAttempts = 0; // reset recover attempts counter

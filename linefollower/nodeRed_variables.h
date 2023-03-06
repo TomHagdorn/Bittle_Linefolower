@@ -18,12 +18,12 @@ int obst_left_t =1000;
 int obst_straight_t=1000;
 int obst_right_t =1000;
 int line_width=30;
-int Fin_line_width=200;
-int min_line_length = 100;
+int min_line_length = 55;
 //define obstacle detection distance
-int obstacle_detection_dist = 7;
+int obstacle_detection_dist = 8;
 int obstacle_tolerance = 3;
 int pixel_threshold = 37;
+unsigned long obstacle_forward_time = 1500;
 
 
 

@@ -22,6 +22,8 @@ static unsigned long obst_stateStartTime = 0;
 
 // defobst_state change time
 static unsigned long lastStateChangeTime = 0;
+static unsigned long finishTime = 0;
+ int counter = 0;
 
 /**************************************************************************/
 /**
@@ -91,7 +93,7 @@ bool avoid_obstacle()
         break;
 
     case 1: // Walk forward
-        if (millis() - obst_stateStartTime >= 3000)
+        if (millis() - obst_stateStartTime >= obstacle_forward_time)
         {
             obst_state = 2;
             obst_stateStartTime = millis();
@@ -100,7 +102,7 @@ bool avoid_obstacle()
         break;
 
     case 2: // TURN RIGHT
-        if (get_distance() < obstacle_detection_dist  )
+        if (get_distance() < obstacle_detection_dist + obstacle_tolerance )
         {
             obst_state = 3;
             obst_stateStartTime = millis();
@@ -110,12 +112,17 @@ bool avoid_obstacle()
 
 
     case 3: // Turn left
-        if (get_distance() > obstacle_detection_dist )
-        {
-            obst_state = 4;
-            obst_stateStartTime = millis();
+        if (get_distance() > obstacle_detection_dist + obstacle_tolerance )
+        {   
+            counter = counter + 1;
+            if (counter == 2)
+            {
+                obst_state = 4;
+                obst_stateStartTime = millis();
+            }
+
         }
-        currentMovementState = STATE_TURN_LEFT;
+        currentMovementState = STATE_TURN_LEFT_AXIS;
         break;
     case 4: // Turn left
         if (any_line_found() == true)
@@ -126,7 +133,7 @@ bool avoid_obstacle()
         currentMovementState = STATE_MOVE_FORWARD;
         break;
     case 5: // Turn left
-        if (get_middle_point() != -1)
+        if (get_middle_point() != -1 || check_for_horizontal_line() == true)
         {
             
             obst_stateStartTime = millis();
@@ -187,18 +194,20 @@ bool crossFinishLine()
 {
     // walk forward for a certain amount of time then stop
     currentMovementState = STATE_MOVE_FORWARD;
-    if (millis() - lastStateChangeTime > 3000)
+    if (millis() - lastStateChangeTime > 2000)
     {
         currentMovementState = STATE_HI;
 
         if (millis() - lastStateChangeTime > 5000)
         {
+            finishTime = millis();
             currentMovementState = STATE_TURN_LEFT_AXIS;
-            if (check_for_horizontal_line() == true)
-            {   
+            if (check_for_horizontal_line() == true || get_middle_point() != -1)
+            {
                 currentMovementState = STATE_MOVE_FORWARD;
                 return true;
             }
+
         }
     }
     return false;
