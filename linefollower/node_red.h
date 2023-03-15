@@ -145,7 +145,9 @@ void send_image() {
 
 */
 
-
+/**
+ * @brief update the status of the robot displayed on node-red dashboard
+*/
 void handle_status() {
   
   if (currentMovementState == STATE_STOP) {
