@@ -98,18 +98,17 @@ $ npm install node-red-node-serialport
 
 
 ## Installation
-1. Install the Arduino IDE
-2. Install the Arduino Extension for Visual Studio Code
-3. Install OpenCV
-4. Clone this repository
-5. Open the folder in Arduino IDE
-6. Install the ESP32-CAM Board in the Arduino IDE
+1. [Install the Arduino IDE](https://support.arduino.cc/hc/en-us/articles/360019833020-Download-and-install-Arduino-IDE)
+2. [Install the Arduino Extension for Visual Studio Code]
+3. Clone this repository
+4. Open the folder in Arduino IDE
+5. Install the ESP32-CAM Board in the Arduino IDE
+6. Go to the nodeRed_variables.h file and change the WIFI ssid and password to your WIFI ssid and password
 7. Install the following libraries in the Arduino IDE
-    - [ArduinoJson](https://arduinojson.org/)
-    - [WiFi](...)   
-    - [HTTPClient](...)
-    - [WebServer](...)
-    - [ESPCamera](...)
+    - ArduinoJson
+    - WiFi
+    - HTTPClient
+    - ESPCamera
 8. Connect the ESP32-CAM to the computer
 9. Select the correct port in the Arduino IDE
 10. Select the correct board in the Arduino IDE
@@ -136,6 +135,36 @@ $ npm install node-red-node-serialport
     - Connect the 5V pin of the ESP32-CAM to the 5V pin of the Ultrasonic Sensor
     - Connect the D12 pin of the ESP32-CAM to the Trig pin of the Ultrasonic Sensor
     - Connect the D13 pin of the ESP32-CAM to the Echo pin of the Ultrasonic Sensor
+16. Start Node-Red in the terminal
+    ```
+    node-red
+    ```
+17. Open the Node-Red flow in the browser
+    ```
+    http://localhost:1880/
+    ```
+18. Import the Node-Red flow
+    - Click on the hamburger menu in the top right corner
+    - Click on import
+    - Click on clipboard
+    - Copy the content of the nodeRed_flow.json file
+    - Paste the content in the import window
+    - Click on import
+19. Deploy the Node-Red flow
+    - Click on the hamburger menu in the top right corner
+    - Click on deploy
+20. Start the Bittle
+21. Go to the Node-Red Dashboard in the browser
+    ```
+    http://localhost:1880/ui
+    ```
+22. Set the desired parameters in the Node-Red Dashboard
+23. Calibrate using the image server on the ESP#2 ip address
+    ```
+    http://ip_address_of_the_esp32-cam:81
+    ```
+24. Start the linefollower using the Node-Red Dashboard
+
 
 
 
@@ -163,15 +192,25 @@ $ npm install node-red-node-serialport
 <summary>Printed parts</summary>
 <br>
 
-GummifussV2.stl
+ESP_Mount.stl
 
-    Covers the feet of the Bittle with TPU or PLA. This prevents the Bittle from slipping on the floor.
-    The PLA needs to be Rubber coated and the TPU needs to be very soft.
+    Mount for the ESP32-CAM. It is printed in PLA+ and it is holding the ESP32-CAM securely in place while the Bittle is moving.
+    Alsos it leaves the back open for connection jumper cables.
 
-CAM-Holder.stl
+Mount_Neck_Connection.stl
 
-    Holds the ESP32-CAM on the Bittle. The ESP32-CAM is screwed on the holder. 
-    The holder is clipped where the Bittle's head would be.
+    Connection between the Camera Holder and the Ultrasonic Sensor Holder. It is printed in PLA+ and it is holding the Camera Holder and the Ultrasonic Sensor Holder securely in place while the Bittle is moving.
+    
+
+UltrasonicSensorHolder.stl
+    
+        Holder for the Ultrasonic Sensor. It is printed in PLA+ and it is holding the Ultrasonic Sensor securely in place while the Bittle is moving.
+        It is screwed to the Camera Holder. With the Mount_Neck_Connection.stl. 
+
+LED_Mount.stl
+
+    Mount for the LED-Strip. It is printed in PLA+ and it is holding the LED-Strip securely in place while the Bittle is moving.
+    It is clipped to the Bittle front rail.
 
 
 
