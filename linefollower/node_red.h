@@ -45,8 +45,6 @@ void setup_wifi() {
 
 
 
-
-
 /**
 * @brief change threshold value
 * 

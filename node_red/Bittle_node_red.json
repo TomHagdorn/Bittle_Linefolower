@@ -1,5 +1,44 @@
 [
     {
+        "id": "40c9fe5c0f60b5d0",
+        "type": "tab",
+        "label": "Change_Values",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "1698dfe8bcbde845",
+        "type": "tab",
+        "label": "Timer",
+        "disabled": false,
+        "info": ""
+    },
+    {
+        "id": "2bfde4946c37a693",
+        "type": "tab",
+        "label": "Start",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "de5c3427eb3aa9c7",
+        "type": "tab",
+        "label": "Kamera",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "997a46ab2c42fa25",
+        "type": "tab",
+        "label": "Flow 1",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
         "id": "e11b66b88e7c1c1a",
         "type": "tab",
         "label": "Change_Values",
@@ -32,6 +71,84 @@
     },
     {
         "id": "afe2bcd9a89f69ee",
+        "type": "tab",
+        "label": "Start/Stop Wifi AP",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "0ffe55d73784c2fe",
+        "type": "tab",
+        "label": "Change_Values",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "e2011e6f078c8688",
+        "type": "tab",
+        "label": "Timer",
+        "disabled": false,
+        "info": ""
+    },
+    {
+        "id": "77a634d64a4a3b55",
+        "type": "tab",
+        "label": "Start",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "b08dfc02489938ac",
+        "type": "tab",
+        "label": "Status_anzeige",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "1ddbf9e3602d728f",
+        "type": "tab",
+        "label": "Start/Stop Bild",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "6bbf12d4048cbee4",
+        "type": "tab",
+        "label": "Change_Values",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "175cf7b1954c7337",
+        "type": "tab",
+        "label": "Timer",
+        "disabled": false,
+        "info": ""
+    },
+    {
+        "id": "b1c9a4e3a5c4be69",
+        "type": "tab",
+        "label": "Start",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "fb992aeda39dba3b",
+        "type": "tab",
+        "label": "Status_anzeige",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "fa34ea72095b5aea",
         "type": "tab",
         "label": "Start/Stop Bild",
         "disabled": false,
@@ -122,13 +239,32 @@
         }
     },
     {
-        "id": "a9b0ce21eebf1c35",
+        "id": "a33a5cbf5a4d1a63",
+        "type": "serial-port",
+        "serialport": "COM10",
+        "serialbaud": "115200",
+        "databits": "8",
+        "parity": "none",
+        "stopbits": "1",
+        "waitfor": "",
+        "dtr": "none",
+        "rts": "none",
+        "cts": "none",
+        "dsr": "none",
+        "newline": "\\n",
+        "bin": "false",
+        "out": "char",
+        "addchar": "",
+        "responsetimeout": "10000"
+    },
+    {
+        "id": "84eb9bf0e4fdf561",
         "type": "ui_base",
         "theme": {
             "name": "theme-light",
             "lightTheme": {
                 "default": "#0094CE",
-                "baseColor": "#000000",
+                "baseColor": "#0094CE",
                 "baseFont": "-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen-Sans,Ubuntu,Cantarell,Helvetica Neue,sans-serif",
                 "edited": true,
                 "reset": false
@@ -148,11 +284,11 @@
             "themeState": {
                 "base-color": {
                     "default": "#0094CE",
-                    "value": "#000000",
-                    "edited": true
+                    "value": "#0094CE",
+                    "edited": false
                 },
                 "page-titlebar-backgroundColor": {
-                    "value": "#000000",
+                    "value": "#0094CE",
                     "edited": false
                 },
                 "page-backgroundColor": {
@@ -160,11 +296,11 @@
                     "edited": false
                 },
                 "page-sidebar-backgroundColor": {
-                    "value": "#333333",
+                    "value": "#ffffff",
                     "edited": false
                 },
                 "group-textColor": {
-                    "value": "#262626",
+                    "value": "#1bbfff",
                     "edited": false
                 },
                 "group-borderColor": {
@@ -180,7 +316,7 @@
                     "edited": false
                 },
                 "widget-backgroundColor": {
-                    "value": "#000000",
+                    "value": "#0094ce",
                     "edited": false
                 },
                 "widget-borderColor": {
@@ -217,6 +353,129 @@
                 "py": 0
             }
         }
+    },
+    {
+        "id": "b8960f08b2fdcb02",
+        "type": "ui_group",
+        "name": "Standard",
+        "tab": "9b98c99ed6d2e914",
+        "order": 1,
+        "disp": true,
+        "width": "6",
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "079296185dd69da2",
+        "type": "ui_group",
+        "name": "Bitle Input",
+        "tab": "",
+        "order": 2,
+        "disp": true,
+        "width": "6",
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "9b98c99ed6d2e914",
+        "type": "ui_tab",
+        "name": "Home",
+        "icon": "dashboard",
+        "disabled": false,
+        "hidden": false
+    },
+    {
+        "id": "ebb34b3136fb470c",
+        "type": "serial-port",
+        "serialport": "COM10",
+        "serialbaud": "115200",
+        "databits": "8",
+        "parity": "none",
+        "stopbits": "1",
+        "waitfor": "",
+        "dtr": "none",
+        "rts": "none",
+        "cts": "none",
+        "dsr": "none",
+        "newline": "\\n",
+        "bin": "false",
+        "out": "char",
+        "addchar": "",
+        "responsetimeout": "10000"
+    },
+    {
+        "id": "c56b65c652f42eca",
+        "type": "ui_group",
+        "name": "Start and Stop the Bittle",
+        "tab": "6ea8955ef26fad6d",
+        "order": 2,
+        "disp": true,
+        "width": "10",
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "a8de949965437e66",
+        "type": "ui_group",
+        "name": "Timer 5 Minuten",
+        "tab": "",
+        "order": 1,
+        "disp": true,
+        "width": "6",
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "6ea8955ef26fad6d",
+        "type": "ui_tab",
+        "name": "Start",
+        "icon": "dashboard",
+        "order": 1,
+        "disabled": false,
+        "hidden": false
+    },
+    {
+        "id": "99b65c407bab5af0",
+        "type": "ui_spacer",
+        "z": "2bfde4946c37a693",
+        "name": "spacer",
+        "group": "a8de949965437e66",
+        "order": 1,
+        "width": 1,
+        "height": 1
+    },
+    {
+        "id": "5b2dbe3a6f738453",
+        "type": "ui_group",
+        "name": "Treshold",
+        "tab": "",
+        "order": 1,
+        "disp": true,
+        "width": "6",
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "82b954ca6fcb77f5",
+        "type": "ui_group",
+        "name": "Value eingabe",
+        "tab": "6ea8955ef26fad6d",
+        "order": 3,
+        "disp": true,
+        "width": "12",
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "8700a9779e53c3b0",
+        "type": "ui_group",
+        "name": "Stopuhr",
+        "tab": "6ea8955ef26fad6d",
+        "order": 1,
+        "disp": true,
+        "width": 5,
+        "collapse": false,
+        "className": ""
     },
     {
         "id": "60b9c858.a9ecdc",
@@ -258,25 +517,6 @@
         "order": 1,
         "width": 1,
         "height": 1
-    },
-    {
-        "id": "a33a5cbf5a4d1a63",
-        "type": "serial-port",
-        "serialport": "COM5",
-        "serialbaud": "115200",
-        "databits": "8",
-        "parity": "none",
-        "stopbits": "1",
-        "waitfor": "",
-        "dtr": "none",
-        "rts": "none",
-        "cts": "none",
-        "dsr": "none",
-        "newline": "\\n",
-        "bin": "false",
-        "out": "char",
-        "addchar": "",
-        "responsetimeout": "10000"
     },
     {
         "id": "b8dc08314662bb39",
@@ -384,6 +624,33 @@
         "className": ""
     },
     {
+        "id": "1a6d9d0bea2f748a",
+        "type": "ui_spacer",
+        "z": "77a634d64a4a3b55",
+        "name": "spacer",
+        "group": "1d657f78.0c59f9",
+        "order": 1,
+        "width": 1,
+        "height": 1
+    },
+    {
+        "id": "83712cc2dbdf2ae2",
+        "type": "ui_spacer",
+        "z": "b1c9a4e3a5c4be69",
+        "name": "spacer",
+        "group": "1d657f78.0c59f9",
+        "order": 1,
+        "width": 1,
+        "height": 1
+    },
+    {
+        "id": "0224c8d7a7f918c5",
+        "type": "ui_tab",
+        "name": "Tab 5",
+        "icon": "dashboard",
+        "order": 5
+    },
+    {
         "id": "e4f2412d.1b609",
         "type": "exec",
         "z": "23160170.77800e",
@@ -480,6 +747,971 @@
         "wires": []
     },
     {
+        "id": "df51669b13b9f935",
+        "type": "function",
+        "z": "40c9fe5c0f60b5d0",
+        "name": "Extract the new value",
+        "func": "var newValue = msg.payload; \nmsg.payload = { value: newValue }; \nreturn msg",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 400,
+        "y": 660,
+        "wires": [
+            [
+                "855475901b549fa8"
+            ]
+        ]
+    },
+    {
+        "id": "03d8f0f90dc18b6e",
+        "type": "debug",
+        "z": "40c9fe5c0f60b5d0",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 830,
+        "y": 660,
+        "wires": []
+    },
+    {
+        "id": "855475901b549fa8",
+        "type": "http request",
+        "z": "40c9fe5c0f60b5d0",
+        "name": "",
+        "method": "GET",
+        "ret": "txt",
+        "paytoqs": "query",
+        "url": "http://192.168.0.43/update-tresholdvalue",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 630,
+        "y": 660,
+        "wires": [
+            [
+                "03d8f0f90dc18b6e"
+            ]
+        ]
+    },
+    {
+        "id": "6921f677afbcdc5f",
+        "type": "ui_text_input",
+        "z": "40c9fe5c0f60b5d0",
+        "name": "",
+        "label": "Treshold_value",
+        "tooltip": "",
+        "group": "c56b65c652f42eca",
+        "order": 4,
+        "width": 12,
+        "height": 4,
+        "passthru": true,
+        "mode": "text",
+        "delay": 300,
+        "topic": "topic",
+        "sendOnBlur": true,
+        "className": "",
+        "topicType": "msg",
+        "x": 120,
+        "y": 660,
+        "wires": [
+            [
+                "df51669b13b9f935"
+            ]
+        ]
+    },
+    {
+        "id": "bba65f700b567233",
+        "type": "function",
+        "z": "40c9fe5c0f60b5d0",
+        "name": "Extract the new value",
+        "func": "var newValue = msg.payload; \nmsg.payload = { value: newValue }; \nreturn msg",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 400,
+        "y": 960,
+        "wires": [
+            [
+                "deaf53636a914cfa"
+            ]
+        ]
+    },
+    {
+        "id": "2780d8b1d07a8105",
+        "type": "debug",
+        "z": "40c9fe5c0f60b5d0",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 830,
+        "y": 960,
+        "wires": []
+    },
+    {
+        "id": "deaf53636a914cfa",
+        "type": "http request",
+        "z": "40c9fe5c0f60b5d0",
+        "name": "",
+        "method": "GET",
+        "ret": "txt",
+        "paytoqs": "ignore",
+        "url": "http://192.168.1.5/update-recovertime ",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 630,
+        "y": 960,
+        "wires": [
+            [
+                "2780d8b1d07a8105"
+            ]
+        ]
+    },
+    {
+        "id": "316d44853d55a9bc",
+        "type": "function",
+        "z": "40c9fe5c0f60b5d0",
+        "name": "Extract the new value",
+        "func": "var newValue = msg.payload; \nmsg.payload = { value: newValue }; \nreturn msg",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 400,
+        "y": 1200,
+        "wires": [
+            [
+                "a47c97396598f023"
+            ]
+        ]
+    },
+    {
+        "id": "f83f78b4a3c8571a",
+        "type": "debug",
+        "z": "40c9fe5c0f60b5d0",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 830,
+        "y": 1200,
+        "wires": []
+    },
+    {
+        "id": "a47c97396598f023",
+        "type": "http request",
+        "z": "40c9fe5c0f60b5d0",
+        "name": "",
+        "method": "GET",
+        "ret": "txt",
+        "paytoqs": "query",
+        "url": "http://192.168.1.5/update-obstleftt ",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 630,
+        "y": 1200,
+        "wires": [
+            [
+                "f83f78b4a3c8571a"
+            ]
+        ]
+    },
+    {
+        "id": "e6efd089d70be8af",
+        "type": "function",
+        "z": "40c9fe5c0f60b5d0",
+        "name": "Extract the new value",
+        "func": "var newValue = msg.payload; \nmsg.payload = { value: newValue }; \nreturn msg",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 400,
+        "y": 1440,
+        "wires": [
+            [
+                "c7f33c8e269aa9ae"
+            ]
+        ]
+    },
+    {
+        "id": "6933e2d9e1ab5390",
+        "type": "debug",
+        "z": "40c9fe5c0f60b5d0",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 830,
+        "y": 1440,
+        "wires": []
+    },
+    {
+        "id": "c7f33c8e269aa9ae",
+        "type": "http request",
+        "z": "40c9fe5c0f60b5d0",
+        "name": "",
+        "method": "GET",
+        "ret": "txt",
+        "paytoqs": "query",
+        "url": "http://192.168.1.5/update-obststraightt",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 630,
+        "y": 1440,
+        "wires": [
+            [
+                "6933e2d9e1ab5390"
+            ]
+        ]
+    },
+    {
+        "id": "0b2892eefa7770cb",
+        "type": "function",
+        "z": "40c9fe5c0f60b5d0",
+        "name": "Extract the new value",
+        "func": "var newValue = msg.payload; \nmsg.payload = { value: newValue }; \nreturn msg",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 380,
+        "y": 1680,
+        "wires": [
+            [
+                "136c70bcfb31dad5"
+            ]
+        ]
+    },
+    {
+        "id": "c7a18e2937a81c11",
+        "type": "debug",
+        "z": "40c9fe5c0f60b5d0",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 810,
+        "y": 1680,
+        "wires": []
+    },
+    {
+        "id": "136c70bcfb31dad5",
+        "type": "http request",
+        "z": "40c9fe5c0f60b5d0",
+        "name": "",
+        "method": "GET",
+        "ret": "txt",
+        "paytoqs": "query",
+        "url": "http://192.168.1.5/update-obstrightt ",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 610,
+        "y": 1680,
+        "wires": [
+            [
+                "c7a18e2937a81c11"
+            ]
+        ]
+    },
+    {
+        "id": "f84ac15bf5f4832f",
+        "type": "function",
+        "z": "40c9fe5c0f60b5d0",
+        "name": "Extract the new value",
+        "func": "var newValue = msg.payload; \nmsg.payload = { value: newValue }; \nreturn msg",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 360,
+        "y": 1900,
+        "wires": [
+            [
+                "db61a1633fd0b9df"
+            ]
+        ]
+    },
+    {
+        "id": "84920c5d2251f3f7",
+        "type": "debug",
+        "z": "40c9fe5c0f60b5d0",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 790,
+        "y": 1900,
+        "wires": []
+    },
+    {
+        "id": "db61a1633fd0b9df",
+        "type": "http request",
+        "z": "40c9fe5c0f60b5d0",
+        "name": "",
+        "method": "GET",
+        "ret": "txt",
+        "paytoqs": "query",
+        "url": "http://192.168.1.5/update-linewidth",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 590,
+        "y": 1900,
+        "wires": [
+            [
+                "84920c5d2251f3f7"
+            ]
+        ]
+    },
+    {
+        "id": "af2106fb9173b8b3",
+        "type": "ui_text_input",
+        "z": "40c9fe5c0f60b5d0",
+        "name": "",
+        "label": "Line_width",
+        "tooltip": "",
+        "group": "82b954ca6fcb77f5",
+        "order": 5,
+        "width": 6,
+        "height": 4,
+        "passthru": true,
+        "mode": "text",
+        "delay": 300,
+        "topic": "topic",
+        "sendOnBlur": true,
+        "className": "",
+        "topicType": "msg",
+        "x": 90,
+        "y": 1900,
+        "wires": [
+            [
+                "f84ac15bf5f4832f"
+            ]
+        ]
+    },
+    {
+        "id": "5b4eedb549ff7621",
+        "type": "function",
+        "z": "40c9fe5c0f60b5d0",
+        "name": "Extract the new value",
+        "func": "var newValue = msg.payload; \nmsg.payload = { value: newValue }; \nreturn msg",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 380,
+        "y": 2140,
+        "wires": [
+            [
+                "eb6efd633e2e2cf5"
+            ]
+        ]
+    },
+    {
+        "id": "c1c79e1f2d272bbd",
+        "type": "debug",
+        "z": "40c9fe5c0f60b5d0",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 810,
+        "y": 2140,
+        "wires": []
+    },
+    {
+        "id": "eb6efd633e2e2cf5",
+        "type": "http request",
+        "z": "40c9fe5c0f60b5d0",
+        "name": "",
+        "method": "GET",
+        "ret": "txt",
+        "paytoqs": "query",
+        "url": "http://192.168.1.5/update-finlinewidth",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 610,
+        "y": 2140,
+        "wires": [
+            [
+                "c1c79e1f2d272bbd"
+            ]
+        ]
+    },
+    {
+        "id": "0cd22626df97c897",
+        "type": "ui_text_input",
+        "z": "40c9fe5c0f60b5d0",
+        "name": "",
+        "label": "Fin_line_width",
+        "tooltip": "",
+        "group": "82b954ca6fcb77f5",
+        "order": 6,
+        "width": 6,
+        "height": 4,
+        "passthru": true,
+        "mode": "text",
+        "delay": 300,
+        "topic": "topic",
+        "sendOnBlur": true,
+        "className": "",
+        "topicType": "msg",
+        "x": 120,
+        "y": 2140,
+        "wires": [
+            [
+                "5b4eedb549ff7621"
+            ]
+        ]
+    },
+    {
+        "id": "4b504e7d6171f909",
+        "type": "function",
+        "z": "40c9fe5c0f60b5d0",
+        "name": "Extract the new value",
+        "func": "var newValue = msg.payload; \nmsg.payload = { value: newValue }; \nreturn msg",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 380,
+        "y": 2380,
+        "wires": [
+            [
+                "cd2e419da0f5ae17"
+            ]
+        ]
+    },
+    {
+        "id": "473dcd010f17ea42",
+        "type": "debug",
+        "z": "40c9fe5c0f60b5d0",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 810,
+        "y": 2380,
+        "wires": []
+    },
+    {
+        "id": "cd2e419da0f5ae17",
+        "type": "http request",
+        "z": "40c9fe5c0f60b5d0",
+        "name": "",
+        "method": "GET",
+        "ret": "txt",
+        "paytoqs": "query",
+        "url": "http://192.168.1.5/update-currentlinewidth",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 610,
+        "y": 2380,
+        "wires": [
+            [
+                "473dcd010f17ea42"
+            ]
+        ]
+    },
+    {
+        "id": "d6580b01a8ee24f0",
+        "type": "ui_text_input",
+        "z": "40c9fe5c0f60b5d0",
+        "name": "",
+        "label": "current_line_width",
+        "tooltip": "",
+        "group": "82b954ca6fcb77f5",
+        "order": 7,
+        "width": 6,
+        "height": 4,
+        "passthru": true,
+        "mode": "text",
+        "delay": 300,
+        "topic": "topic",
+        "sendOnBlur": true,
+        "className": "",
+        "topicType": "msg",
+        "x": 110,
+        "y": 2380,
+        "wires": [
+            [
+                "4b504e7d6171f909"
+            ]
+        ]
+    },
+    {
+        "id": "264fd98d9f4dd94f",
+        "type": "function",
+        "z": "40c9fe5c0f60b5d0",
+        "name": "Extract the new value",
+        "func": "var newValue = msg.payload; \nmsg.payload = { value: newValue }; \nreturn msg",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 360,
+        "y": 2620,
+        "wires": [
+            [
+                "8f2a33a93824e470"
+            ]
+        ]
+    },
+    {
+        "id": "776117aa8a9cf90f",
+        "type": "debug",
+        "z": "40c9fe5c0f60b5d0",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 790,
+        "y": 2620,
+        "wires": []
+    },
+    {
+        "id": "8f2a33a93824e470",
+        "type": "http request",
+        "z": "40c9fe5c0f60b5d0",
+        "name": "",
+        "method": "GET",
+        "ret": "txt",
+        "paytoqs": "query",
+        "url": "http://192.168.1.5/update-currentfinlinewidth",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 590,
+        "y": 2620,
+        "wires": [
+            [
+                "776117aa8a9cf90f"
+            ]
+        ]
+    },
+    {
+        "id": "0cdf9ac724564d83",
+        "type": "ui_text_input",
+        "z": "40c9fe5c0f60b5d0",
+        "name": "",
+        "label": "Current_finline_width",
+        "tooltip": "",
+        "group": "82b954ca6fcb77f5",
+        "order": 8,
+        "width": 6,
+        "height": 4,
+        "passthru": true,
+        "mode": "text",
+        "delay": 300,
+        "topic": "topic",
+        "sendOnBlur": true,
+        "className": "",
+        "topicType": "msg",
+        "x": 100,
+        "y": 2620,
+        "wires": [
+            [
+                "264fd98d9f4dd94f"
+            ]
+        ]
+    },
+    {
+        "id": "305b2383cc463422",
+        "type": "ui_button",
+        "z": "1698dfe8bcbde845",
+        "name": "",
+        "group": "8700a9779e53c3b0",
+        "order": 1,
+        "width": 5,
+        "height": 4,
+        "passthru": false,
+        "label": "Start",
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "fa-clock-o",
+        "payload": "{ \"payload\": \"on\", \"timeout\": 300 }",
+        "payloadType": "str",
+        "topic": "",
+        "topicType": "str",
+        "x": 150,
+        "y": 300,
+        "wires": [
+            [
+                "2cd05b6557e60f92"
+            ]
+        ]
+    },
+    {
+        "id": "e2d069f27646c17e",
+        "type": "function",
+        "z": "1698dfe8bcbde845",
+        "name": "Sekunden zu Minuten",
+        "func": "var minuten = msg.payload;\nmsg.payload=minuten;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 620,
+        "y": 300,
+        "wires": [
+            [
+                "6868e7e7b787740b"
+            ]
+        ]
+    },
+    {
+        "id": "1a57ce332dd2971f",
+        "type": "comment",
+        "z": "1698dfe8bcbde845",
+        "name": "Countdown Timer",
+        "info": "",
+        "x": 180,
+        "y": 120,
+        "wires": []
+    },
+    {
+        "id": "6868e7e7b787740b",
+        "type": "ui_gauge",
+        "z": "1698dfe8bcbde845",
+        "name": "",
+        "group": "8700a9779e53c3b0",
+        "order": 2,
+        "width": 5,
+        "height": 5,
+        "gtype": "donut",
+        "title": "Countdown",
+        "label": "Sekunden",
+        "format": "{{value}}",
+        "min": "0",
+        "max": "300",
+        "colors": [
+            "#ff0000",
+            "#e6e600",
+            "#00ff00"
+        ],
+        "seg1": "",
+        "seg2": "",
+        "className": "",
+        "x": 970,
+        "y": 300,
+        "wires": []
+    },
+    {
+        "id": "094f2d8b2586db77",
+        "type": "ui_button",
+        "z": "1698dfe8bcbde845",
+        "name": "",
+        "group": "8700a9779e53c3b0",
+        "order": 3,
+        "width": 5,
+        "height": 4,
+        "passthru": false,
+        "label": "Stop",
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "fa-clock-o",
+        "payload": "{ \"payload\": \"stop\" }",
+        "payloadType": "str",
+        "topic": "",
+        "topicType": "str",
+        "x": 150,
+        "y": 380,
+        "wires": [
+            [
+                "2cd05b6557e60f92"
+            ]
+        ]
+    },
+    {
+        "id": "2cd05b6557e60f92",
+        "type": "mytimeout",
+        "z": "1698dfe8bcbde845",
+        "name": "5 Minuten Timer",
+        "outtopic": "",
+        "outsafe": "",
+        "outwarning": "Warnung",
+        "outunsafe": "Zeit abgelaufen",
+        "warning": "5",
+        "timer": "10",
+        "debug": false,
+        "ndebug": false,
+        "ignoreCase": false,
+        "repeat": false,
+        "again": false,
+        "x": 380,
+        "y": 300,
+        "wires": [
+            [],
+            [
+                "e2d069f27646c17e"
+            ]
+        ]
+    },
+    {
+        "id": "d81022a190adfe6e",
+        "type": "http request",
+        "z": "2bfde4946c37a693",
+        "name": "",
+        "method": "GET",
+        "ret": "txt",
+        "paytoqs": "ignore",
+        "url": "http://192.168.1.5/Start",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 550,
+        "y": 200,
+        "wires": [
+            [
+                "d614671127d83ddf"
+            ]
+        ]
+    },
+    {
+        "id": "df9a599dd1a93375",
+        "type": "ui_button",
+        "z": "2bfde4946c37a693",
+        "name": "",
+        "group": "c56b65c652f42eca",
+        "order": 1,
+        "width": 5,
+        "height": 4,
+        "passthru": false,
+        "label": "Start",
+        "tooltip": "",
+        "color": "Black",
+        "bgcolor": "Green",
+        "className": "",
+        "icon": "",
+        "payload": "H",
+        "payloadType": "str",
+        "topic": "topic",
+        "topicType": "str",
+        "x": 250,
+        "y": 200,
+        "wires": [
+            [
+                "d81022a190adfe6e"
+            ]
+        ]
+    },
+    {
+        "id": "d614671127d83ddf",
+        "type": "debug",
+        "z": "2bfde4946c37a693",
+        "name": "debug 2",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 900,
+        "y": 200,
+        "wires": []
+    },
+    {
+        "id": "9bfdbfec68157c4b",
+        "type": "http request",
+        "z": "2bfde4946c37a693",
+        "name": "",
+        "method": "GET",
+        "ret": "txt",
+        "paytoqs": "ignore",
+        "url": "http://192.168.1.5/Stop",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 570,
+        "y": 340,
+        "wires": [
+            [
+                "8edcaf6ccb548214"
+            ]
+        ]
+    },
+    {
+        "id": "9f4256368c06b831",
+        "type": "ui_button",
+        "z": "2bfde4946c37a693",
+        "name": "",
+        "group": "c56b65c652f42eca",
+        "order": 5,
+        "width": 5,
+        "height": 4,
+        "passthru": false,
+        "label": "Stop",
+        "tooltip": "",
+        "color": "Black",
+        "bgcolor": "Red",
+        "className": "",
+        "icon": "",
+        "payload": "H",
+        "payloadType": "str",
+        "topic": "topic",
+        "topicType": "str",
+        "x": 250,
+        "y": 340,
+        "wires": [
+            [
+                "9bfdbfec68157c4b"
+            ]
+        ]
+    },
+    {
+        "id": "8edcaf6ccb548214",
+        "type": "debug",
+        "z": "2bfde4946c37a693",
+        "name": "debug 3",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 910,
+        "y": 340,
+        "wires": []
+    },
+    {
+        "id": "635166e55b98632b",
+        "type": "ui_template",
+        "z": "de5c3427eb3aa9c7",
+        "group": "",
+        "name": "ESP32_Cam",
+        "order": 1,
+        "width": 7,
+        "height": 6,
+        "format": "<div>\n\n    <img src=\"http://192.168.0.43:81/stream\"\n     width=\"160\" height=\"120\">\n\n</div>",
+        "storeOutMessages": true,
+        "fwdInMessages": true,
+        "resendOnRefresh": true,
+        "templateScope": "local",
+        "className": "",
+        "x": 510,
+        "y": 200,
+        "wires": [
+            []
+        ],
+        "icon": "font-awesome/fa-video-camera"
+    },
+    {
         "id": "5eabf9c9.9a8ff8",
         "type": "function",
         "z": "e11b66b88e7c1c1a",
@@ -523,7 +1755,7 @@
         "method": "GET",
         "ret": "txt",
         "paytoqs": "query",
-        "url": "http://192.168.0.43/update-tresholdvalue",
+        "url": "http://172.20.10.7/update-tresholdvalue",
         "tls": "",
         "persist": false,
         "proxy": "",
@@ -1254,178 +2486,6 @@
         ]
     },
     {
-        "id": "0fe4f217a23c8bd1",
-        "type": "function",
-        "z": "e11b66b88e7c1c1a",
-        "name": "Extract the new value",
-        "func": "var newValue = msg.payload; \nmsg.payload = { value: newValue }; \nreturn msg",
-        "outputs": 1,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 400,
-        "y": 740,
-        "wires": [
-            [
-                "e1479089469fe18c"
-            ]
-        ]
-    },
-    {
-        "id": "8070bb18a3a25671",
-        "type": "debug",
-        "z": "e11b66b88e7c1c1a",
-        "name": "",
-        "active": true,
-        "tosidebar": true,
-        "console": false,
-        "tostatus": false,
-        "complete": "true",
-        "targetType": "full",
-        "statusVal": "",
-        "statusType": "auto",
-        "x": 830,
-        "y": 740,
-        "wires": []
-    },
-    {
-        "id": "e1479089469fe18c",
-        "type": "http request",
-        "z": "e11b66b88e7c1c1a",
-        "name": "",
-        "method": "GET",
-        "ret": "txt",
-        "paytoqs": "query",
-        "url": "http://192.168.0.43/update-gain",
-        "tls": "",
-        "persist": false,
-        "proxy": "",
-        "insecureHTTPParser": false,
-        "authType": "",
-        "senderr": false,
-        "headers": [],
-        "x": 630,
-        "y": 740,
-        "wires": [
-            [
-                "8070bb18a3a25671"
-            ]
-        ]
-    },
-    {
-        "id": "f1f4f5fdc04eb2c5",
-        "type": "ui_text_input",
-        "z": "e11b66b88e7c1c1a",
-        "name": "",
-        "label": "gain_value",
-        "tooltip": "",
-        "group": "5bd151deb14bfdab",
-        "order": 1,
-        "width": 8,
-        "height": 4,
-        "passthru": true,
-        "mode": "text",
-        "delay": 300,
-        "topic": "topic",
-        "sendOnBlur": true,
-        "className": "",
-        "topicType": "msg",
-        "x": 110,
-        "y": 740,
-        "wires": [
-            [
-                "0fe4f217a23c8bd1"
-            ]
-        ]
-    },
-    {
-        "id": "65199a450d0afa6b",
-        "type": "function",
-        "z": "e11b66b88e7c1c1a",
-        "name": "Extract the new value",
-        "func": "var newValue = msg.payload; \nmsg.payload = { value: newValue }; \nreturn msg",
-        "outputs": 1,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 400,
-        "y": 820,
-        "wires": [
-            [
-                "e75b0139eda5759f"
-            ]
-        ]
-    },
-    {
-        "id": "8322d9407834b317",
-        "type": "debug",
-        "z": "e11b66b88e7c1c1a",
-        "name": "",
-        "active": true,
-        "tosidebar": true,
-        "console": false,
-        "tostatus": false,
-        "complete": "true",
-        "targetType": "full",
-        "statusVal": "",
-        "statusType": "auto",
-        "x": 830,
-        "y": 820,
-        "wires": []
-    },
-    {
-        "id": "e75b0139eda5759f",
-        "type": "http request",
-        "z": "e11b66b88e7c1c1a",
-        "name": "",
-        "method": "GET",
-        "ret": "txt",
-        "paytoqs": "query",
-        "url": "http://192.168.0.43/update-exposure",
-        "tls": "",
-        "persist": false,
-        "proxy": "",
-        "insecureHTTPParser": false,
-        "authType": "",
-        "senderr": false,
-        "headers": [],
-        "x": 630,
-        "y": 820,
-        "wires": [
-            [
-                "8322d9407834b317"
-            ]
-        ]
-    },
-    {
-        "id": "052f1e400dbf2b03",
-        "type": "ui_text_input",
-        "z": "e11b66b88e7c1c1a",
-        "name": "",
-        "label": "exposure_value",
-        "tooltip": "",
-        "group": "5bd151deb14bfdab",
-        "order": 1,
-        "width": 8,
-        "height": 4,
-        "passthru": true,
-        "mode": "text",
-        "delay": 300,
-        "topic": "topic",
-        "sendOnBlur": true,
-        "className": "",
-        "topicType": "msg",
-        "x": 120,
-        "y": 820,
-        "wires": [
-            [
-                "65199a450d0afa6b"
-            ]
-        ]
-    },
-    {
         "id": "4ca0c1cf9c2d2102",
         "type": "ui_button",
         "z": "694fb32518b8351e",
@@ -1706,7 +2766,7 @@
         "method": "GET",
         "ret": "txt",
         "paytoqs": "ignore",
-        "url": "http://192.168.0.43/status",
+        "url": "http://172.20.10.7/status",
         "tls": "",
         "persist": false,
         "proxy": "",
@@ -1771,7 +2831,7 @@
                 "vt": "str"
             }
         ],
-        "repeat": "2",
+        "repeat": "3",
         "crontab": "",
         "once": false,
         "onceDelay": 0.1,
@@ -1794,7 +2854,7 @@
         "method": "GET",
         "ret": "txt",
         "paytoqs": "ignore",
-        "url": "http://192.168.0.43/Start_image",
+        "url": "http://172.20.10.7/Stop_server",
         "tls": "",
         "persist": false,
         "proxy": "",
@@ -1820,17 +2880,17 @@
         "width": 0,
         "height": 0,
         "passthru": false,
-        "label": "Bild an",
+        "label": "Tötet den Server",
         "tooltip": "",
         "color": "Black",
-        "bgcolor": "Green",
+        "bgcolor": "Red",
         "className": "",
         "icon": "",
         "payload": "H",
         "payloadType": "str",
         "topic": "topic",
         "topicType": "str",
-        "x": 165.08331298828125,
+        "x": 205.08331298828125,
         "y": 360.0833435058594,
         "wires": [
             [
@@ -1855,9 +2915,1384 @@
         "wires": []
     },
     {
-        "id": "b454df88539887d4",
+        "id": "00ea1ab338a2809f",
+        "type": "function",
+        "z": "0ffe55d73784c2fe",
+        "name": "Extract the new value",
+        "func": "var newValue = msg.payload; \nmsg.payload = { value: newValue }; \nreturn msg",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 400,
+        "y": 660,
+        "wires": [
+            [
+                "478a6ed6db1ca3bc"
+            ]
+        ]
+    },
+    {
+        "id": "504fbfdf014a2943",
+        "type": "debug",
+        "z": "0ffe55d73784c2fe",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 830,
+        "y": 660,
+        "wires": []
+    },
+    {
+        "id": "478a6ed6db1ca3bc",
         "type": "http request",
-        "z": "afe2bcd9a89f69ee",
+        "z": "0ffe55d73784c2fe",
+        "name": "",
+        "method": "GET",
+        "ret": "txt",
+        "paytoqs": "query",
+        "url": "http://192.168.0.43/update-tresholdvalue",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 630,
+        "y": 660,
+        "wires": [
+            [
+                "504fbfdf014a2943"
+            ]
+        ]
+    },
+    {
+        "id": "3778898a99f7de37",
+        "type": "ui_text_input",
+        "z": "0ffe55d73784c2fe",
+        "name": "",
+        "label": "Treshold_value",
+        "tooltip": "",
+        "group": "5bd151deb14bfdab",
+        "order": 1,
+        "width": 8,
+        "height": 4,
+        "passthru": true,
+        "mode": "text",
+        "delay": 300,
+        "topic": "topic",
+        "sendOnBlur": true,
+        "className": "",
+        "topicType": "msg",
+        "x": 120,
+        "y": 660,
+        "wires": [
+            [
+                "00ea1ab338a2809f"
+            ]
+        ]
+    },
+    {
+        "id": "11b84d7db117578b",
+        "type": "function",
+        "z": "0ffe55d73784c2fe",
+        "name": "Extract the new value",
+        "func": "var newValue = msg.payload; \nmsg.payload = { value: newValue }; \nreturn msg",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 400,
+        "y": 960,
+        "wires": [
+            [
+                "ba721824744c3bcb"
+            ]
+        ]
+    },
+    {
+        "id": "8b44440ea10ffa84",
+        "type": "debug",
+        "z": "0ffe55d73784c2fe",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 830,
+        "y": 960,
+        "wires": []
+    },
+    {
+        "id": "ba721824744c3bcb",
+        "type": "http request",
+        "z": "0ffe55d73784c2fe",
+        "name": "",
+        "method": "GET",
+        "ret": "txt",
+        "paytoqs": "ignore",
+        "url": "http://192.168.0.156/update-recovertime ",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 630,
+        "y": 960,
+        "wires": [
+            [
+                "8b44440ea10ffa84"
+            ]
+        ]
+    },
+    {
+        "id": "c4dcbf666f1b343c",
+        "type": "ui_text_input",
+        "z": "0ffe55d73784c2fe",
+        "name": "",
+        "label": "recover_time ",
+        "tooltip": "",
+        "group": "5bd151deb14bfdab",
+        "order": 2,
+        "width": 4,
+        "height": 4,
+        "passthru": true,
+        "mode": "text",
+        "delay": 300,
+        "topic": "topic",
+        "sendOnBlur": true,
+        "className": "",
+        "topicType": "msg",
+        "x": 130,
+        "y": 960,
+        "wires": [
+            [
+                "11b84d7db117578b"
+            ]
+        ]
+    },
+    {
+        "id": "8289b0e1ae3a51fa",
+        "type": "function",
+        "z": "0ffe55d73784c2fe",
+        "name": "Extract the new value",
+        "func": "var newValue = msg.payload; \nmsg.payload = { value: newValue }; \nreturn msg",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 400,
+        "y": 1200,
+        "wires": [
+            [
+                "979804ffa9d85e1a"
+            ]
+        ]
+    },
+    {
+        "id": "807443cbbe85da36",
+        "type": "debug",
+        "z": "0ffe55d73784c2fe",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 830,
+        "y": 1200,
+        "wires": []
+    },
+    {
+        "id": "979804ffa9d85e1a",
+        "type": "http request",
+        "z": "0ffe55d73784c2fe",
+        "name": "",
+        "method": "GET",
+        "ret": "txt",
+        "paytoqs": "query",
+        "url": "http://192.168.0.156/update-obstleftt ",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 630,
+        "y": 1200,
+        "wires": [
+            [
+                "807443cbbe85da36"
+            ]
+        ]
+    },
+    {
+        "id": "322e7fedd262104e",
+        "type": "ui_text_input",
+        "z": "0ffe55d73784c2fe",
+        "name": "",
+        "label": "Obst_left_t ",
+        "tooltip": "",
+        "group": "5bd151deb14bfdab",
+        "order": 4,
+        "width": 4,
+        "height": 4,
+        "passthru": true,
+        "mode": "text",
+        "delay": 300,
+        "topic": "topic",
+        "sendOnBlur": true,
+        "className": "",
+        "topicType": "msg",
+        "x": 150,
+        "y": 1200,
+        "wires": [
+            [
+                "8289b0e1ae3a51fa"
+            ]
+        ]
+    },
+    {
+        "id": "1899e528b58ece29",
+        "type": "function",
+        "z": "0ffe55d73784c2fe",
+        "name": "Extract the new value",
+        "func": "var newValue = msg.payload; \nmsg.payload = { value: newValue }; \nreturn msg",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 400,
+        "y": 1440,
+        "wires": [
+            [
+                "480176de308e8166"
+            ]
+        ]
+    },
+    {
+        "id": "25f7244213772ceb",
+        "type": "debug",
+        "z": "0ffe55d73784c2fe",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 830,
+        "y": 1440,
+        "wires": []
+    },
+    {
+        "id": "480176de308e8166",
+        "type": "http request",
+        "z": "0ffe55d73784c2fe",
+        "name": "",
+        "method": "GET",
+        "ret": "txt",
+        "paytoqs": "query",
+        "url": "http://192.168.0.156/update-obststraightt",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 630,
+        "y": 1440,
+        "wires": [
+            [
+                "25f7244213772ceb"
+            ]
+        ]
+    },
+    {
+        "id": "65e24e4bcd583a39",
+        "type": "ui_text_input",
+        "z": "0ffe55d73784c2fe",
+        "name": "",
+        "label": "Obst_straight_t",
+        "tooltip": "",
+        "group": "5bd151deb14bfdab",
+        "order": 3,
+        "width": 4,
+        "height": 4,
+        "passthru": true,
+        "mode": "text",
+        "delay": 300,
+        "topic": "topic",
+        "sendOnBlur": true,
+        "className": "",
+        "topicType": "msg",
+        "x": 120,
+        "y": 1440,
+        "wires": [
+            [
+                "1899e528b58ece29"
+            ]
+        ]
+    },
+    {
+        "id": "234cf971b8658161",
+        "type": "function",
+        "z": "0ffe55d73784c2fe",
+        "name": "Extract the new value",
+        "func": "var newValue = msg.payload; \nmsg.payload = { value: newValue }; \nreturn msg",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 380,
+        "y": 1680,
+        "wires": [
+            [
+                "bbc2401bc2d9548f"
+            ]
+        ]
+    },
+    {
+        "id": "17f6be9eeb9e9017",
+        "type": "debug",
+        "z": "0ffe55d73784c2fe",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 810,
+        "y": 1680,
+        "wires": []
+    },
+    {
+        "id": "bbc2401bc2d9548f",
+        "type": "http request",
+        "z": "0ffe55d73784c2fe",
+        "name": "",
+        "method": "GET",
+        "ret": "txt",
+        "paytoqs": "query",
+        "url": "http://192.168.0.156/update-obstrightt ",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 610,
+        "y": 1680,
+        "wires": [
+            [
+                "17f6be9eeb9e9017"
+            ]
+        ]
+    },
+    {
+        "id": "cfe25880b5c6672e",
+        "type": "ui_text_input",
+        "z": "0ffe55d73784c2fe",
+        "name": "",
+        "label": "Obst_right_t ",
+        "tooltip": "",
+        "group": "5bd151deb14bfdab",
+        "order": 5,
+        "width": 4,
+        "height": 4,
+        "passthru": true,
+        "mode": "text",
+        "delay": 300,
+        "topic": "topic",
+        "sendOnBlur": true,
+        "className": "",
+        "topicType": "msg",
+        "x": 130,
+        "y": 1680,
+        "wires": [
+            [
+                "234cf971b8658161"
+            ]
+        ]
+    },
+    {
+        "id": "ab2abe3d1ec2f8aa",
+        "type": "function",
+        "z": "0ffe55d73784c2fe",
+        "name": "Extract the new value",
+        "func": "var newValue = msg.payload; \nmsg.payload = { value: newValue }; \nreturn msg",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 360,
+        "y": 1900,
+        "wires": [
+            [
+                "558ba2767a6e6033"
+            ]
+        ]
+    },
+    {
+        "id": "fc8b97957a4ba7a6",
+        "type": "debug",
+        "z": "0ffe55d73784c2fe",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 790,
+        "y": 1900,
+        "wires": []
+    },
+    {
+        "id": "558ba2767a6e6033",
+        "type": "http request",
+        "z": "0ffe55d73784c2fe",
+        "name": "",
+        "method": "GET",
+        "ret": "txt",
+        "paytoqs": "query",
+        "url": "http://192.168.0.156/update-linewidth",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 590,
+        "y": 1900,
+        "wires": [
+            [
+                "fc8b97957a4ba7a6"
+            ]
+        ]
+    },
+    {
+        "id": "8e13d7c7a1861994",
+        "type": "ui_text_input",
+        "z": "0ffe55d73784c2fe",
+        "name": "",
+        "label": "Line_width",
+        "tooltip": "",
+        "group": "5bd151deb14bfdab",
+        "order": 6,
+        "width": 4,
+        "height": 4,
+        "passthru": true,
+        "mode": "text",
+        "delay": 300,
+        "topic": "topic",
+        "sendOnBlur": true,
+        "className": "",
+        "topicType": "msg",
+        "x": 90,
+        "y": 1900,
+        "wires": [
+            [
+                "ab2abe3d1ec2f8aa"
+            ]
+        ]
+    },
+    {
+        "id": "67bd79f3345f06f0",
+        "type": "function",
+        "z": "0ffe55d73784c2fe",
+        "name": "Extract the new value",
+        "func": "var newValue = msg.payload; \nmsg.payload = { value: newValue }; \nreturn msg",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 380,
+        "y": 2140,
+        "wires": [
+            [
+                "7a20ce1fa514c07e"
+            ]
+        ]
+    },
+    {
+        "id": "f04a3c4a8082ae8e",
+        "type": "debug",
+        "z": "0ffe55d73784c2fe",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 810,
+        "y": 2140,
+        "wires": []
+    },
+    {
+        "id": "7a20ce1fa514c07e",
+        "type": "http request",
+        "z": "0ffe55d73784c2fe",
+        "name": "",
+        "method": "GET",
+        "ret": "txt",
+        "paytoqs": "query",
+        "url": "http://192.168.0.156/update-finlinewidth",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 610,
+        "y": 2140,
+        "wires": [
+            [
+                "f04a3c4a8082ae8e"
+            ]
+        ]
+    },
+    {
+        "id": "4315aae219291f5f",
+        "type": "ui_text_input",
+        "z": "0ffe55d73784c2fe",
+        "name": "",
+        "label": "Fin_line_width",
+        "tooltip": "",
+        "group": "5bd151deb14bfdab",
+        "order": 7,
+        "width": 4,
+        "height": 4,
+        "passthru": true,
+        "mode": "text",
+        "delay": 300,
+        "topic": "topic",
+        "sendOnBlur": true,
+        "className": "",
+        "topicType": "msg",
+        "x": 120,
+        "y": 2140,
+        "wires": [
+            [
+                "67bd79f3345f06f0"
+            ]
+        ]
+    },
+    {
+        "id": "9e518ffde28e91b2",
+        "type": "function",
+        "z": "0ffe55d73784c2fe",
+        "name": "Extract the new value",
+        "func": "var newValue = msg.payload; \nmsg.payload = { value: newValue }; \nreturn msg",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 380,
+        "y": 2380,
+        "wires": [
+            [
+                "a07ce5af19493bfe"
+            ]
+        ]
+    },
+    {
+        "id": "3e0d366c7b957a33",
+        "type": "debug",
+        "z": "0ffe55d73784c2fe",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 810,
+        "y": 2380,
+        "wires": []
+    },
+    {
+        "id": "a07ce5af19493bfe",
+        "type": "http request",
+        "z": "0ffe55d73784c2fe",
+        "name": "",
+        "method": "GET",
+        "ret": "txt",
+        "paytoqs": "query",
+        "url": "http://192.168.0.156/update-currentlinewidth",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 610,
+        "y": 2380,
+        "wires": [
+            [
+                "3e0d366c7b957a33"
+            ]
+        ]
+    },
+    {
+        "id": "ad9ad5a44dab79cc",
+        "type": "ui_text_input",
+        "z": "0ffe55d73784c2fe",
+        "name": "",
+        "label": "current_line_width",
+        "tooltip": "",
+        "group": "5bd151deb14bfdab",
+        "order": 8,
+        "width": 4,
+        "height": 4,
+        "passthru": true,
+        "mode": "text",
+        "delay": 300,
+        "topic": "topic",
+        "sendOnBlur": true,
+        "className": "",
+        "topicType": "msg",
+        "x": 110,
+        "y": 2380,
+        "wires": [
+            [
+                "9e518ffde28e91b2"
+            ]
+        ]
+    },
+    {
+        "id": "6dc1fa34ca12cada",
+        "type": "function",
+        "z": "0ffe55d73784c2fe",
+        "name": "Extract the new value",
+        "func": "var newValue = msg.payload; \nmsg.payload = { value: newValue }; \nreturn msg",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 360,
+        "y": 2620,
+        "wires": [
+            [
+                "2817fa7f1e05d40b"
+            ]
+        ]
+    },
+    {
+        "id": "db3fa14e6da13ea9",
+        "type": "debug",
+        "z": "0ffe55d73784c2fe",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 790,
+        "y": 2620,
+        "wires": []
+    },
+    {
+        "id": "2817fa7f1e05d40b",
+        "type": "http request",
+        "z": "0ffe55d73784c2fe",
+        "name": "",
+        "method": "GET",
+        "ret": "txt",
+        "paytoqs": "query",
+        "url": "http://192.168.0.156/update-currentfinlinewidth",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 590,
+        "y": 2620,
+        "wires": [
+            [
+                "db3fa14e6da13ea9"
+            ]
+        ]
+    },
+    {
+        "id": "60e8563050425308",
+        "type": "ui_text_input",
+        "z": "0ffe55d73784c2fe",
+        "name": "",
+        "label": "Current_finline_width",
+        "tooltip": "",
+        "group": "5bd151deb14bfdab",
+        "order": 9,
+        "width": 4,
+        "height": 4,
+        "passthru": true,
+        "mode": "text",
+        "delay": 300,
+        "topic": "topic",
+        "sendOnBlur": true,
+        "className": "",
+        "topicType": "msg",
+        "x": 100,
+        "y": 2620,
+        "wires": [
+            [
+                "6dc1fa34ca12cada"
+            ]
+        ]
+    },
+    {
+        "id": "6ce9debd90652cd3",
+        "type": "function",
+        "z": "0ffe55d73784c2fe",
+        "name": "Extract the new value",
+        "func": "var newValue = msg.payload; \nmsg.payload = { value: newValue }; \nreturn msg",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 400,
+        "y": 740,
+        "wires": [
+            [
+                "7e2a5945d2a40b31"
+            ]
+        ]
+    },
+    {
+        "id": "d19cb10bf2d5e142",
+        "type": "debug",
+        "z": "0ffe55d73784c2fe",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 830,
+        "y": 740,
+        "wires": []
+    },
+    {
+        "id": "7e2a5945d2a40b31",
+        "type": "http request",
+        "z": "0ffe55d73784c2fe",
+        "name": "",
+        "method": "GET",
+        "ret": "txt",
+        "paytoqs": "query",
+        "url": "http://192.168.0.43/update-gain",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 630,
+        "y": 740,
+        "wires": [
+            [
+                "d19cb10bf2d5e142"
+            ]
+        ]
+    },
+    {
+        "id": "85e0e2067a28e5e6",
+        "type": "ui_text_input",
+        "z": "0ffe55d73784c2fe",
+        "name": "",
+        "label": "gain_value",
+        "tooltip": "",
+        "group": "5bd151deb14bfdab",
+        "order": 1,
+        "width": 8,
+        "height": 4,
+        "passthru": true,
+        "mode": "text",
+        "delay": 300,
+        "topic": "topic",
+        "sendOnBlur": true,
+        "className": "",
+        "topicType": "msg",
+        "x": 110,
+        "y": 740,
+        "wires": [
+            [
+                "6ce9debd90652cd3"
+            ]
+        ]
+    },
+    {
+        "id": "4f0346b6ca080504",
+        "type": "function",
+        "z": "0ffe55d73784c2fe",
+        "name": "Extract the new value",
+        "func": "var newValue = msg.payload; \nmsg.payload = { value: newValue }; \nreturn msg",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 400,
+        "y": 820,
+        "wires": [
+            [
+                "1855f8fcc074702c"
+            ]
+        ]
+    },
+    {
+        "id": "360cf56de6855dc5",
+        "type": "debug",
+        "z": "0ffe55d73784c2fe",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 830,
+        "y": 820,
+        "wires": []
+    },
+    {
+        "id": "1855f8fcc074702c",
+        "type": "http request",
+        "z": "0ffe55d73784c2fe",
+        "name": "",
+        "method": "GET",
+        "ret": "txt",
+        "paytoqs": "query",
+        "url": "http://192.168.0.43/update-exposure",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 630,
+        "y": 820,
+        "wires": [
+            [
+                "360cf56de6855dc5"
+            ]
+        ]
+    },
+    {
+        "id": "076e57680a4b1d9f",
+        "type": "ui_text_input",
+        "z": "0ffe55d73784c2fe",
+        "name": "",
+        "label": "exposure_value",
+        "tooltip": "",
+        "group": "5bd151deb14bfdab",
+        "order": 1,
+        "width": 8,
+        "height": 4,
+        "passthru": true,
+        "mode": "text",
+        "delay": 300,
+        "topic": "topic",
+        "sendOnBlur": true,
+        "className": "",
+        "topicType": "msg",
+        "x": 120,
+        "y": 820,
+        "wires": [
+            [
+                "4f0346b6ca080504"
+            ]
+        ]
+    },
+    {
+        "id": "8aae7e2e0c6d4858",
+        "type": "ui_button",
+        "z": "e2011e6f078c8688",
+        "name": "",
+        "group": "8478555ca06fa3e9",
+        "order": 1,
+        "width": 3,
+        "height": 3,
+        "passthru": false,
+        "label": "Start",
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "fa-clock-o",
+        "payload": "{ \"payload\": \"on\", \"timeout\": 300 }",
+        "payloadType": "str",
+        "topic": "",
+        "topicType": "str",
+        "x": 150,
+        "y": 300,
+        "wires": [
+            [
+                "a4bcf028b9ddda2f"
+            ]
+        ]
+    },
+    {
+        "id": "a4bcf028b9ddda2f",
+        "type": "mytimeout",
+        "z": "e2011e6f078c8688",
+        "name": "5 Minuten Timer",
+        "outtopic": "",
+        "outsafe": "",
+        "outwarning": "Warnung",
+        "outunsafe": "Zeit abgelaufen",
+        "warning": "5",
+        "timer": "10",
+        "debug": false,
+        "ndebug": false,
+        "ignoreCase": false,
+        "repeat": false,
+        "again": false,
+        "x": 380,
+        "y": 300,
+        "wires": [
+            [],
+            [
+                "3f1e1cf6a8652b47"
+            ]
+        ]
+    },
+    {
+        "id": "3f1e1cf6a8652b47",
+        "type": "function",
+        "z": "e2011e6f078c8688",
+        "name": "Sekunden zu Minuten",
+        "func": "var minuten = msg.payload;\nmsg.payload=minuten;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 620,
+        "y": 300,
+        "wires": [
+            [
+                "9a80b01e4b9ab40b"
+            ]
+        ]
+    },
+    {
+        "id": "d955d9c0e33d7bdd",
+        "type": "comment",
+        "z": "e2011e6f078c8688",
+        "name": "Countdown Timer",
+        "info": "",
+        "x": 180,
+        "y": 120,
+        "wires": []
+    },
+    {
+        "id": "9a80b01e4b9ab40b",
+        "type": "ui_gauge",
+        "z": "e2011e6f078c8688",
+        "name": "",
+        "group": "8478555ca06fa3e9",
+        "order": 2,
+        "width": 3,
+        "height": 4,
+        "gtype": "donut",
+        "title": "Countdown",
+        "label": "Sekunden",
+        "format": "{{value}}",
+        "min": "0",
+        "max": "300",
+        "colors": [
+            "#ff0000",
+            "#e6e600",
+            "#00ff00"
+        ],
+        "seg1": "",
+        "seg2": "",
+        "className": "",
+        "x": 970,
+        "y": 300,
+        "wires": []
+    },
+    {
+        "id": "8009b0521ccacdb8",
+        "type": "ui_button",
+        "z": "e2011e6f078c8688",
+        "name": "",
+        "group": "8478555ca06fa3e9",
+        "order": 3,
+        "width": 3,
+        "height": 3,
+        "passthru": false,
+        "label": "Stop",
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "fa-clock-o",
+        "payload": "{ \"payload\": \"stop\" }",
+        "payloadType": "str",
+        "topic": "",
+        "topicType": "str",
+        "x": 150,
+        "y": 380,
+        "wires": [
+            [
+                "a4bcf028b9ddda2f"
+            ]
+        ]
+    },
+    {
+        "id": "936a73ec6bc70525",
+        "type": "http request",
+        "z": "77a634d64a4a3b55",
+        "name": "",
+        "method": "GET",
+        "ret": "txt",
+        "paytoqs": "ignore",
+        "url": "http://192.168.0.156/Start",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 550,
+        "y": 200,
+        "wires": [
+            [
+                "5467296d60bb596a"
+            ]
+        ]
+    },
+    {
+        "id": "4c966e1fecfb0cf7",
+        "type": "ui_button",
+        "z": "77a634d64a4a3b55",
+        "name": "",
+        "group": "60b9c858.a9ecdc",
+        "order": 1,
+        "width": 3,
+        "height": 3,
+        "passthru": false,
+        "label": "Start",
+        "tooltip": "",
+        "color": "Black",
+        "bgcolor": "Green",
+        "className": "",
+        "icon": "",
+        "payload": "H",
+        "payloadType": "str",
+        "topic": "topic",
+        "topicType": "str",
+        "x": 250,
+        "y": 200,
+        "wires": [
+            [
+                "936a73ec6bc70525"
+            ]
+        ]
+    },
+    {
+        "id": "5467296d60bb596a",
+        "type": "debug",
+        "z": "77a634d64a4a3b55",
+        "name": "debug 2",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 900,
+        "y": 200,
+        "wires": []
+    },
+    {
+        "id": "5bb8eb3a39f2d3ce",
+        "type": "http request",
+        "z": "77a634d64a4a3b55",
+        "name": "",
+        "method": "GET",
+        "ret": "txt",
+        "paytoqs": "ignore",
+        "url": "http://192.168.0.156/Stop",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 570,
+        "y": 340,
+        "wires": [
+            [
+                "9246d3694dcde5d4"
+            ]
+        ]
+    },
+    {
+        "id": "4a26dcd68caf2016",
+        "type": "ui_button",
+        "z": "77a634d64a4a3b55",
+        "name": "",
+        "group": "60b9c858.a9ecdc",
+        "order": 3,
+        "width": 3,
+        "height": 3,
+        "passthru": false,
+        "label": "Stop",
+        "tooltip": "",
+        "color": "Black",
+        "bgcolor": "Red",
+        "className": "",
+        "icon": "",
+        "payload": "H",
+        "payloadType": "str",
+        "topic": "topic",
+        "topicType": "str",
+        "x": 250,
+        "y": 340,
+        "wires": [
+            [
+                "5bb8eb3a39f2d3ce"
+            ]
+        ]
+    },
+    {
+        "id": "9246d3694dcde5d4",
+        "type": "debug",
+        "z": "77a634d64a4a3b55",
+        "name": "debug 3",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 910,
+        "y": 340,
+        "wires": []
+    },
+    {
+        "id": "3c3297b819089f04",
+        "type": "http request",
+        "z": "b08dfc02489938ac",
+        "name": "Get Status",
+        "method": "GET",
+        "ret": "txt",
+        "paytoqs": "ignore",
+        "url": "http://192.168.0.43/status",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 430,
+        "y": 160,
+        "wires": [
+            [
+                "36598db290a864f4",
+                "21bfdf04c0b04d9e"
+            ]
+        ]
+    },
+    {
+        "id": "36598db290a864f4",
+        "type": "ui_text",
+        "z": "b08dfc02489938ac",
+        "group": "60b9c858.a9ecdc",
+        "order": 2,
+        "width": 3,
+        "height": 4,
+        "name": "",
+        "label": "State",
+        "format": "{{payload}}",
+        "layout": "col-center",
+        "className": "",
+        "x": 670,
+        "y": 80,
+        "wires": []
+    },
+    {
+        "id": "21bfdf04c0b04d9e",
+        "type": "debug",
+        "z": "b08dfc02489938ac",
+        "name": "debug 4",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 680,
+        "y": 220,
+        "wires": []
+    },
+    {
+        "id": "d8e2480c3cda7b11",
+        "type": "inject",
+        "z": "b08dfc02489938ac",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "2",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 210,
+        "y": 160,
+        "wires": [
+            [
+                "3c3297b819089f04"
+            ]
+        ]
+    },
+    {
+        "id": "555cdd0f60148271",
+        "type": "http request",
+        "z": "1ddbf9e3602d728f",
+        "name": "",
+        "method": "GET",
+        "ret": "txt",
+        "paytoqs": "ignore",
+        "url": "http://192.168.0.43/Start_image",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 505.08331298828125,
+        "y": 360.0833435058594,
+        "wires": [
+            [
+                "a939ef07be2e87d5"
+            ]
+        ]
+    },
+    {
+        "id": "24a6f153e2745490",
+        "type": "ui_button",
+        "z": "1ddbf9e3602d728f",
+        "name": "",
+        "group": "7ef72d236a7aa62c",
+        "order": 2,
+        "width": 0,
+        "height": 0,
+        "passthru": false,
+        "label": "Bild an",
+        "tooltip": "",
+        "color": "Black",
+        "bgcolor": "Green",
+        "className": "",
+        "icon": "",
+        "payload": "H",
+        "payloadType": "str",
+        "topic": "topic",
+        "topicType": "str",
+        "x": 165.08331298828125,
+        "y": 360.0833435058594,
+        "wires": [
+            [
+                "555cdd0f60148271"
+            ]
+        ]
+    },
+    {
+        "id": "a939ef07be2e87d5",
+        "type": "debug",
+        "z": "1ddbf9e3602d728f",
+        "name": "debug 6",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 835.0833129882812,
+        "y": 360.0833435058594,
+        "wires": []
+    },
+    {
+        "id": "49d6abb248d41ec4",
+        "type": "http request",
+        "z": "1ddbf9e3602d728f",
         "name": "",
         "method": "GET",
         "ret": "txt",
@@ -1877,9 +4312,9 @@
         ]
     },
     {
-        "id": "0b34abce9c0ddb90",
+        "id": "68417c1da4cfda9a",
         "type": "ui_button",
-        "z": "afe2bcd9a89f69ee",
+        "z": "1ddbf9e3602d728f",
         "name": "",
         "group": "7ef72d236a7aa62c",
         "order": 2,
@@ -1900,7 +4335,1406 @@
         "y": 540,
         "wires": [
             [
-                "b454df88539887d4"
+                "49d6abb248d41ec4"
+            ]
+        ]
+    },
+    {
+        "id": "b4b798c10ce4a450",
+        "type": "function",
+        "z": "6bbf12d4048cbee4",
+        "name": "Extract the new value",
+        "func": "var newValue = msg.payload; \nmsg.payload = { value: newValue }; \nreturn msg",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 400,
+        "y": 660,
+        "wires": [
+            [
+                "e5059f79b52f2af7"
+            ]
+        ]
+    },
+    {
+        "id": "5de9b576f267e1bb",
+        "type": "debug",
+        "z": "6bbf12d4048cbee4",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 830,
+        "y": 660,
+        "wires": []
+    },
+    {
+        "id": "e5059f79b52f2af7",
+        "type": "http request",
+        "z": "6bbf12d4048cbee4",
+        "name": "",
+        "method": "GET",
+        "ret": "txt",
+        "paytoqs": "query",
+        "url": "http://192.168.57.180/update-tresholdvalue",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 630,
+        "y": 660,
+        "wires": [
+            [
+                "5de9b576f267e1bb"
+            ]
+        ]
+    },
+    {
+        "id": "57ba4afa6cd95583",
+        "type": "ui_text_input",
+        "z": "6bbf12d4048cbee4",
+        "name": "",
+        "label": "Treshold_value",
+        "tooltip": "",
+        "group": "5bd151deb14bfdab",
+        "order": 1,
+        "width": 8,
+        "height": 4,
+        "passthru": true,
+        "mode": "text",
+        "delay": 300,
+        "topic": "topic",
+        "sendOnBlur": true,
+        "className": "",
+        "topicType": "msg",
+        "x": 120,
+        "y": 660,
+        "wires": [
+            [
+                "b4b798c10ce4a450"
+            ]
+        ]
+    },
+    {
+        "id": "98f01335cb16110f",
+        "type": "function",
+        "z": "6bbf12d4048cbee4",
+        "name": "Extract the new value",
+        "func": "var newValue = msg.payload; \nmsg.payload = { value: newValue }; \nreturn msg",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 400,
+        "y": 960,
+        "wires": [
+            [
+                "f83271caabc22aef"
+            ]
+        ]
+    },
+    {
+        "id": "4e8ca0508a5d054c",
+        "type": "debug",
+        "z": "6bbf12d4048cbee4",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 830,
+        "y": 960,
+        "wires": []
+    },
+    {
+        "id": "f83271caabc22aef",
+        "type": "http request",
+        "z": "6bbf12d4048cbee4",
+        "name": "",
+        "method": "GET",
+        "ret": "txt",
+        "paytoqs": "ignore",
+        "url": "http://192.168.0.156/update-recovertime ",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 630,
+        "y": 960,
+        "wires": [
+            [
+                "4e8ca0508a5d054c"
+            ]
+        ]
+    },
+    {
+        "id": "b871e4042015ed86",
+        "type": "function",
+        "z": "6bbf12d4048cbee4",
+        "name": "Extract the new value",
+        "func": "var newValue = msg.payload; \nmsg.payload = { value: newValue }; \nreturn msg",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 400,
+        "y": 1200,
+        "wires": [
+            [
+                "be63abe70cfbd015"
+            ]
+        ]
+    },
+    {
+        "id": "3b1ef548289b6808",
+        "type": "debug",
+        "z": "6bbf12d4048cbee4",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 830,
+        "y": 1200,
+        "wires": []
+    },
+    {
+        "id": "be63abe70cfbd015",
+        "type": "http request",
+        "z": "6bbf12d4048cbee4",
+        "name": "",
+        "method": "GET",
+        "ret": "txt",
+        "paytoqs": "query",
+        "url": "http://192.168.57.180/update-obstacle-distance",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 630,
+        "y": 1200,
+        "wires": [
+            [
+                "3b1ef548289b6808"
+            ]
+        ]
+    },
+    {
+        "id": "465e87c53f9de2e0",
+        "type": "ui_text_input",
+        "z": "6bbf12d4048cbee4",
+        "name": "",
+        "label": "obstacle_detection_dist",
+        "tooltip": "",
+        "group": "82b954ca6fcb77f5",
+        "order": 4,
+        "width": "6",
+        "height": 4,
+        "passthru": true,
+        "mode": "text",
+        "delay": 300,
+        "topic": "topic",
+        "sendOnBlur": true,
+        "className": "",
+        "topicType": "msg",
+        "x": 180,
+        "y": 1200,
+        "wires": [
+            [
+                "b871e4042015ed86"
+            ]
+        ]
+    },
+    {
+        "id": "23b9b7e9a0cf40aa",
+        "type": "function",
+        "z": "6bbf12d4048cbee4",
+        "name": "Extract the new value",
+        "func": "var newValue = msg.payload; \nmsg.payload = { value: newValue }; \nreturn msg",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 400,
+        "y": 1440,
+        "wires": [
+            [
+                "08dcdd1e1812a6fc"
+            ]
+        ]
+    },
+    {
+        "id": "f7b73c3c48b14679",
+        "type": "debug",
+        "z": "6bbf12d4048cbee4",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 830,
+        "y": 1440,
+        "wires": []
+    },
+    {
+        "id": "08dcdd1e1812a6fc",
+        "type": "http request",
+        "z": "6bbf12d4048cbee4",
+        "name": "",
+        "method": "GET",
+        "ret": "txt",
+        "paytoqs": "query",
+        "url": "http://192.168.57.180/update-obstacle-tollerance",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 630,
+        "y": 1440,
+        "wires": [
+            [
+                "f7b73c3c48b14679"
+            ]
+        ]
+    },
+    {
+        "id": "b78ed615a88289b8",
+        "type": "ui_text_input",
+        "z": "6bbf12d4048cbee4",
+        "name": "",
+        "label": "obstacle_detection_tolerance",
+        "tooltip": "",
+        "group": "82b954ca6fcb77f5",
+        "order": 3,
+        "width": "6",
+        "height": 4,
+        "passthru": true,
+        "mode": "text",
+        "delay": 300,
+        "topic": "topic",
+        "sendOnBlur": true,
+        "className": "",
+        "topicType": "msg",
+        "x": 160,
+        "y": 1440,
+        "wires": [
+            [
+                "23b9b7e9a0cf40aa"
+            ]
+        ]
+    },
+    {
+        "id": "c64bdb42cf9d7ec9",
+        "type": "function",
+        "z": "6bbf12d4048cbee4",
+        "name": "Extract the new value",
+        "func": "var newValue = msg.payload; \nmsg.payload = { value: newValue }; \nreturn msg",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 380,
+        "y": 1680,
+        "wires": [
+            [
+                "f1cafd2d3bb1138e"
+            ]
+        ]
+    },
+    {
+        "id": "39710e7c5ecb5a23",
+        "type": "debug",
+        "z": "6bbf12d4048cbee4",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 810,
+        "y": 1680,
+        "wires": []
+    },
+    {
+        "id": "f1cafd2d3bb1138e",
+        "type": "http request",
+        "z": "6bbf12d4048cbee4",
+        "name": "",
+        "method": "GET",
+        "ret": "txt",
+        "paytoqs": "query",
+        "url": "http://192.168.0.156/update-obstrightt ",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 610,
+        "y": 1680,
+        "wires": [
+            [
+                "39710e7c5ecb5a23"
+            ]
+        ]
+    },
+    {
+        "id": "5b9ace10ed2c3911",
+        "type": "ui_text_input",
+        "z": "6bbf12d4048cbee4",
+        "name": "",
+        "label": "Obst_right_t ",
+        "tooltip": "",
+        "group": "5bd151deb14bfdab",
+        "order": 5,
+        "width": 4,
+        "height": 4,
+        "passthru": true,
+        "mode": "text",
+        "delay": 300,
+        "topic": "topic",
+        "sendOnBlur": true,
+        "className": "",
+        "topicType": "msg",
+        "x": 130,
+        "y": 1680,
+        "wires": [
+            [
+                "c64bdb42cf9d7ec9"
+            ]
+        ]
+    },
+    {
+        "id": "fe182e65d7439288",
+        "type": "function",
+        "z": "6bbf12d4048cbee4",
+        "name": "Extract the new value",
+        "func": "var newValue = msg.payload; \nmsg.payload = { value: newValue }; \nreturn msg",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 360,
+        "y": 1900,
+        "wires": [
+            [
+                "04b9c4f10a4f523e"
+            ]
+        ]
+    },
+    {
+        "id": "d83acd0e58087474",
+        "type": "debug",
+        "z": "6bbf12d4048cbee4",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 790,
+        "y": 1900,
+        "wires": []
+    },
+    {
+        "id": "04b9c4f10a4f523e",
+        "type": "http request",
+        "z": "6bbf12d4048cbee4",
+        "name": "",
+        "method": "GET",
+        "ret": "txt",
+        "paytoqs": "query",
+        "url": "http://192.168.0.156/update-linewidth",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 590,
+        "y": 1900,
+        "wires": [
+            [
+                "d83acd0e58087474"
+            ]
+        ]
+    },
+    {
+        "id": "56a0a49e017e771e",
+        "type": "ui_text_input",
+        "z": "6bbf12d4048cbee4",
+        "name": "",
+        "label": "Line_width",
+        "tooltip": "",
+        "group": "5bd151deb14bfdab",
+        "order": 6,
+        "width": 4,
+        "height": 4,
+        "passthru": true,
+        "mode": "text",
+        "delay": 300,
+        "topic": "topic",
+        "sendOnBlur": true,
+        "className": "",
+        "topicType": "msg",
+        "x": 90,
+        "y": 1900,
+        "wires": [
+            [
+                "fe182e65d7439288"
+            ]
+        ]
+    },
+    {
+        "id": "3c3b3734b7080953",
+        "type": "function",
+        "z": "6bbf12d4048cbee4",
+        "name": "Extract the new value",
+        "func": "var newValue = msg.payload; \nmsg.payload = { value: newValue }; \nreturn msg",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 380,
+        "y": 2140,
+        "wires": [
+            [
+                "257910c2707d5a64"
+            ]
+        ]
+    },
+    {
+        "id": "7dbf997733c70ef2",
+        "type": "debug",
+        "z": "6bbf12d4048cbee4",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 810,
+        "y": 2140,
+        "wires": []
+    },
+    {
+        "id": "257910c2707d5a64",
+        "type": "http request",
+        "z": "6bbf12d4048cbee4",
+        "name": "",
+        "method": "GET",
+        "ret": "txt",
+        "paytoqs": "query",
+        "url": "http://192.168.0.156/update-finlinewidth",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 610,
+        "y": 2140,
+        "wires": [
+            [
+                "7dbf997733c70ef2"
+            ]
+        ]
+    },
+    {
+        "id": "24eb6f9659718df2",
+        "type": "ui_text_input",
+        "z": "6bbf12d4048cbee4",
+        "name": "",
+        "label": "Fin_line_width",
+        "tooltip": "",
+        "group": "5bd151deb14bfdab",
+        "order": 7,
+        "width": 4,
+        "height": 4,
+        "passthru": true,
+        "mode": "text",
+        "delay": 300,
+        "topic": "topic",
+        "sendOnBlur": true,
+        "className": "",
+        "topicType": "msg",
+        "x": 120,
+        "y": 2140,
+        "wires": [
+            [
+                "3c3b3734b7080953"
+            ]
+        ]
+    },
+    {
+        "id": "b9664ff9096cfb70",
+        "type": "function",
+        "z": "6bbf12d4048cbee4",
+        "name": "Extract the new value",
+        "func": "var newValue = msg.payload; \nmsg.payload = { value: newValue }; \nreturn msg",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 380,
+        "y": 2380,
+        "wires": [
+            [
+                "6c21d8c31eb7c37d"
+            ]
+        ]
+    },
+    {
+        "id": "7431d2653c06600a",
+        "type": "debug",
+        "z": "6bbf12d4048cbee4",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 810,
+        "y": 2380,
+        "wires": []
+    },
+    {
+        "id": "6c21d8c31eb7c37d",
+        "type": "http request",
+        "z": "6bbf12d4048cbee4",
+        "name": "",
+        "method": "GET",
+        "ret": "txt",
+        "paytoqs": "query",
+        "url": "http://192.168.0.156/update-currentlinewidth",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 610,
+        "y": 2380,
+        "wires": [
+            [
+                "7431d2653c06600a"
+            ]
+        ]
+    },
+    {
+        "id": "3bb0b363b5042aa9",
+        "type": "ui_text_input",
+        "z": "6bbf12d4048cbee4",
+        "name": "",
+        "label": "current_line_width",
+        "tooltip": "",
+        "group": "5bd151deb14bfdab",
+        "order": 8,
+        "width": 4,
+        "height": 4,
+        "passthru": true,
+        "mode": "text",
+        "delay": 300,
+        "topic": "topic",
+        "sendOnBlur": true,
+        "className": "",
+        "topicType": "msg",
+        "x": 110,
+        "y": 2380,
+        "wires": [
+            [
+                "b9664ff9096cfb70"
+            ]
+        ]
+    },
+    {
+        "id": "015dd2c57b72a4af",
+        "type": "function",
+        "z": "6bbf12d4048cbee4",
+        "name": "Extract the new value",
+        "func": "var newValue = msg.payload; \nmsg.payload = { value: newValue }; \nreturn msg",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 360,
+        "y": 2620,
+        "wires": [
+            [
+                "2b8c0d4a2a871f45"
+            ]
+        ]
+    },
+    {
+        "id": "560a31c610dca2c6",
+        "type": "debug",
+        "z": "6bbf12d4048cbee4",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 790,
+        "y": 2620,
+        "wires": []
+    },
+    {
+        "id": "2b8c0d4a2a871f45",
+        "type": "http request",
+        "z": "6bbf12d4048cbee4",
+        "name": "",
+        "method": "GET",
+        "ret": "txt",
+        "paytoqs": "query",
+        "url": "http://192.168.0.156/update-currentfinlinewidth",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 590,
+        "y": 2620,
+        "wires": [
+            [
+                "560a31c610dca2c6"
+            ]
+        ]
+    },
+    {
+        "id": "39c636997c731cfe",
+        "type": "ui_text_input",
+        "z": "6bbf12d4048cbee4",
+        "name": "",
+        "label": "Current_finline_width",
+        "tooltip": "",
+        "group": "5bd151deb14bfdab",
+        "order": 9,
+        "width": 4,
+        "height": 4,
+        "passthru": true,
+        "mode": "text",
+        "delay": 300,
+        "topic": "topic",
+        "sendOnBlur": true,
+        "className": "",
+        "topicType": "msg",
+        "x": 100,
+        "y": 2620,
+        "wires": [
+            [
+                "015dd2c57b72a4af"
+            ]
+        ]
+    },
+    {
+        "id": "79e29984db725b1d",
+        "type": "function",
+        "z": "6bbf12d4048cbee4",
+        "name": "Extract the new value",
+        "func": "var newValue = msg.payload; \nmsg.payload = { value: newValue }; \nreturn msg",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 400,
+        "y": 740,
+        "wires": [
+            [
+                "f6cb5552214cb98d"
+            ]
+        ]
+    },
+    {
+        "id": "7ad1d77a6c6a5fbd",
+        "type": "debug",
+        "z": "6bbf12d4048cbee4",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 830,
+        "y": 740,
+        "wires": []
+    },
+    {
+        "id": "f6cb5552214cb98d",
+        "type": "http request",
+        "z": "6bbf12d4048cbee4",
+        "name": "",
+        "method": "GET",
+        "ret": "txt",
+        "paytoqs": "query",
+        "url": "http://192.168.57.180/update-gain",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 630,
+        "y": 740,
+        "wires": [
+            [
+                "7ad1d77a6c6a5fbd"
+            ]
+        ]
+    },
+    {
+        "id": "9b3cb3807ce77034",
+        "type": "ui_text_input",
+        "z": "6bbf12d4048cbee4",
+        "name": "",
+        "label": "gain_value",
+        "tooltip": "",
+        "group": "c56b65c652f42eca",
+        "order": 2,
+        "width": 8,
+        "height": 4,
+        "passthru": true,
+        "mode": "text",
+        "delay": 300,
+        "topic": "topic",
+        "sendOnBlur": true,
+        "className": "",
+        "topicType": "msg",
+        "x": 110,
+        "y": 740,
+        "wires": [
+            [
+                "79e29984db725b1d"
+            ]
+        ]
+    },
+    {
+        "id": "8e09a0d88049b7a1",
+        "type": "function",
+        "z": "6bbf12d4048cbee4",
+        "name": "Extract the new value",
+        "func": "var newValue = msg.payload; \nmsg.payload = { value: newValue }; \nreturn msg",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 400,
+        "y": 820,
+        "wires": [
+            [
+                "e4cd05b38fb4e7d5"
+            ]
+        ]
+    },
+    {
+        "id": "4dcadff92cac798f",
+        "type": "debug",
+        "z": "6bbf12d4048cbee4",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 830,
+        "y": 820,
+        "wires": []
+    },
+    {
+        "id": "e4cd05b38fb4e7d5",
+        "type": "http request",
+        "z": "6bbf12d4048cbee4",
+        "name": "",
+        "method": "GET",
+        "ret": "txt",
+        "paytoqs": "query",
+        "url": "http://192.168.57.180/update-exposure",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 630,
+        "y": 820,
+        "wires": [
+            [
+                "4dcadff92cac798f"
+            ]
+        ]
+    },
+    {
+        "id": "bd649c5a338d0baa",
+        "type": "ui_text_input",
+        "z": "6bbf12d4048cbee4",
+        "name": "",
+        "label": "exposure_value",
+        "tooltip": "",
+        "group": "c56b65c652f42eca",
+        "order": 3,
+        "width": 8,
+        "height": 4,
+        "passthru": true,
+        "mode": "text",
+        "delay": 300,
+        "topic": "topic",
+        "sendOnBlur": true,
+        "className": "",
+        "topicType": "msg",
+        "x": 120,
+        "y": 820,
+        "wires": [
+            [
+                "8e09a0d88049b7a1"
+            ]
+        ]
+    },
+    {
+        "id": "1a55737315223099",
+        "type": "ui_button",
+        "z": "175cf7b1954c7337",
+        "name": "",
+        "group": "8478555ca06fa3e9",
+        "order": 1,
+        "width": 3,
+        "height": 3,
+        "passthru": false,
+        "label": "Start",
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "fa-clock-o",
+        "payload": "{ \"payload\": \"on\", \"timeout\": 300 }",
+        "payloadType": "str",
+        "topic": "",
+        "topicType": "str",
+        "x": 150,
+        "y": 300,
+        "wires": [
+            [
+                "2c53aacccc31892b"
+            ]
+        ]
+    },
+    {
+        "id": "2c53aacccc31892b",
+        "type": "mytimeout",
+        "z": "175cf7b1954c7337",
+        "name": "5 Minuten Timer",
+        "outtopic": "",
+        "outsafe": "",
+        "outwarning": "Warnung",
+        "outunsafe": "Zeit abgelaufen",
+        "warning": "5",
+        "timer": "10",
+        "debug": false,
+        "ndebug": false,
+        "ignoreCase": false,
+        "repeat": false,
+        "again": false,
+        "x": 380,
+        "y": 300,
+        "wires": [
+            [],
+            [
+                "14f268f959cf3aff"
+            ]
+        ]
+    },
+    {
+        "id": "14f268f959cf3aff",
+        "type": "function",
+        "z": "175cf7b1954c7337",
+        "name": "Sekunden zu Minuten",
+        "func": "var minuten = msg.payload;\nmsg.payload=minuten;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 620,
+        "y": 300,
+        "wires": [
+            [
+                "4b0b05d5f5134ad5"
+            ]
+        ]
+    },
+    {
+        "id": "518916bd177129fc",
+        "type": "comment",
+        "z": "175cf7b1954c7337",
+        "name": "Countdown Timer",
+        "info": "",
+        "x": 180,
+        "y": 120,
+        "wires": []
+    },
+    {
+        "id": "4b0b05d5f5134ad5",
+        "type": "ui_gauge",
+        "z": "175cf7b1954c7337",
+        "name": "",
+        "group": "8478555ca06fa3e9",
+        "order": 2,
+        "width": 3,
+        "height": 4,
+        "gtype": "donut",
+        "title": "Countdown",
+        "label": "Sekunden",
+        "format": "{{value}}",
+        "min": "0",
+        "max": "300",
+        "colors": [
+            "#ff0000",
+            "#e6e600",
+            "#00ff00"
+        ],
+        "seg1": "",
+        "seg2": "",
+        "className": "",
+        "x": 970,
+        "y": 300,
+        "wires": []
+    },
+    {
+        "id": "3f7efc48ace0a6de",
+        "type": "ui_button",
+        "z": "175cf7b1954c7337",
+        "name": "",
+        "group": "8478555ca06fa3e9",
+        "order": 3,
+        "width": 3,
+        "height": 3,
+        "passthru": false,
+        "label": "Stop",
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "fa-clock-o",
+        "payload": "{ \"payload\": \"stop\" }",
+        "payloadType": "str",
+        "topic": "",
+        "topicType": "str",
+        "x": 150,
+        "y": 380,
+        "wires": [
+            [
+                "2c53aacccc31892b"
+            ]
+        ]
+    },
+    {
+        "id": "51265492e15b0317",
+        "type": "http request",
+        "z": "b1c9a4e3a5c4be69",
+        "name": "",
+        "method": "GET",
+        "ret": "txt",
+        "paytoqs": "ignore",
+        "url": "http://192.168.0.156/Start",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 550,
+        "y": 200,
+        "wires": [
+            [
+                "b56286a761c326ae"
+            ]
+        ]
+    },
+    {
+        "id": "3fae2dfe31322b8f",
+        "type": "ui_button",
+        "z": "b1c9a4e3a5c4be69",
+        "name": "",
+        "group": "60b9c858.a9ecdc",
+        "order": 1,
+        "width": 3,
+        "height": 3,
+        "passthru": false,
+        "label": "Start",
+        "tooltip": "",
+        "color": "Black",
+        "bgcolor": "Green",
+        "className": "",
+        "icon": "",
+        "payload": "H",
+        "payloadType": "str",
+        "topic": "topic",
+        "topicType": "str",
+        "x": 250,
+        "y": 200,
+        "wires": [
+            [
+                "51265492e15b0317"
+            ]
+        ]
+    },
+    {
+        "id": "b56286a761c326ae",
+        "type": "debug",
+        "z": "b1c9a4e3a5c4be69",
+        "name": "debug 2",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 900,
+        "y": 200,
+        "wires": []
+    },
+    {
+        "id": "935a23168552f4c5",
+        "type": "http request",
+        "z": "b1c9a4e3a5c4be69",
+        "name": "",
+        "method": "GET",
+        "ret": "txt",
+        "paytoqs": "ignore",
+        "url": "http://192.168.0.156/Stop",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 570,
+        "y": 340,
+        "wires": [
+            [
+                "2795daaa83bba8e5"
+            ]
+        ]
+    },
+    {
+        "id": "25b1bdd4313d0930",
+        "type": "ui_button",
+        "z": "b1c9a4e3a5c4be69",
+        "name": "",
+        "group": "60b9c858.a9ecdc",
+        "order": 3,
+        "width": 3,
+        "height": 3,
+        "passthru": false,
+        "label": "Stop",
+        "tooltip": "",
+        "color": "Black",
+        "bgcolor": "Red",
+        "className": "",
+        "icon": "",
+        "payload": "H",
+        "payloadType": "str",
+        "topic": "topic",
+        "topicType": "str",
+        "x": 250,
+        "y": 340,
+        "wires": [
+            [
+                "935a23168552f4c5"
+            ]
+        ]
+    },
+    {
+        "id": "2795daaa83bba8e5",
+        "type": "debug",
+        "z": "b1c9a4e3a5c4be69",
+        "name": "debug 3",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 910,
+        "y": 340,
+        "wires": []
+    },
+    {
+        "id": "2e92768287b82ff5",
+        "type": "http request",
+        "z": "fb992aeda39dba3b",
+        "name": "Get Status",
+        "method": "GET",
+        "ret": "txt",
+        "paytoqs": "ignore",
+        "url": "http://192.168.0.43/status",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 430,
+        "y": 160,
+        "wires": [
+            [
+                "9fc2ece72aa2cf59",
+                "787c45820f8a0bff"
+            ]
+        ]
+    },
+    {
+        "id": "9fc2ece72aa2cf59",
+        "type": "ui_text",
+        "z": "fb992aeda39dba3b",
+        "group": "60b9c858.a9ecdc",
+        "order": 2,
+        "width": 3,
+        "height": 4,
+        "name": "",
+        "label": "State",
+        "format": "{{payload}}",
+        "layout": "col-center",
+        "className": "",
+        "x": 670,
+        "y": 80,
+        "wires": []
+    },
+    {
+        "id": "787c45820f8a0bff",
+        "type": "debug",
+        "z": "fb992aeda39dba3b",
+        "name": "debug 4",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 680,
+        "y": 220,
+        "wires": []
+    },
+    {
+        "id": "b8c1d645a59bd6ba",
+        "type": "inject",
+        "z": "fb992aeda39dba3b",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "2",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 210,
+        "y": 160,
+        "wires": [
+            [
+                "2e92768287b82ff5"
+            ]
+        ]
+    },
+    {
+        "id": "e4c574ea3ccd5406",
+        "type": "http request",
+        "z": "fa34ea72095b5aea",
+        "name": "",
+        "method": "GET",
+        "ret": "txt",
+        "paytoqs": "ignore",
+        "url": "http://192.168.0.43/Start_image",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 505.08331298828125,
+        "y": 360.0833435058594,
+        "wires": [
+            [
+                "dd78555ba17efab2"
+            ]
+        ]
+    },
+    {
+        "id": "f99697e01641b7cd",
+        "type": "ui_button",
+        "z": "fa34ea72095b5aea",
+        "name": "",
+        "group": "7ef72d236a7aa62c",
+        "order": 2,
+        "width": 0,
+        "height": 0,
+        "passthru": false,
+        "label": "Bild an",
+        "tooltip": "",
+        "color": "Black",
+        "bgcolor": "Green",
+        "className": "",
+        "icon": "",
+        "payload": "H",
+        "payloadType": "str",
+        "topic": "topic",
+        "topicType": "str",
+        "x": 165.08331298828125,
+        "y": 360.0833435058594,
+        "wires": [
+            [
+                "e4c574ea3ccd5406"
+            ]
+        ]
+    },
+    {
+        "id": "dd78555ba17efab2",
+        "type": "debug",
+        "z": "fa34ea72095b5aea",
+        "name": "debug 6",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 835.0833129882812,
+        "y": 360.0833435058594,
+        "wires": []
+    },
+    {
+        "id": "ff3267a786aed00e",
+        "type": "http request",
+        "z": "fa34ea72095b5aea",
+        "name": "",
+        "method": "GET",
+        "ret": "txt",
+        "paytoqs": "ignore",
+        "url": "http://172.20.10.7/Stop_Image",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 510,
+        "y": 540,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "a897e86386f94aad",
+        "type": "ui_button",
+        "z": "fa34ea72095b5aea",
+        "name": "",
+        "group": "7ef72d236a7aa62c",
+        "order": 2,
+        "width": 0,
+        "height": 0,
+        "passthru": false,
+        "label": "Bild aus",
+        "tooltip": "",
+        "color": "Black",
+        "bgcolor": "Red",
+        "className": "",
+        "icon": "",
+        "payload": "H",
+        "payloadType": "str",
+        "topic": "topic",
+        "topicType": "str",
+        "x": 180,
+        "y": 540,
+        "wires": [
+            [
+                "ff3267a786aed00e"
             ]
         ]
     }
