@@ -198,14 +198,15 @@ bool initialiseCamera()
     return (camerr == ESP_OK); // Return boolean result of camera initialisation
 }
 
-/**************************************************************************/
 /**
-  Camera Image Settings
-  Set Image parameters
-  Based on CameraWebServer sample code by ESP32 Arduino
-  \return true: successful, false: failed
+ * @brief Capture an image from the camera.
+ *
+ * This function acquires a frame from the camera and stores it in the `fb` global variable.
+ * If the acquisition is successful, the function returns `ESP_OK`. Otherwise, it returns
+ * `ESP_FAIL`.
+ *
+ * @return `ESP_OK` if the acquisition is successful, `ESP_FAIL` otherwise.
  */
-/**************************************************************************/
 esp_err_t camera_capture()
 {
     // acquire a frame

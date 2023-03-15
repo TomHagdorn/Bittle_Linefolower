@@ -11,6 +11,8 @@ enum MovementState
     STATE_TURN_BACK_LEFT,
     STATE_TURN_RIGHT_AXIS,
     STATE_TURN_LEFT_AXIS,
+    STATE_SLEEP,
+    STATE_HI
 };
 
 MovementState currentMovementState = STATE_STOP;
@@ -20,6 +22,9 @@ static unsigned long obst_stateStartTime = 0;
 
 // defobst_state change time
 static unsigned long lastStateChangeTime = 0;
+static unsigned long finishTime = 0;
+ int counter = 0;
+ int counter2 = 0;
 
 /**************************************************************************/
 /**
@@ -65,6 +70,15 @@ bool line_follower()
     }
 }
 
+/**
+ * @brief Detects if an obstacle is present in front of the robot.
+ * 
+ * This function uses the distance sensor to detect if there is an obstacle
+ * present in front of the robot. The function returns true if an obstacle is
+ * detected, and false otherwise.
+ * 
+ * @return True if an obstacle is detected, false otherwise.
+ */
 bool detect_obstacle()
 {
     //if (get_distance_test() < obstacle_detection_dist)
@@ -75,70 +89,75 @@ bool detect_obstacle()
     return false;
 }
 
+
+/**
+ * @brief Function to avoid an obstacle by turning left, moving forward, and turning right.
+ * 
+ * This function is used to avoid an obstacle detected by the robot. It has a state machine
+ * that determines the current action to take based on the distance of the obstacle from
+ * the robot. It turns left, moves forward, and turns right to avoid the obstacle.
+ * 
+ * @return true if obstacle avoidance was successful, false otherwise.
+ */
 bool avoid_obstacle()
 {
-
     switch (obst_state)
     {
-    case 0: // Stop for obstacle
-        if (millis() - obst_stateStartTime >= obst_stop_t)
+    case 0: // Turn left
+        if (get_distance() > obstacle_detection_dist + obstacle_tolerance )
         {
             obst_state = 1;
-            obst_stateStartTime = millis();
-        }
-        currentMovementState = STATE_STOP;
-        break;
-
-    case 1: // Turn left
-        if (get_distance() > obstacle_detection_dist + 5)
-        {
-            obst_state = 2;
             obst_stateStartTime = millis();
         }
         currentMovementState = STATE_TURN_LEFT_AXIS;
         break;
 
-    case 2: // Walk forward
-        if (millis() - obst_stateStartTime >= obst_right_t)
+    case 1: // Walk forward
+        if (millis() - obst_stateStartTime >= obstacle_forward_time)
         {
-            obst_state = 3;
+            obst_state = 2;
             obst_stateStartTime = millis();
         }
         currentMovementState = STATE_MOVE_FORWARD;
         break;
 
-    case 3: // TURN RIGHT
-        if (get_distance() > obstacle_detection_dist + 10)
+    case 2: // TURN RIGHT
+        if (get_distance() < obstacle_detection_dist + 4 )
         {
-            obst_state = 4;
+            obst_state = 3;
             obst_stateStartTime = millis();
         }
         currentMovementState = STATE_TURN_RIGHT_AXIS;
         break;
 
+
+    case 3: // Turn left
+        if (get_distance() > obstacle_detection_dist + obstacle_tolerance )
+        {   
+            counter = counter + 1;
+            if (counter >= 2)
+            {
+                obst_state = 4;
+                obst_stateStartTime = millis();
+            }
+
+        }
+        currentMovementState = STATE_TURN_LEFT_AXIS;
+        break;
     case 4: // Turn left
-        if (get_distance() > obstacle_detection_dist + 7)
+        if (any_line_found() == true)
         {
             obst_state = 5;
             obst_stateStartTime = millis();
         }
-        currentMovementState = STATE_TURN_RIGHT_AXIS;
+        currentMovementState = STATE_MOVE_FORWARD;
         break;
-
-    case 5: // Walk forward
-        if (any_line_found() == true)
+    case 5: // Turn left
+        if (get_middle_point() != -1 || check_for_horizontal_line() == true)
         {
-            obst_state = 6;
+            
             obst_stateStartTime = millis();
-        }
-        currentMovementState = STATE_TURN_LEFT;
-        break;
-
-    case 6: // Turn left
-        if (get_middle_point() == -1)
-        {
-            obst_state = 7;
-            obst_stateStartTime = millis();
+            obst_state = 0;
             return true;
         }
         currentMovementState = STATE_TURN_LEFT;
@@ -150,62 +169,95 @@ bool avoid_obstacle()
     
 }
 
+
+/**
+ * @brief Tries to recover from losing the line by rotating until it finds the line again.
+ * 
+ * The function rotates the robot left and right alternately until it finds the line again.
+ * It does this for a maximum of `recover_time` milliseconds, after which it returns false.
+ * If the line is found before `recover_time` milliseconds have elapsed, the function returns true.
+ * 
+ * @return True if the line is found during the recovery process, false otherwise.
+ */
 bool recover()
 {
-    // // Rotate to find line again
-    // if (millis() - lastStateChangeTime < recover_time)
-    // {
-    //     if (millis() - lastStateChangeTime < recover_time / 4 && get_middle_point() == -1)
-    //     {
-    //         currentMovementState = STATE_TURN_RIGHT_AXIS;
-    //     }
-    //     else if (millis() - lastStateChangeTime < recover_time * 2 / 4 && get_middle_point() == -1)
-    //     {
-    //         currentMovementState = STATE_TURN_LEFT_AXIS;
-    //     }
-    //     else if (millis() - lastStateChangeTime < recover_time * 3 / 4 && get_middle_point() == -1)
-    //     {
-    //         currentMovementState = STATE_TURN_RIGHT_AXIS;
-    //     }
-    //     else if (millis() - lastStateChangeTime < recover_time * 4 / 4 && get_middle_point() == -1)
-    //     {
-    //         currentMovementState = STATE_TURN_LEFT_AXIS;
-    //     }
-    //     else if (get_middle_point() != -1)
-    //     {
-    //         return true;
-    //     }
-    //     else
-    //     {
-    //         return false;
-    //         Serialprintln("Recovery failed");
-    //     }
+    // Rotate to find line again
+    if (millis() - lastStateChangeTime < recover_time)
+    {
+        if (millis() - lastStateChangeTime < recover_time / 4 && get_middle_point() == -1)
+        {
+            currentMovementState = STATE_TURN_RIGHT_AXIS;
+        }
+        else if (millis() - lastStateChangeTime < recover_time * 2 / 4 && get_middle_point() == -1)
+        {
+            currentMovementState = STATE_TURN_LEFT_AXIS;
+        }
+        else if (millis() - lastStateChangeTime < recover_time * 3 / 4 && get_middle_point() == -1)
+        {
+            currentMovementState = STATE_TURN_RIGHT_AXIS;
+        }
+        else if (millis() - lastStateChangeTime < recover_time * 4 / 4 && get_middle_point() == -1)
+        {
+            currentMovementState = STATE_TURN_LEFT_AXIS;
+        }
+        else if (get_middle_point() != -1)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+            Serialprintln("Recovery failed");
+        }
 
-    // }      
+    }      
         return true;
 }
 
-void cool_move()
-{
-    // TODO David writes cool move and then we test
-    // write function to turn on the spot
-    return;
-}
-
+/**
+ * Function to detect and cross the finish line.
+ * 
+ * Returns true when the robot has crossed the finish line.
+ * 
+ * The robot will move forward for a certain amount of time, then turn left and check for a horizontal line or middle point.
+ * If found, the robot will move forward and stop, and the function will return true indicating that the robot has crossed the finish line.
+ * 
+ * If a horizontal line or middle point is not detected after turning left twice, the function will continue to return false.
+ */
 bool crossFinishLine()
 {
     // walk forward for a certain amount of time then stop
-    if (millis() - lastStateChangeTime < 1000)
-    {
-        currentMovementState = STATE_MOVE_FORWARD;
-    }
-    else
-    {
-        return true;
+    currentMovementState = STATE_MOVE_FORWARD;
+    // if (millis() - lastStateChangeTime > 2000)
+    // {
+        currentMovementState = STATE_HI;
+
+        if (millis() - lastStateChangeTime > 5000)
+        {
+            
+            currentMovementState = STATE_TURN_LEFT_AXIS;//TODO oder timer!
+            counter2 = counter2 + 1;
+            if (counter2 >= 2)
+            {
+                if (check_for_horizontal_line() == true | get_middle_point() != -1)
+                {
+                    currentMovementState = STATE_MOVE_FORWARD;
+                    finishTime = millis();
+                    return true;
+                }
+            }
+
+        // }
     }
     return false;
 }
 
+
+/**
+ * This function updates the robot's current movement state and sends corresponding serial commands
+ * to control the motors accordingly. It also updates the timestamp of the last movement change.  
+ * @return None
+ */
 void update_movement()
 {
     if (currentMovementState != prevMovementState)
@@ -254,6 +306,14 @@ void update_movement()
         
         case STATE_TURN_LEFT_AXIS:
             Serial.print("kvtL");
+            lastMovementChangeTime = millis();
+            break;
+        case STATE_SLEEP:
+            Serial.print("ksleep");
+            lastMovementChangeTime = millis();
+            break;
+        case STATE_HI:
+            Serial.print("khi");
             lastMovementChangeTime = millis();
             break;
         }
