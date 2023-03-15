@@ -70,6 +70,15 @@ bool line_follower()
     }
 }
 
+/**
+ * @brief Detects if an obstacle is present in front of the robot.
+ * 
+ * This function uses the distance sensor to detect if there is an obstacle
+ * present in front of the robot. The function returns true if an obstacle is
+ * detected, and false otherwise.
+ * 
+ * @return True if an obstacle is detected, false otherwise.
+ */
 bool detect_obstacle()
 {
     //if (get_distance_test() < obstacle_detection_dist)
@@ -80,6 +89,16 @@ bool detect_obstacle()
     return false;
 }
 
+
+/**
+ * @brief Function to avoid an obstacle by turning left, moving forward, and turning right.
+ * 
+ * This function is used to avoid an obstacle detected by the robot. It has a state machine
+ * that determines the current action to take based on the distance of the obstacle from
+ * the robot. It turns left, moves forward, and turns right to avoid the obstacle.
+ * 
+ * @return true if obstacle avoidance was successful, false otherwise.
+ */
 bool avoid_obstacle()
 {
     switch (obst_state)
@@ -150,47 +169,61 @@ bool avoid_obstacle()
     
 }
 
+
+/**
+ * @brief Tries to recover from losing the line by rotating until it finds the line again.
+ * 
+ * The function rotates the robot left and right alternately until it finds the line again.
+ * It does this for a maximum of `recover_time` milliseconds, after which it returns false.
+ * If the line is found before `recover_time` milliseconds have elapsed, the function returns true.
+ * 
+ * @return True if the line is found during the recovery process, false otherwise.
+ */
 bool recover()
 {
-    // // Rotate to find line again
-    // if (millis() - lastStateChangeTime < recover_time)
-    // {
-    //     if (millis() - lastStateChangeTime < recover_time / 4 && get_middle_point() == -1)
-    //     {
-    //         currentMovementState = STATE_TURN_RIGHT_AXIS;
-    //     }
-    //     else if (millis() - lastStateChangeTime < recover_time * 2 / 4 && get_middle_point() == -1)
-    //     {
-    //         currentMovementState = STATE_TURN_LEFT_AXIS;
-    //     }
-    //     else if (millis() - lastStateChangeTime < recover_time * 3 / 4 && get_middle_point() == -1)
-    //     {
-    //         currentMovementState = STATE_TURN_RIGHT_AXIS;
-    //     }
-    //     else if (millis() - lastStateChangeTime < recover_time * 4 / 4 && get_middle_point() == -1)
-    //     {
-    //         currentMovementState = STATE_TURN_LEFT_AXIS;
-    //     }
-    //     else if (get_middle_point() != -1)
-    //     {
-    //         return true;
-    //     }
-    //     else
-    //     {
-    //         return false;
-    //         Serialprintln("Recovery failed");
-    //     }
+    // Rotate to find line again
+    if (millis() - lastStateChangeTime < recover_time)
+    {
+        if (millis() - lastStateChangeTime < recover_time / 4 && get_middle_point() == -1)
+        {
+            currentMovementState = STATE_TURN_RIGHT_AXIS;
+        }
+        else if (millis() - lastStateChangeTime < recover_time * 2 / 4 && get_middle_point() == -1)
+        {
+            currentMovementState = STATE_TURN_LEFT_AXIS;
+        }
+        else if (millis() - lastStateChangeTime < recover_time * 3 / 4 && get_middle_point() == -1)
+        {
+            currentMovementState = STATE_TURN_RIGHT_AXIS;
+        }
+        else if (millis() - lastStateChangeTime < recover_time * 4 / 4 && get_middle_point() == -1)
+        {
+            currentMovementState = STATE_TURN_LEFT_AXIS;
+        }
+        else if (get_middle_point() != -1)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+            Serialprintln("Recovery failed");
+        }
 
-    // }      
+    }      
         return true;
 }
 
-void cool_move()
-{
-    
-    return;
-}
-
+/**
+ * Function to detect and cross the finish line.
+ * 
+ * Returns true when the robot has crossed the finish line.
+ * 
+ * The robot will move forward for a certain amount of time, then turn left and check for a horizontal line or middle point.
+ * If found, the robot will move forward and stop, and the function will return true indicating that the robot has crossed the finish line.
+ * 
+ * If a horizontal line or middle point is not detected after turning left twice, the function will continue to return false.
+ */
 bool crossFinishLine()
 {
     // walk forward for a certain amount of time then stop
@@ -219,6 +252,12 @@ bool crossFinishLine()
     return false;
 }
 
+
+/**
+ * This function updates the robot's current movement state and sends corresponding serial commands
+ * to control the motors accordingly. It also updates the timestamp of the last movement change.  
+ * @return None
+ */
 void update_movement()
 {
     if (currentMovementState != prevMovementState)

@@ -7,11 +7,14 @@
 //TODO not enough memory unfortunately figure something out
 //int* gradient = new int[fb->height * fb->width];
 
-
+/**
+ * @brief Applies a Gaussian blur to the image buffer.
+ * 
+ * @param kernelSize The size of the Gaussian kernel to use. This must be an odd integer.
+ */
 void gaussianBlur(int kernelSize) {
   float kernel[] = { 1, 2, 1, 2, 4, 2, 1, 2, 1 }; // 3x3 Gaussian kernel
 
-  //TODO test this function
   int radius = kernelSize / 2;   
 
   int height = fb->height;
@@ -40,9 +43,14 @@ void gaussianBlur(int kernelSize) {
   }
 }
 
-
-
-
+/**
+ * @brief Thresholds the image buffer to binary (black and white).
+ * 
+ * @note This function assumes that the frame buffer (`fb`) contains grayscale pixel values.
+ * 
+ * @param pixel_threshold The threshold value to use. Pixels with values greater than this will be set to 255 (white), 
+ *                        while pixels with values less than or equal to this will be set to 0 (black).
+ */
 void threshold_image()
 {
     // get the height and width of the frame
@@ -65,21 +73,10 @@ void threshold_image()
     }
 }
 
-
-
 /**
- * @brief Finds the middle point of the white pixels in a region of the camera frame buffer.
+ * @brief the middle point of a white line in the specified region of the frame.
  *
- * The function scans the specified region of the camera frame buffer for white pixels and calculates
- * the middle point of the white pixels. The middle point is determined by averaging the starting and
- * ending x-coordinates of the white pixels. The function also checks for the validity of the row
- * by checking for consecutive white pixels.
- *
- * @param fb The camera frame buffer.
- * @param start_fraction The fraction of the frame buffer's height at which to start scanning for white pixels.
- * @param end_fraction The fraction of the frame buffer's height at which to end scanning for white pixels.
- * @return The middle point of the white pixels in the specified region of the frame buffer, or -1 if no valid
- *         white pixels were found.
+ * @return The x-coordinate of the middle point of the white line, or -1 if no valid line is found.
  */
 int get_middle_point()
 {   
@@ -180,13 +177,11 @@ int get_middle_point()
     }
 }
 
-/**************************************************************************/
 /**
-  Detect Obstacle
-  Detect an obstacle using the camera
-  \param fb: pointer to the frame buffer
-  \return true if an obstacle is found, false otherwise
- */
+ * @brief Gets the distance to the nearest object in front of the ultrasonic sensor.
+ *  
+ * @return The distance to the nearest object in front of the ultrasonic sensor.
+*/
 int get_distance()
 {
     // Clears the trigPin
@@ -206,14 +201,11 @@ int get_distance()
     return distance;
 }
 
-/**************************************************************************/
 /**
-  Check for Horizontal Line
-  Check if there is a horizontal line in the bottom third of the image
-  \param fb: pointer to the frame buffer
-  \return true if there is a horizontal line, false otherwise
- */
-/**************************************************************************/
+ * @brief Checks if the robot is at the end of the line.
+ * 
+ * @return True if the robot is at the end of the line, false otherwise.
+*/
 bool check_for_horizontal_line()
 {
     // calculate the start and end rows of the lowest third of the image
@@ -271,17 +263,7 @@ bool check_for_horizontal_line()
     //return false;
 }
 
-bool any_line_found()
-{
-    if (check_for_horizontal_line() or get_middle_point() != -1)
-    {
-        return true;
-    }
-    else
-    {
-        return false;
-    }
-}
+
 
 
 

@@ -6,6 +6,11 @@
 unsigned long last_colorchange = 0;
 
 Adafruit_NeoPixel strip(LED_COUNT, LED_PIN, NEO_GRB + NEO_KHZ800);
+
+
+/**
+ * @brief Setup the led strip
+*/
 void strip_setup() {
   strip.begin();
   
@@ -16,6 +21,11 @@ void strip_setup() {
   strip.show(); // display the updated colors
 }
 
+
+
+
+
+//TODO Make it so that the color changes to maximise the contrast between the line and the background.
 
 // Input a value 0 to 255 to get a color value.
 // The colours are a transition r - g - b - back to r.
@@ -47,4 +57,4 @@ void cycle_led_strip() {
     }
   }
 }
-#
+

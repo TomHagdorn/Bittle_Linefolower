@@ -15,6 +15,10 @@ bool server_status = false;
 //TODO Set server to lower power consumption by running it less frequent.
 WebServer server(80);
 
+/**
+  * @brief Setup the wifi connection
+  * 
+  */
 void setup_wifi() {
   
     WiFi.begin(ssid, password);
@@ -39,6 +43,14 @@ void setup_wifi() {
 
     
 
+
+
+
+
+/**
+* @brief change threshold value
+* 
+*/
 void Change_Treshold_value(){
     server.on("/update-tresholdvalue", HTTP_GET, []() {
     String newValue = server.arg("value");
@@ -46,6 +58,10 @@ void Change_Treshold_value(){
   });
 }
 
+/**
+* @brief change gain value
+* 
+*/
 void Change_IMG_Gain_value(){
     server.on("/update-gain", HTTP_GET, []() {
     String newValue = server.arg("value");
@@ -53,7 +69,10 @@ void Change_IMG_Gain_value(){
    cameraImageSettings();
   });
 }
-
+/**
+  *  @brief change exposure value
+  * 
+*/
 void Change_IMG_Exposur_value(){
     server.on("/update-exposure", HTTP_GET, []() {
     String newValue = server.arg("value");
@@ -62,6 +81,10 @@ void Change_IMG_Exposur_value(){
   });
 }
 
+/**
+  *  @brief change obstacle detection distance
+  * 
+*/
 void Change_Obstacle_Distance(){
     server.on("/update-obstacle-distance", HTTP_GET, []() {
     String newValue = server.arg("value");
@@ -69,6 +92,10 @@ void Change_Obstacle_Distance(){
   });
 }
 
+/**
+  *  @brief change obstacle detection distance tolerance
+  * 
+*/
 void Change_Obstacle_Tollerance(){
     server.on("/update-obstacle-tollerance", HTTP_GET, []() {
     String newValue = server.arg("value");
@@ -76,6 +103,9 @@ void Change_Obstacle_Tollerance(){
   });
 }
 
+/**
+ * @brief send the image to the server
+*/
 void send_image() {
     // server will do the following every time [esp32-ip]/image is requested:
     server.on(F("/image"), [&]() {
@@ -88,10 +118,7 @@ void send_image() {
         // free memory and return buffer
         // note that the picture is actually taken when you return the frame buffer
         free(buf);
-        //esp_camera_fb_return(fb);
     });
-  //TODO Make own wifi setup function
-  
 }
 
 
@@ -200,7 +227,3 @@ void Change_currentfinlinewidth(){
     currentfinlinewidth = newValue.toInt();
   });
 }*/
-
-//TODO add states to node red
-//TODO add movement states to node red
-//TODO add new node redvariables to node red

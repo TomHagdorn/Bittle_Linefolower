@@ -50,14 +50,16 @@ unsigned long lastServerUpdate = 0;
 unsigned long startTime = 0;
 unsigned long obstacleTime = 7000;
 
-/**************************************************************************/
-/*!
-  \brief  Setup function
-  Initialization for following:
-    disable Brownout detection
-    camera
-*/
-/**************************************************************************/
+
+
+/**
+ * Initializes various components used in the device.
+ * Initializes serial communication, disables brownout detector, initializes the camera,
+ * sets up the on-board flash, sets LED brightness, and sets up the ultrasound sensor.
+ * Additionally, it sets the modes of the trigPin and echoPin.
+ *
+ * @return None.
+ */
 void setup()
 {
     Serial.begin(serialSpeed); ///< Initialize serial communication
@@ -94,12 +96,15 @@ void setup()
     pinMode(trigPin, OUTPUT); // Sets the trigPin as an Output
     pinMode(echoPin, INPUT);  // Sets the echoPin as an Input
 }
-/**************************************************************************/
-/*!
-  \brief  Loop function
-  Captures and processes ca image every 320ms
-*/
-/**************************************************************************/
+/**
+ * The main loop of the program.
+ *
+ * Performs image processing on the camera capture every 320 milliseconds, including applying
+ * a Gaussian blur, thresholding, and updating the device's state accordingly. Also updates
+ * the server every 900 milliseconds (commented out). Prints the loop time to the serial monitor.
+ *
+ * @return None.
+ */
 void loop()
 {
 
@@ -150,25 +155,24 @@ void loop()
     // Print the loop timeg
 }
 
-/**************************************************************************/
 /**
- * Update the current state of the line follower.
- *
- * This function updates the current state of the line follower based on the
- * current conditions of the line, the presence of obstacles, and the presence
- * of the finish line. It then executes the appropriate behavior based on the
- * current state.
- *
- * The possible states are:
- * - FOLLOW_LINE: Follow the line using the camera.
- * - AVOID_OBSTACLE: Avoid an obstacle by walking around it.
- * - CROSS_FINISH_LINE: Cross the finish line.
- * - FINISH: The robot has finished the course.
- * - RECOVER_FROM_NO_LINE: Recover from losing the line by walking backwards in a curve.
- *
- * \param fb: pointer to the frame buffer.
+ * The `update()` function updates the state of the robot based on the current state.
+ * This function is called repeatedly in the `loop()` function.
+ * 
+ * The robot has several states, including:
+ * 
+ * - FOLLOW_LINE: the robot follows the line on the ground.
+ * - AVOID_OBSTACLE: the robot detects an obstacle and maneuvers around it.
+ * - CROSS_FINISH_LINE: the robot crosses the finish line.
+ * - RECOVER_FROM_NO_LINE: the robot has lost the line and tries to recover.
+ * - FINISH: the robot has finished the course.
+ * 
+ * Depending on the current state, this function may call other functions to perform specific actions,
+ * such as line following, obstacle avoidance, or finish line detection.
+ * 
+ * This function also sets the current movement state of the robot, which is used to control the
+ * motors and move the robot.
  */
-/**************************************************************************/
 void update()
 {
 
@@ -196,19 +200,6 @@ void update()
                 // line follower returned true, indicating that the line was found
             }
             
-
-            // else
-            // {
-            //     if (millis() - lastStateChangeTime >= 10000)
-            //     {
-            //         // line follower returned false, indicating that the line was not found
-            //         // and at least 3 seconds have passed since the last state change
-            //         Serial.println("\nRECOVER_FROM_NO_LINE");
-            //         currentState = RECOVER_FROM_NO_LINE;
-            //         lastStateChangeTime = millis();
-            //     }
-            //     break;
-            // }
             break;
         }
         break;
@@ -260,7 +251,7 @@ void update()
             // If recover attempts exceed 3, switch back to FOLLOW_LINE
             Serial.println("\nFOLLOW_LINE (max recover attempts reached)");
 
-            currentState = FOLLOW_LINE;
+            currentMovementState = STATE_SLEEP;
             lastStateChangeTime = millis();
             recoverAttempts = 0; // reset recover attempts counter
         }
