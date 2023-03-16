@@ -135,8 +135,8 @@ void loop()
             // TODO Fix this
             if (millis() - lastServerUpdate >= 900)
             {
-                // server.handleClient();
-                // lastServerUpdate = millis();
+                server.handleClient();
+                lastServerUpdate = millis();
             }
 
             // print image to serial monitor
