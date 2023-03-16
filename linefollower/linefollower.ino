@@ -16,6 +16,7 @@
 #if !defined ESP32
 #error Wrong board selected
 #endif
+#define BAUDRATE 115200
 
 #include "soc/soc.h"          //! Used to disable brownout detection
 #include "soc/rtc_cntl_reg.h" //! Used to disable brownout detection
@@ -30,6 +31,7 @@ const int serialSpeed = 115200; ///< Serial data speed to use
 #include "control.h"
 #include "light_strip.h"
 #include "node_red.h"
+#define PIN_S2TX 4
 
 // possible states of the robot
 enum State
@@ -63,7 +65,7 @@ unsigned long obstacleTime = 7000;
 void setup()
 {
     Serial.begin(serialSpeed); ///< Initialize serial communication
-
+    BittleSerial.begin(BAUDRATE ,SERIAL_8N1, PIN_S2TX);
     WRITE_PERI_REG(RTC_CNTL_BROWN_OUT_REG, 0); ///< Disable 'brownout detector'
 
     // Serial.print(("\nInitialising camera: "));
@@ -75,20 +77,17 @@ void setup()
     {
         // Serial.println("Error!");
     }
-
+    setup.wifi();
     setupOnBoardFlash();
     setLedBrightness(ledBrightness);
+    server.on("/Start", HandleClienttrue);
+    server.on("/Stop", HandleClientfalse);
     // Wifi functions to start or stop the update()
-    //.on("/Stop_server", server_set_off);
-    //  server.on("/status", handle_status);
-    //  setup_wifi();
-    //  send_image();
+    server.on("/status", handle_status);
+ 
+    send_image();
+    Update_node_red_value();
 
-    // Change_Treshold_value();
-    // Change_IMG_Gain_value();
-    // Change_IMG_Exposur_value();
-    // Change_Obstacle_Distance();
-    // Change_Obstacle_Tollerance();
 
     // Ultrasound sensor setup
     strip_setup();

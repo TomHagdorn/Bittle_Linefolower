@@ -42,7 +42,15 @@ void setup_wifi() {
     }
 
     
+void HandleClienttrue(){
+    bstart = true;
+    server.send(200, "text/plan", "OK");
+}
 
+void HandleClientfalse(){
+    bstart = false;
+    server.send(200, "text/plan", "OK");
+}
 
 
 /**
@@ -227,3 +235,10 @@ void Change_currentfinlinewidth(){
     currentfinlinewidth = newValue.toInt();
   });
 }*/
+void Update_node_red_values(){
+  Change_Treshold_value();
+  Change_IMG_Gain_value();
+  Change_IMG_Exposur_value();
+  Change_Obstacle_Tollerance();
+  Change_Obstacle_Distance();
+}
